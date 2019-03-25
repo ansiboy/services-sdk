@@ -9,9 +9,7 @@ export interface LoginInfo {
     userId: string,
 }
 
-// const TOKEN_NAME = 'app-token'
 
-// type LoginResult = { token: string, userId: string }
 let user: User | null
 
 export class UserService extends Service {
@@ -39,11 +37,11 @@ export class UserService extends Service {
         }
     }
     // static token = new chitu.ValueStore(localStorage[TOKEN_NAME] || '');
-    sentRegisterVerifyCode(mobile: string) {
+    sendRegisterVerifyCode(mobile: string) {
         let url = this.url('sms/sendVerifyCode')
         return this.postByJson<{ smsId: string }>(url, { mobile, type: 'register' })
     }
-    sentResetVerifyCode(mobile: string) {
+    sendResetVerifyCode(mobile: string) {
         let url = this.url('sms/sendVerifyCode')
         return this.postByJson<{ smsId: string }>(url, { mobile, type: 'resetPassword' })
     }
