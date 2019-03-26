@@ -11,7 +11,7 @@ export class UserService extends Service {
 
     static currentUser = new ValueStore<User>()
 
-    private url(path: string) {
+    protected url(path: string) {
         if (!settings.permissionServiceUrl)
             throw errors.serviceUrlCanntNull('permissionService')
 
@@ -49,18 +49,29 @@ export class UserService extends Service {
     }
 
     /**
+     * 重置手机号码
+     * @param mobile 需要重置的新手机号
+     * @param smsId 短信编号
+     * @param verifyCode 验证码
+     */
+    resetMobile(mobile: string, smsId: string, verifyCode: string) {
+        let url = this.url('user/resetMobile')
+        return this.postByJson(url, { mobile, smsId, verifyCode })
+    }
+
+    /**
      * 退出登录
      */
     logout() {
-        if (UserService.loginInfo == null)
+        if (UserService.loginInfo.value == null)
             return
 
         //TODO: 将服务端 token 设置为失效
 
+        events.logout.fire(this, UserService.loginInfo.value)
         Service.setStorageLoginInfo(null)
-        events.logout.fire(this, UserService.loginInfo)
 
-        UserService.loginInfo = null
+        UserService.loginInfo.value = null
         UserService.currentUser.value = null
     }
 
@@ -87,9 +98,9 @@ export class UserService extends Service {
      * @param smsId 短信编号
      * @param verifyCode 验证码
      */
-    async register(mobile: string, password: string, smsId: string, verifyCode: string) {
+    async register(mobile: string, password: string, smsId: string, verifyCode: string, data: { [key: string]: any }) {
         let url = this.url('user/register')
-        let r = await this.postByJson<LoginInfo>(url, { mobile, password, smsId, verifyCode })
+        let r = await this.postByJson<LoginInfo>(url, { mobile, password, smsId, verifyCode, data })
         if (r == null)
             throw errors.unexpectedNullResult()
 

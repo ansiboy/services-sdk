@@ -5,7 +5,7 @@ import { errors } from "../errors";
 
 /** 图片服务，实现图片的上传，获取 */
 export class ImageService extends Service {
-    private url(path: string) {
+    protected url(path: string) {
         if (!settings.imageServiceUrl)
             throw errors.serviceUrlCanntNull('imageService')
 

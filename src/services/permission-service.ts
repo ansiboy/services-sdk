@@ -12,7 +12,7 @@ export class PermissionService extends Service {
         })
     }
 
-    private url(path: string) {
+    protected url(path: string) {
         if (!settings.permissionServiceUrl)
             throw errors.serviceUrlCanntNull('permissionService')
 
@@ -44,11 +44,11 @@ export class PermissionService extends Service {
         let args: DataSourceSelectArguments = {
             filter: `(type = "${menuType}")`
         }
-        return this.getResources(args)
+        return this.getResourceList(args)
     }
 
     /** 获取资源列表 */
-    async getResources(args: DataSourceSelectArguments): Promise<DataSourceSelectResult<Resource>> {
+    async getResourceList(args: DataSourceSelectArguments): Promise<DataSourceSelectResult<Resource>> {
         let url = this.url('resource/list')
         if (!args.sortExpression)
             args.sortExpression = 'sort_number asc'
@@ -141,7 +141,7 @@ export class PermissionService extends Service {
     // 用户相关
 
     /** 获取用户列表 */
-    async getUsers(args: DataSourceSelectArguments): Promise<DataSourceSelectResult<User>> {
+    async getUserList(args: DataSourceSelectArguments): Promise<DataSourceSelectResult<User>> {
         let url = this.url('user/list')
         let result = await this.getByJson<DataSourceSelectResult<User>>(url, { args })
         if (result == null)
@@ -157,14 +157,35 @@ export class PermissionService extends Service {
     async getUserByMobile(mobile: string) {
         let args: DataSourceSelectArguments = {}
         args.filter = `mobile = '${mobile}'`
-        let r = await this.getUsers(args)
+        let r = await this.getUserList(args)
         return r.dataItems[0]
     }
 
-    /** 删除用户 */
+    /** 
+     * 移除当前应用的用户
+     * @param userId 要移除的用户编号
+     */
     async removeUser(userId: string) {
         let url = this.url('application/removeUser')
         return this.deleteByJson(url, { userId })
+    }
+
+    /**
+     * 获取当前应用的所有用户
+     * @param args 数据源选择参数
+     */
+    async getApplicatinUsers(args: DataSourceSelectArguments) {
+        if (args == null) throw errors.argumentNull('args')
+        let url = this.url('application/users')
+        let result = await this.getByJson<DataSourceSelectResult<User>>(url, { args })
+        if (result == null)
+            throw errors.unexpectedNullResult()
+
+        for (let i = 0; i < result.dataItems.length; i++) {
+            result.dataItems[i].sort_number = (args.startRowIndex || 0) + i + 1
+        }
+
+        return result
     }
 }
 
@@ -195,7 +216,7 @@ interface DataSourceSelectResult<T> {
     dataItems: Array<T>;
 }
 
-interface Role {
+export interface Role {
     id?: string,
     name: string,
     data: {
@@ -203,13 +224,13 @@ interface Role {
     }
 }
 
-interface User {
+export interface User {
     id: string,
     user_name: string,
     mobile: string,
     email: string,
     password: string,
     sort_number: number,
-    data: any
+    data?: any
     // roleIds: string[]
 }

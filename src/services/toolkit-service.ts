@@ -7,11 +7,11 @@ export class ToolkitService extends Service {
         super()
     }
 
-    private url(path: string) {
+    protected url(path: string) {
         if (!path) throw new Error('Argument path cannt be null or empty.')
 
         if (!settings.toolServiceUrl)
-            throw errors.serviceUrlCanntNull('imageService')
+            throw errors.serviceUrlCanntNull('toolServiceUrl')
 
         return `${settings.toolServiceUrl}/${path}`;
     }

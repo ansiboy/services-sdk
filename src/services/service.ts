@@ -6,8 +6,8 @@ export interface LoginInfo {
 }
 
 export class Service extends chitu.Service {
-    static readonly LoginInfoStorageName = 'LoginInfo'
-    static loginInfo: LoginInfo | null = Service.getStorageLoginInfo()
+    static readonly LoginInfoStorageName = 'app-login-info'
+    static loginInfo = new chitu.ValueStore<LoginInfo | null>(Service.getStorageLoginInfo())
 
     constructor() {
         super();
@@ -41,8 +41,8 @@ export class Service extends chitu.Service {
     async ajax<T>(url: string, options?: chitu.AjaxOptions): Promise<T | null> {
         options = options || {}
         options.headers = options.headers || {}
-        if (Service.loginInfo)
-            options.headers['token'] = Service.loginInfo.token
+        if (Service.loginInfo.value)
+            options.headers['token'] = Service.loginInfo.value.token
 
         let data = await super.ajax<T>(url, options)
         if (data == null) {
