@@ -1,5 +1,6 @@
 import { Callbacks } from 'maishu-chitu'
-import { LoginInfo, UserService } from './services/user-service';
+import { UserService } from './services/user-service';
+import { LoginInfo } from './services/service';
 export let events = {
     /** 成功调用 login 方法后引发 */
     login: Callbacks<UserService, LoginInfo>(),

@@ -1,22 +1,48 @@
 import * as chitu from 'maishu-chitu'
-import { UserService } from './user-service';
 
-interface LoginInfo {
+export interface LoginInfo {
     token: string,
     userId: string,
 }
 
 export class Service extends chitu.Service {
+    static readonly LoginInfoStorageName = 'LoginInfo'
+    static loginInfo: LoginInfo | null = Service.getStorageLoginInfo()
 
     constructor() {
         super();
     }
 
+    private static getStorageLoginInfo(): LoginInfo | null {
+        let loginInfoSerialString = localStorage.getItem(Service.LoginInfoStorageName)
+        if (!loginInfoSerialString)
+            return null
+
+        try {
+            let loginInfo = JSON.parse(loginInfoSerialString)
+            return loginInfo
+        }
+        catch (e) {
+            console.error(e)
+            console.log(loginInfoSerialString)
+            return null
+        }
+    }
+
+    protected static setStorageLoginInfo(value: LoginInfo | null) {
+        if (value == null) {
+            localStorage.removeItem(Service.LoginInfoStorageName)
+            return
+        }
+
+        localStorage.setItem(Service.LoginInfoStorageName, JSON.stringify(value))
+    }
+
     async ajax<T>(url: string, options?: chitu.AjaxOptions): Promise<T | null> {
         options = options || {}
         options.headers = options.headers || {}
-        if (UserService.loginInfo)
-            options.headers['token'] = UserService.loginInfo.token
+        if (Service.loginInfo)
+            options.headers['token'] = Service.loginInfo.token
 
         let data = await super.ajax<T>(url, options)
         if (data == null) {

@@ -1,50 +1,21 @@
-import { Service } from "./service";
+import { Service, LoginInfo } from "./service";
 import { settings } from "../settings";
 import { errors } from "../errors";
 import { events } from "../events";
-
-
-export interface LoginInfo {
-    token: string,
-    userId: string,
-}
-
+import { ValueStore } from "maishu-chitu";
 
 let user: User | null
 
 /** 与用户相关的服务 */
 export class UserService extends Service {
-    static readonly LoginInfoStorageName = 'LoginInfo'
-    static loginInfo: LoginInfo | null = UserService.getStorageLoginInfo()
+
+    static currentUser = new ValueStore<User>()
+
     private url(path: string) {
         if (!settings.permissionServiceUrl)
             throw errors.serviceUrlCanntNull('permissionService')
 
         return `${settings.permissionServiceUrl}/${path}`
-    }
-    
-    private static getStorageLoginInfo(): LoginInfo | null {
-        let loginInfoSerialString = localStorage.getItem(UserService.LoginInfoStorageName)
-        if (!loginInfoSerialString)
-            return null
-
-        try {
-            let loginInfo = JSON.parse(loginInfoSerialString)
-            return loginInfo
-        }
-        catch (e) {
-            console.error(e)
-            console.log(loginInfoSerialString)
-            return null
-        }
-    }
-    private static setStorageLoginInfo(value: LoginInfo | null) {
-        if (value == null) {
-            localStorage.removeItem(UserService.LoginInfoStorageName)
-            return
-        }
-
-        localStorage.setItem(UserService.LoginInfoStorageName, JSON.stringify(value))
     }
 
     /** 
@@ -86,10 +57,11 @@ export class UserService extends Service {
 
         //TODO: 将服务端 token 设置为失效
 
+        Service.setStorageLoginInfo(null)
         events.logout.fire(this, UserService.loginInfo)
 
-        localStorage.removeItem(UserService.LoginInfoStorageName)
         UserService.loginInfo = null
+        UserService.currentUser.value = null
     }
 
     /**
@@ -103,6 +75,7 @@ export class UserService extends Service {
         if (r == null)
             throw errors.unexpectedNullResult()
 
+        UserService.setStorageLoginInfo(r)
         events.login.fire(this, r)
         return r
     }
@@ -121,7 +94,7 @@ export class UserService extends Service {
             throw errors.unexpectedNullResult()
 
         UserService.setStorageLoginInfo(r)
-        events.login.fire(this, r)
+        events.register.fire(this, r)
 
         return r;
     }
@@ -130,15 +103,19 @@ export class UserService extends Service {
      * 获取用户个人信息
      */
     async me() {
-        if (user == null) {
-            let url = this.url('user/me')
-            user = await this.getByJson<User>(url)
-            if (user == null) {
-                return null
-            }
-            user.data = user.data || {}
+        if (UserService.currentUser.value) {
+            return UserService.currentUser.value
         }
-        return user;
+
+        let url = this.url('user/me')
+        let user = await this.getByJson<User>(url)
+        if (user == null) {
+            return null
+        }
+
+        user.data = user.data || {}
+        UserService.currentUser.value = user
+        return user
     }
 
     /**
@@ -163,6 +140,15 @@ export class UserService extends Service {
         let url = this.url('user/update')
         return this.postByJson(url, { user })
     }
+
+    /**
+     * 获取当前登录用户的角色
+     */
+    async myRoles() {
+        let url = this.url('user/getRoles')
+        let roles = await this.getByJson<Role[]>(url)
+        return roles
+    }
 }
 
 export interface User {
@@ -173,9 +159,12 @@ export interface User {
     password?: string,
     openid?: string,
     create_date_time: Date,
-    data: {
-        head_image?: string,
-        nick_name?: string,
-    }
+    data: { [key: string]: any }
 }
+
+export interface Role {
+    id: string,
+    name: string,
+}
+
 
