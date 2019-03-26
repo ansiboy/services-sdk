@@ -2,14 +2,13 @@ import { Service, LoginInfo } from "./service";
 import { settings } from "../settings";
 import { errors } from "../errors";
 import { events } from "../events";
-import { ValueStore } from "maishu-chitu";
 
-let user: User | null
+// let user: User | null
 
 /** 与用户相关的服务 */
 export class UserService extends Service {
 
-    static currentUser = new ValueStore<User>()
+    // static currentUser = new ValueStore<User>()
 
     protected url(path: string) {
         if (!settings.permissionServiceUrl)
@@ -72,7 +71,7 @@ export class UserService extends Service {
         Service.setStorageLoginInfo(null)
 
         UserService.loginInfo.value = null
-        UserService.currentUser.value = null
+        // UserService.currentUser.value = null
     }
 
     /**
@@ -114,18 +113,18 @@ export class UserService extends Service {
      * 获取用户个人信息
      */
     async me() {
-        if (UserService.currentUser.value) {
-            return UserService.currentUser.value
-        }
+        // if (UserService.currentUser.value) {
+        //     return UserService.currentUser.value
+        // }
 
         let url = this.url('user/me')
         let user = await this.getByJson<User>(url)
-        if (user == null) {
-            return null
-        }
+        // if (user == null) {
+        //     return null
+        // }
 
-        user.data = user.data || {}
-        UserService.currentUser.value = user
+        // user.data = user.data || {}
+        // UserService.currentUser.value = user
         return user
     }
 
@@ -135,11 +134,7 @@ export class UserService extends Service {
      */
     async getUser(userId: string) {
         let url = this.url('user/item')
-        user = await this.getByJson<User | null>(url, { userId })
-        if (user == null) {
-            return null
-        }
-        user.data = user.data || {}
+        let user = await this.getByJson<User | null>(url, { userId })
         return user
     }
 
