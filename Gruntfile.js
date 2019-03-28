@@ -51,7 +51,7 @@ module.exports = function (grunt) {
                     standalone: 'service-sdk',
                 },
                 banner: license,
-                external: ['maishu-chitu', 'maishu-ui-toolkit']
+                external: ['maishu-chitu', 'maishu-ui-toolkit', 'socket.io']
             },
         },
         copy: {

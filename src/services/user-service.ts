@@ -2,8 +2,7 @@ import { Service, LoginInfo } from "./service";
 import { settings } from "../settings";
 import { errors } from "../errors";
 import { events } from "../events";
-
-// let user: User | null
+import { User, Role } from "../models";
 
 /** 与用户相关的服务 */
 export class UserService extends Service {
@@ -69,9 +68,7 @@ export class UserService extends Service {
 
         events.logout.fire(this, UserService.loginInfo.value)
         Service.setStorageLoginInfo(null)
-
         UserService.loginInfo.value = null
-        // UserService.currentUser.value = null
     }
 
     /**
@@ -85,6 +82,7 @@ export class UserService extends Service {
         if (r == null)
             throw errors.unexpectedNullResult()
 
+        UserService.loginInfo.value = r
         UserService.setStorageLoginInfo(r)
         events.login.fire(this, r)
         return r
@@ -113,18 +111,8 @@ export class UserService extends Service {
      * 获取用户个人信息
      */
     async me() {
-        // if (UserService.currentUser.value) {
-        //     return UserService.currentUser.value
-        // }
-
         let url = this.url('user/me')
         let user = await this.getByJson<User>(url)
-        // if (user == null) {
-        //     return null
-        // }
-
-        // user.data = user.data || {}
-        // UserService.currentUser.value = user
         return user
     }
 
@@ -157,20 +145,8 @@ export class UserService extends Service {
     }
 }
 
-export interface User {
-    id: string,
-    user_name?: string,
-    mobile?: string,
-    email?: string,
-    password?: string,
-    openid?: string,
-    create_date_time: Date,
-    data: { [key: string]: any }
-}
 
-export interface Role {
-    id: string,
-    name: string,
-}
+
+
 
 

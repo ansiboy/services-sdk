@@ -1,6 +1,7 @@
 import { Service } from "./service";
 import { settings } from "../settings";
 import { errors } from "../errors";
+import { User, Resource, ResourceType, Role } from "../models";
 
 export class PermissionService extends Service {
 
@@ -147,9 +148,6 @@ export class PermissionService extends Service {
         if (result == null)
             throw errors.unexpectedNullResult()
 
-        for (let i = 0; i < result.dataItems.length; i++) {
-            result.dataItems[i].sort_number = args.startRowIndex || 0 + i + 1
-        }
         return result
     }
 
@@ -181,28 +179,17 @@ export class PermissionService extends Service {
         if (result == null)
             throw errors.unexpectedNullResult()
 
-        for (let i = 0; i < result.dataItems.length; i++) {
-            result.dataItems[i].sort_number = (args.startRowIndex || 0) + i + 1
-        }
+        // for (let i = 0; i < result.dataItems.length; i++) {
+        //     result.dataItems[i].sort_number = (args.startRowIndex || 0) + i + 1
+        // }
 
         return result
     }
 }
 
-export interface Resource {
-    id?: string,
-    name: string,
-    path?: string,
-    parent_id: string,
-    sort_number?: number,
-    type: ResourceType,
-    create_date_time?: Date,
-    data: any,
-    category: Category
-}
 
-type ResourceType = 'menu' | 'button'
-type Category = 'platform' | 'distributor'
+
+
 
 interface DataSourceSelectArguments {
     startRowIndex?: number;
@@ -216,21 +203,15 @@ interface DataSourceSelectResult<T> {
     dataItems: Array<T>;
 }
 
-export interface Role {
-    id?: string,
-    name: string,
-    data: {
-        resource_types: ResourceType[]
-    }
-}
 
-export interface User {
-    id: string,
-    user_name: string,
-    mobile: string,
-    email: string,
-    password: string,
-    sort_number: number,
-    data?: any
-    // roleIds: string[]
-}
+
+// export interface User {
+//     id: string,
+//     user_name: string,
+//     mobile: string,
+//     email: string,
+//     password: string,
+//     sort_number: number,
+//     data?: any
+//     // roleIds: string[]
+// }
