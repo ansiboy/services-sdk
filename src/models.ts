@@ -32,17 +32,40 @@ export interface User {
     data: { [key: string]: any }
 }
 
-export interface Message {
+//===================================================
+// 消息实体类
+export interface ChatMessage {
     id: string,
-    title?: string,
-    content: string,
     create_date_time: number;
-    update_date_time: number;
     from_user_id: string,
     to_user_id: string,
-    is_reply?: boolean,
-    unread_count?: number
+    content: string,
+    distributor_id: string
+    customer_id: string
 }
+
+export interface LastestChatMessage {
+    id: string,
+    create_date_time: number;
+    from_user_id: string,
+    to_user_id: string,
+    content: string,
+    update_date_time: number;
+    unread_count?: number
+    distributor_id: string
+    customer_id: string
+}
+
+export interface UserPlatformMessage {
+    id: string,
+    create_date_time: number,
+    title: string,
+    content: string,
+    user_id: string,
+    is_read: boolean,
+}
+
+//===================================================
 
 export interface DataSourceSelectResult<T> {
     totalRowCount: number;

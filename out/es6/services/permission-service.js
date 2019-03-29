@@ -50,11 +50,11 @@ class PermissionService extends service_1.Service {
             let args = {
                 filter: `(type = "${menuType}")`
             };
-            return this.getResources(args);
+            return this.getResourceList(args);
         });
     }
     /** 获取资源列表 */
-    getResources(args) {
+    getResourceList(args) {
         return __awaiter(this, void 0, void 0, function* () {
             let url = this.url('resource/list');
             if (!args.sortExpression)
@@ -145,15 +145,12 @@ class PermissionService extends service_1.Service {
     //================================================================
     // 用户相关
     /** 获取用户列表 */
-    getUsers(args) {
+    getUserList(args) {
         return __awaiter(this, void 0, void 0, function* () {
             let url = this.url('user/list');
             let result = yield this.getByJson(url, { args });
             if (result == null)
                 throw errors_1.errors.unexpectedNullResult();
-            for (let i = 0; i < result.dataItems.length; i++) {
-                result.dataItems[i].sort_number = args.startRowIndex || 0 + i + 1;
-            }
             return result;
         });
     }
@@ -162,16 +159,47 @@ class PermissionService extends service_1.Service {
         return __awaiter(this, void 0, void 0, function* () {
             let args = {};
             args.filter = `mobile = '${mobile}'`;
-            let r = yield this.getUsers(args);
+            let r = yield this.getUserList(args);
             return r.dataItems[0];
         });
     }
-    /** 删除用户 */
+    /**
+     * 移除当前应用的用户
+     * @param userId 要移除的用户编号
+     */
     removeUser(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             let url = this.url('application/removeUser');
             return this.deleteByJson(url, { userId });
         });
     }
+    /**
+     * 获取当前应用的所有用户
+     * @param args 数据源选择参数
+     */
+    getApplicatinUsers(args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (args == null)
+                throw errors_1.errors.argumentNull('args');
+            let url = this.url('application/users');
+            let result = yield this.getByJson(url, { args });
+            if (result == null)
+                throw errors_1.errors.unexpectedNullResult();
+            // for (let i = 0; i < result.dataItems.length; i++) {
+            //     result.dataItems[i].sort_number = (args.startRowIndex || 0) + i + 1
+            // }
+            return result;
+        });
+    }
 }
 exports.PermissionService = PermissionService;
+// export interface User {
+//     id: string,
+//     user_name: string,
+//     mobile: string,
+//     email: string,
+//     password: string,
+//     sort_number: number,
+//     data?: any
+//     // roleIds: string[]
+// }

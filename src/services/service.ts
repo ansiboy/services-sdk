@@ -1,4 +1,5 @@
 import * as chitu from 'maishu-chitu'
+import { settings } from '../settings';
 
 export interface LoginInfo {
     token: string,
@@ -43,6 +44,9 @@ export class Service extends chitu.Service {
         options.headers = options.headers || {}
         if (Service.loginInfo.value)
             options.headers['token'] = Service.loginInfo.value.token
+
+        if (settings.applicationId)
+            options.headers['application-id'] = typeof settings.applicationId == 'function' ? settings.applicationId() : settings.applicationId
 
         let data = await super.ajax<T>(url, options)
         if (data == null) {

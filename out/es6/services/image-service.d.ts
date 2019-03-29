@@ -1,7 +1,7 @@
 import { Service } from "./service";
 /** 图片服务，实现图片的上传，获取 */
 export declare class ImageService extends Service {
-    private url;
+    protected url(path: string): string;
     /** 获取图片的 URL
      * @param id 图片的 ID
      * @param width 图片的宽度，如果不指定则为实际图片的宽度

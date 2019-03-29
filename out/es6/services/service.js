@@ -9,10 +9,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const chitu = require("maishu-chitu");
-const user_service_1 = require("./user-service");
+const settings_1 = require("../settings");
 class Service extends chitu.Service {
     constructor() {
         super();
+    }
+    static getStorageLoginInfo() {
+        let loginInfoSerialString = localStorage.getItem(Service.LoginInfoStorageName);
+        if (!loginInfoSerialString)
+            return null;
+        try {
+            let loginInfo = JSON.parse(loginInfoSerialString);
+            return loginInfo;
+        }
+        catch (e) {
+            console.error(e);
+            console.log(loginInfoSerialString);
+            return null;
+        }
+    }
+    static setStorageLoginInfo(value) {
+        if (value == null) {
+            localStorage.removeItem(Service.LoginInfoStorageName);
+            return;
+        }
+        localStorage.setItem(Service.LoginInfoStorageName, JSON.stringify(value));
     }
     ajax(url, options) {
         const _super = Object.create(null, {
@@ -21,8 +42,10 @@ class Service extends chitu.Service {
         return __awaiter(this, void 0, void 0, function* () {
             options = options || {};
             options.headers = options.headers || {};
-            if (user_service_1.UserService.loginInfo)
-                options.headers['token'] = user_service_1.UserService.loginInfo.token;
+            if (Service.loginInfo.value)
+                options.headers['token'] = Service.loginInfo.value.token;
+            if (settings_1.settings.applicationId)
+                options.headers['application-id'] = typeof settings_1.settings.applicationId == 'function' ? settings_1.settings.applicationId() : settings_1.settings.applicationId;
             let data = yield _super.ajax.call(this, url, options);
             if (data == null) {
                 return null;
@@ -130,4 +153,6 @@ class Service extends chitu.Service {
         return this.ajax(url, { headers, data, method: 'delete' });
     }
 }
+Service.LoginInfoStorageName = 'app-login-info';
+Service.loginInfo = new chitu.ValueStore(Service.getStorageLoginInfo());
 exports.Service = Service;

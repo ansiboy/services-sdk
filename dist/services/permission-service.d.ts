@@ -1,7 +1,8 @@
 import { Service } from "./service";
+import { User, Resource, Role } from "../models";
 export declare class PermissionService extends Service {
     constructor();
-    private url;
+    protected url(path: string): string;
     /** 添加资源 */
     addResource(item: Partial<Resource>): Promise<{
         id: string;
@@ -11,7 +12,7 @@ export declare class PermissionService extends Service {
     /** 获取菜单类型的资源 */
     getMenuResources(): Promise<DataSourceSelectResult<Resource>>;
     /** 获取资源列表 */
-    getResources(args: DataSourceSelectArguments): Promise<DataSourceSelectResult<Resource>>;
+    getResourceList(args: DataSourceSelectArguments): Promise<DataSourceSelectResult<Resource>>;
     /**
      * 删除指定的资源
      * @param id 要删除的资源编号
@@ -45,25 +46,20 @@ export declare class PermissionService extends Service {
     /** 设置用户角色 */
     setUserRoles(userId: string, roleIds: string[]): Promise<{} | null>;
     /** 获取用户列表 */
-    getUsers(args: DataSourceSelectArguments): Promise<DataSourceSelectResult<User>>;
+    getUserList(args: DataSourceSelectArguments): Promise<DataSourceSelectResult<User>>;
     /** 通过手机获取用户 */
     getUserByMobile(mobile: string): Promise<User>;
-    /** 删除用户 */
+    /**
+     * 移除当前应用的用户
+     * @param userId 要移除的用户编号
+     */
     removeUser(userId: string): Promise<{} | null>;
+    /**
+     * 获取当前应用的所有用户
+     * @param args 数据源选择参数
+     */
+    getApplicatinUsers(args: DataSourceSelectArguments): Promise<DataSourceSelectResult<User>>;
 }
-export interface Resource {
-    id?: string;
-    name: string;
-    path?: string;
-    parent_id: string;
-    sort_number?: number;
-    type: ResourceType;
-    create_date_time?: Date;
-    data: any;
-    category: Category;
-}
-declare type ResourceType = 'menu' | 'button';
-declare type Category = 'platform' | 'distributor';
 interface DataSourceSelectArguments {
     startRowIndex?: number;
     maximumRows?: number;
@@ -73,21 +69,5 @@ interface DataSourceSelectArguments {
 interface DataSourceSelectResult<T> {
     totalRowCount: number;
     dataItems: Array<T>;
-}
-interface Role {
-    id?: string;
-    name: string;
-    data: {
-        resource_types: ResourceType[];
-    };
-}
-interface User {
-    id: string;
-    user_name: string;
-    mobile: string;
-    email: string;
-    password: string;
-    sort_number: number;
-    data: any;
 }
 export {};

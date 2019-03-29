@@ -1,6 +1,14 @@
 import * as chitu from 'maishu-chitu';
+export interface LoginInfo {
+    token: string;
+    userId: string;
+}
 export declare class Service extends chitu.Service {
+    static readonly LoginInfoStorageName = "app-login-info";
+    static loginInfo: chitu.ValueStore<LoginInfo | null>;
     constructor();
+    private static getStorageLoginInfo;
+    protected static setStorageLoginInfo(value: LoginInfo | null): void;
     ajax<T>(url: string, options?: chitu.AjaxOptions): Promise<T | null>;
     /**
      * 遍历 JSON 对象各个字段，将日期字符串转换为 Date 对象

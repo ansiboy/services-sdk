@@ -1,29 +1,28 @@
 import { ValueStore, Callbacks } from "maishu-chitu";
 import { MessageService } from "./message-service";
-// import { instanceMessangerUrl } from "../settings";
 import io = require('socket.io')
-import { Message } from "../models";
+import { ChatMessage, UserPlatformMessage, LastestChatMessage } from "../models";
 import { settings } from "../settings";
 import { errors } from "../errors";
 
-type CustomEvent = 'chat-message' | 'system-info' | 'chat-lastest-message'
+type CustomEvent = 'chat-message' | 'platform-message' | 'lastest-chat-message'
 
 export class InstanceMessanger {
     /** 系统消息 */
-    systemMessages = new ValueStore<Message[]>([])
+    userPlatformMessages = new ValueStore<UserPlatformMessage[]>([])
 
-    /** 问答的消息 */
-    qaMessages = new ValueStore<Message[]>([])
+    /** 聊天消息 */
+    lastestChatMessages = new ValueStore<LastestChatMessage[]>([])
 
     /** 聊天事件 */
-    chatMessageReceived = Callbacks<null, Message>()
+    chatMessageReceived = Callbacks<null, ChatMessage>()
 
     private socket?: socket.io.Socket | null = null;
 
     start(userId: string, messageService: MessageService) {
         if (this.socket != null)
             throw errors.instanceMessangerStart()
-            
+
         if (!settings.instanceMessangerUrl) throw errors.serviceUrlCanntNull('instanceMessangerUrl')
         let socket = this.socket = io(settings.instanceMessangerUrl, { query: { userId } })
         this.socket.on('connect', () => {
@@ -59,30 +58,29 @@ export class InstanceMessanger {
         this.socket.on('pong', (latency: any) => {
             //console.log("接收服务器数据包");
         });
-        this.socket.on<CustomEvent>('chat-lastest-message', (text: string) => {
-            let msg: Message = JSON.parse(text)
-            if (!msg.from_user_id) {
-                let msgs = this.systemMessages.value
-                if (msgs == null) throw errors.unexpectedNullResult()
-                msgs.unshift(msg)
-                this.systemMessages.value = msgs
-            }
-            else if (msg.to_user_id == userId) {
-                let msgs = this.qaMessages.value
+        this.socket.on<CustomEvent>('lastest-chat-message', (text: string) => {
+            let msg: LastestChatMessage = JSON.parse(text)
+            if (msg.to_user_id == userId) {
+                let msgs = this.lastestChatMessages.value
                 if (msgs == null) throw errors.unexpectedNullResult()
                 msgs.forEach(o => { o.update_date_time = o.update_date_time || o.create_date_time })
                 msgs = msgs.filter(o => !(o.from_user_id == msg.from_user_id && o.to_user_id == msg.to_user_id))
                     .sort((a, b) => a.update_date_time > b.update_date_time ? 1 : -1)
 
                 msgs.unshift(msg)
-                this.qaMessages.value = msgs
+                this.lastestChatMessages.value = msgs
             }
         })
-        this.socket.on<CustomEvent>('system-info', (text: string) => {
-            console.log("系统消息：" + text)
+        this.socket.on<CustomEvent>('platform-message', (text: string) => {
+            let msg: UserPlatformMessage = JSON.parse(text)
+            let msgs = this.userPlatformMessages.value
+            if (msgs == null) throw errors.unexpectedNullResult()
+            msgs.unshift(msg)
+            this.userPlatformMessages.value = msgs
+            console.log("platform-message:" + text)
         })
         this.socket.on<CustomEvent>('chat-message', (text: string) => {
-            let msg: Message = JSON.parse(text)
+            let msg: ChatMessage = JSON.parse(text)
             this.chatMessageReceived.fire(null, msg)
         })
     }
@@ -98,12 +96,12 @@ export class InstanceMessanger {
     /** 获取最新消息 */
     private async fetchLastestMessages(userId: string, messageService: MessageService) {
         let result = await Promise.all([
-            messageService.getSystemMessages(userId),
+            messageService.getUserPlatformMessage(userId),
             messageService.getLastestChatMessages(userId),
         ])
 
-        this.systemMessages.value = result[0]
-        this.qaMessages.value = result[1]
+        this.userPlatformMessages.value = result[0]
+        this.lastestChatMessages.value = result[1]
     }
 
 
