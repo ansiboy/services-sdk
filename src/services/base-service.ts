@@ -1,12 +1,4 @@
-// import * as chitu from 'maishu-chitu'
 import { Callback1, Callbacks } from "../extends";
-
-
-export interface LoginInfo {
-    token: string,
-    userId: string,
-}
-
 
 interface ServiceError extends Error {
     method?: string
@@ -94,35 +86,8 @@ export class Service {
 
     error = Callbacks<Service, Error>();
 
-    static readonly LoginInfoStorageName = 'app-login-info'
-
     static settings = {
         ajaxTimeout: 30,
-    }
-
-    private static getStorageLoginInfo(): LoginInfo | null {
-        let loginInfoSerialString = localStorage.getItem(Service.LoginInfoStorageName)
-        if (!loginInfoSerialString)
-            return null
-
-        try {
-            let loginInfo = JSON.parse(loginInfoSerialString)
-            return loginInfo
-        }
-        catch (e) {
-            console.error(e)
-            console.log(loginInfoSerialString)
-            return null
-        }
-    }
-
-    protected static setStorageLoginInfo(value: LoginInfo | null) {
-        if (value == null) {
-            localStorage.removeItem(Service.LoginInfoStorageName)
-            return
-        }
-
-        localStorage.setItem(Service.LoginInfoStorageName, JSON.stringify(value))
     }
 
     async ajax<T>(url: string, options?: AjaxOptions): Promise<T | null> {

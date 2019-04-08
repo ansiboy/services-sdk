@@ -16,3 +16,5 @@ declare module 'socket.io' {
 
     export = io;
 }
+
+declare let process: any
