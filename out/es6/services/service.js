@@ -8,14 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const chitu = require("maishu-chitu");
 const settings_1 = require("../settings");
-class Service extends chitu.Service {
+const chitu_service_1 = require("./chitu-service");
+const chitu_extends_1 = require("./chitu-extends");
+class Service extends chitu_service_1.Service {
     constructor() {
         super();
     }
     static getStorageLoginInfo() {
-        let loginInfoSerialString = localStorage.getItem(Service.LoginInfoStorageName);
+        let loginInfoSerialString = this.getCookie(Service.LoginInfoStorageName);
         if (!loginInfoSerialString)
             return null;
         try {
@@ -30,10 +31,34 @@ class Service extends chitu.Service {
     }
     static setStorageLoginInfo(value) {
         if (value == null) {
-            localStorage.removeItem(Service.LoginInfoStorageName);
+            this.removeCookie(Service.LoginInfoStorageName);
             return;
         }
-        localStorage.setItem(Service.LoginInfoStorageName, JSON.stringify(value));
+        this.setCookie(Service.LoginInfoStorageName, JSON.stringify(value), 1000);
+    }
+    static setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+    static getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ')
+                c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0)
+                return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+    static removeCookie(name) {
+        document.cookie = name + '=; Max-Age=-99999999;';
     }
     ajax(url, options) {
         const _super = Object.create(null, {
@@ -154,5 +179,5 @@ class Service extends chitu.Service {
     }
 }
 Service.LoginInfoStorageName = 'app-login-info';
-Service.loginInfo = new chitu.ValueStore(Service.getStorageLoginInfo());
+Service.loginInfo = new chitu_extends_1.ValueStore(Service.getStorageLoginInfo());
 exports.Service = Service;

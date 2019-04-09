@@ -1,4 +1,4 @@
-import { Callbacks } from 'maishu-chitu'
+import { Callbacks } from './services/chitu-extends'
 import { UserService } from './services/user-service';
 import { LoginInfo } from './services/service';
 export let events = {

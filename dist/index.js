@@ -1,6 +1,6 @@
 
 /*
- * SERVICE SDK v1.1.14
+ * SERVICE SDK v1.1.18
  * https://github.com/ansiboy/dilu
  *
  * Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -19,8 +19,8 @@ exports.errors = {
         let msg = `Null result is unexpected.`;
         return new Error(msg);
     },
-    unexpectedNullValue() {
-        let msg = `Null value is unexpected.`;
+    unexpectedNullValue(name) {
+        let msg = `variable ${name} is unexpected null value.`;
         return new Error(msg);
     },
     argumentNull(name) {
@@ -40,17 +40,17 @@ exports.errors = {
 },{}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const maishu_chitu_1 = require("maishu-chitu");
+const chitu_extends_1 = require("./services/chitu-extends");
 exports.events = {
     /** 成功调用 login 方法后引发 */
-    login: maishu_chitu_1.Callbacks(),
+    login: chitu_extends_1.Callbacks(),
     /** 成功调用 logout 方法后引发 */
-    logout: maishu_chitu_1.Callbacks(),
+    logout: chitu_extends_1.Callbacks(),
     /** 成功调用 register 方法后引发 */
-    register: maishu_chitu_1.Callbacks(),
+    register: chitu_extends_1.Callbacks(),
 };
 
-},{"maishu-chitu":"maishu-chitu"}],3:[function(require,module,exports){
+},{"./services/chitu-extends":4}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var service_1 = require("./services/service");
@@ -72,7 +72,174 @@ exports.settings = settings_1.settings;
 var events_1 = require("./events");
 exports.events = events_1.events;
 
-},{"./events":2,"./services/image-service":4,"./services/instance-messanger":5,"./services/message-service":6,"./services/permission-service":7,"./services/service":8,"./services/toolkit-service":9,"./services/user-service":10,"./settings":11}],4:[function(require,module,exports){
+},{"./events":2,"./services/image-service":6,"./services/instance-messanger":7,"./services/message-service":8,"./services/permission-service":9,"./services/service":10,"./services/toolkit-service":11,"./services/user-service":12,"./settings":13}],4:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class Callback {
+    constructor() {
+        this.funcs = new Array();
+    }
+    add(func) {
+        this.funcs.push(func);
+    }
+    remove(func) {
+        this.funcs = this.funcs.filter(o => o != func);
+    }
+    fire(...args) {
+        this.funcs.forEach(o => o(...args));
+    }
+}
+exports.Callback = Callback;
+function Callbacks() {
+    return new Callback();
+}
+exports.Callbacks = Callbacks;
+class ValueStore {
+    constructor(value) {
+        this.items = new Array();
+        this._value = value === undefined ? null : value;
+    }
+    add(func, sender) {
+        this.items.push({ func, sender });
+        return func;
+    }
+    remove(func) {
+        this.items = this.items.filter(o => o.func != func);
+    }
+    fire(value) {
+        this.items.forEach(o => o.func(value, o.sender));
+    }
+    get value() {
+        if (this._value === undefined)
+            return null;
+        return this._value;
+    }
+    set value(value) {
+        this._value = value;
+        this.fire(value);
+    }
+}
+exports.ValueStore = ValueStore;
+
+},{}],5:[function(require,module,exports){
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const errors_1 = require("../errors");
+const chitu_extends_1 = require("./chitu-extends");
+class Service {
+    constructor() {
+        this.error = chitu_extends_1.Callbacks();
+    }
+    ajax(url, options) {
+        // options = options || {} as any
+        if (options === undefined)
+            options = {};
+        let data = options.data;
+        let method = options.method;
+        let headers = options.headers || {};
+        let body;
+        if (data != null) {
+            let is_json = (headers['content-type'] || '').indexOf('json') >= 0;
+            if (is_json) {
+                body = JSON.stringify(data);
+            }
+            else {
+                body = new URLSearchParams();
+                for (let key in data) {
+                    body.append(key, data[key]);
+                }
+            }
+        }
+        // return callAjax<T>(url, { headers: headers as any, body, method }, this, this.error);
+        return new Promise((reslove, reject) => {
+            let options = { headers: headers, body, method };
+            let timeId;
+            if (options == null)
+                throw errors_1.errors.unexpectedNullValue('options');
+            if (method == 'get') {
+                timeId = setTimeout(() => {
+                    let err = new Error(); //new AjaxError(options.method);
+                    err.name = 'timeout';
+                    err.message = '网络连接超时';
+                    reject(err);
+                    this.error.fire(this, err);
+                    clearTimeout(timeId);
+                }, Service.settings.ajaxTimeout * 1000);
+            }
+            ajax(url, options)
+                .then(data => {
+                reslove(data);
+                if (timeId)
+                    clearTimeout(timeId);
+            })
+                .catch(err => {
+                reject(err);
+                this.error.fire(this, err);
+                if (timeId)
+                    clearTimeout(timeId);
+            });
+        });
+    }
+    /**
+     * 创建服务
+     * @param type 服务类型
+     */
+    createService(type) {
+        type = type || Service;
+        let service = new type();
+        service.error.add((sender, error) => {
+            this.error.fire(service, error);
+        });
+        return service;
+    }
+}
+Service.settings = {
+    ajaxTimeout: 30,
+};
+exports.Service = Service;
+function ajax(url, options) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let response = yield fetch(url, options);
+        let responseText = response.text();
+        let p;
+        if (typeof responseText == 'string') {
+            p = new Promise((reslove, reject) => {
+                reslove(responseText);
+            });
+        }
+        else {
+            p = responseText;
+        }
+        let text = yield responseText;
+        let textObject;
+        let isJSONContextType = (response.headers.get('content-type') || '').indexOf('json') >= 0;
+        if (isJSONContextType) {
+            textObject = text ? JSON.parse(text) : null;
+        }
+        else {
+            textObject = text;
+        }
+        if (response.status >= 300) {
+            let err = new Error();
+            err.method = options.method;
+            err.name = `${response.status}`;
+            err.message = isJSONContextType ? (textObject.Message || textObject.message) : textObject;
+            err.message = err.message || response.statusText;
+            throw err;
+        }
+        return textObject;
+    });
+}
+
+},{"../errors":1,"./chitu-extends":4}],6:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -187,7 +354,7 @@ class ImageService extends service_1.Service {
 }
 exports.ImageService = ImageService;
 
-},{"../errors":1,"../settings":11,"./service":8,"maishu-ui-toolkit":"maishu-ui-toolkit"}],5:[function(require,module,exports){
+},{"../errors":1,"../settings":13,"./service":10,"maishu-ui-toolkit":"maishu-ui-toolkit"}],7:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -198,18 +365,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const maishu_chitu_1 = require("maishu-chitu");
+const chitu_extends_1 = require("../services/chitu-extends");
 const io = require("socket.io");
 const settings_1 = require("../settings");
 const errors_1 = require("../errors");
 class InstanceMessanger {
     constructor() {
         /** 系统消息 */
-        this.userPlatformMessages = new maishu_chitu_1.ValueStore([]);
+        this.userPlatformMessages = new chitu_extends_1.ValueStore([]);
         /** 聊天消息 */
-        this.lastestChatMessages = new maishu_chitu_1.ValueStore([]);
+        this.lastestChatMessages = new chitu_extends_1.ValueStore([]);
         /** 聊天事件 */
-        this.chatMessageReceived = maishu_chitu_1.Callbacks();
+        this.chatMessageReceived = chitu_extends_1.Callbacks();
         this.socket = null;
     }
     start(userId, messageService) {
@@ -298,7 +465,7 @@ class InstanceMessanger {
 }
 exports.InstanceMessanger = InstanceMessanger;
 
-},{"../errors":1,"../settings":11,"maishu-chitu":"maishu-chitu","socket.io":"socket.io"}],6:[function(require,module,exports){
+},{"../errors":1,"../services/chitu-extends":4,"../settings":13,"socket.io":"socket.io"}],8:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -312,7 +479,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const service_1 = require("./service");
 const settings_1 = require("../settings");
 const errors_1 = require("../errors");
-exports.messageSend = chitu.Callbacks();
+const chitu_extends_1 = require("./chitu-extends");
+exports.messageSend = chitu_extends_1.Callbacks();
 class MessageService extends service_1.Service {
     url(path) {
         if (!path)
@@ -432,7 +600,7 @@ class MessageService extends service_1.Service {
 }
 exports.MessageService = MessageService;
 
-},{"../errors":1,"../settings":11,"./service":8}],7:[function(require,module,exports){
+},{"../errors":1,"../settings":13,"./chitu-extends":4,"./service":10}],9:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -639,7 +807,7 @@ exports.PermissionService = PermissionService;
 //     // roleIds: string[]
 // }
 
-},{"../errors":1,"../settings":11,"./service":8}],8:[function(require,module,exports){
+},{"../errors":1,"../settings":13,"./service":10}],10:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -650,14 +818,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const chitu = require("maishu-chitu");
 const settings_1 = require("../settings");
-class Service extends chitu.Service {
+const chitu_service_1 = require("./chitu-service");
+const chitu_extends_1 = require("./chitu-extends");
+class Service extends chitu_service_1.Service {
     constructor() {
         super();
     }
     static getStorageLoginInfo() {
-        let loginInfoSerialString = localStorage.getItem(Service.LoginInfoStorageName);
+        let loginInfoSerialString = this.getCookie(Service.LoginInfoStorageName);
         if (!loginInfoSerialString)
             return null;
         try {
@@ -672,10 +841,34 @@ class Service extends chitu.Service {
     }
     static setStorageLoginInfo(value) {
         if (value == null) {
-            localStorage.removeItem(Service.LoginInfoStorageName);
+            this.removeCookie(Service.LoginInfoStorageName);
             return;
         }
-        localStorage.setItem(Service.LoginInfoStorageName, JSON.stringify(value));
+        this.setCookie(Service.LoginInfoStorageName, JSON.stringify(value), 1000);
+    }
+    static setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+    static getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ')
+                c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0)
+                return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+    static removeCookie(name) {
+        document.cookie = name + '=; Max-Age=-99999999;';
     }
     ajax(url, options) {
         const _super = Object.create(null, {
@@ -796,10 +989,10 @@ class Service extends chitu.Service {
     }
 }
 Service.LoginInfoStorageName = 'app-login-info';
-Service.loginInfo = new chitu.ValueStore(Service.getStorageLoginInfo());
+Service.loginInfo = new chitu_extends_1.ValueStore(Service.getStorageLoginInfo());
 exports.Service = Service;
 
-},{"../settings":11,"maishu-chitu":"maishu-chitu"}],9:[function(require,module,exports){
+},{"../settings":13,"./chitu-extends":4,"./chitu-service":5}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const service_1 = require("./service");
@@ -823,7 +1016,7 @@ class ToolkitService extends service_1.Service {
 }
 exports.ToolkitService = ToolkitService;
 
-},{"../errors":1,"../settings":11,"./service":8}],10:[function(require,module,exports){
+},{"../errors":1,"../settings":13,"./service":10}],12:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -840,7 +1033,6 @@ const errors_1 = require("../errors");
 const events_1 = require("../events");
 /** 与用户相关的服务 */
 class UserService extends service_1.Service {
-    // static currentUser = new ValueStore<User>()
     url(path) {
         if (!settings_1.settings.permissionServiceUrl)
             throw errors_1.errors.serviceUrlCanntNull('permissionService');
@@ -853,6 +1045,18 @@ class UserService extends service_1.Service {
     sendRegisterVerifyCode(mobile) {
         let url = this.url('sms/sendVerifyCode');
         return this.postByJson(url, { mobile, type: 'register' });
+    }
+    /**
+     * 校验验证码
+     * @param smsId 验证码信息的 ID 号
+     * @param verifyCode 验证码
+     */
+    checkVerifyCode(smsId, verifyCode) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let url = this.url('sms/checkVerifyCode');
+            let r = yield this.postByJson(url, { smsId, verifyCode });
+            return r;
+        });
     }
     /**
      * 发送重置密码操作验证码
@@ -971,7 +1175,7 @@ class UserService extends service_1.Service {
 }
 exports.UserService = UserService;
 
-},{"../errors":1,"../events":2,"../settings":11,"./service":8}],11:[function(require,module,exports){
+},{"../errors":1,"../events":2,"../settings":13,"./service":10}],13:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.settings = {

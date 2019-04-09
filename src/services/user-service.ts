@@ -7,8 +7,6 @@ import { User, Role } from "../models";
 /** 与用户相关的服务 */
 export class UserService extends Service {
 
-    // static currentUser = new ValueStore<User>()
-
     protected url(path: string) {
         if (!settings.permissionServiceUrl)
             throw errors.serviceUrlCanntNull('permissionService')
@@ -23,6 +21,18 @@ export class UserService extends Service {
     sendRegisterVerifyCode(mobile: string) {
         let url = this.url('sms/sendVerifyCode')
         return this.postByJson<{ smsId: string }>(url, { mobile, type: 'register' })
+    }
+
+
+    /**
+     * 校验验证码
+     * @param smsId 验证码信息的 ID 号
+     * @param verifyCode 验证码
+     */
+    async checkVerifyCode(smsId: string, verifyCode: string) {
+        let url = this.url('sms/checkVerifyCode')
+        let r = await this.postByJson<Boolean>(url, { smsId, verifyCode })
+        return r
     }
 
     /**

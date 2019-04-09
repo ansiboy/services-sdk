@@ -9,8 +9,8 @@ exports.errors = {
         let msg = `Null result is unexpected.`;
         return new Error(msg);
     },
-    unexpectedNullValue() {
-        let msg = `Null value is unexpected.`;
+    unexpectedNullValue(name) {
+        let msg = `variable ${name} is unexpected null value.`;
         return new Error(msg);
     },
     argumentNull(name) {

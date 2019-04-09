@@ -1,11 +1,10 @@
 {
     "name": "maishu-services-sdk",
-    "version": "1.1.14",
+    "version": "1.1.18",
     "scripts": {
         "build": "grunt"
     },
     "dependencies": {
-        "maishu-chitu": "^2.3.0",
         "maishu-ui-toolkit": "^1.0.2"
     },
     "devDependencies": {

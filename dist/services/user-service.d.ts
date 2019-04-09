@@ -11,6 +11,12 @@ export declare class UserService extends Service {
         smsId: string;
     } | null>;
     /**
+     * 校验验证码
+     * @param smsId 验证码信息的 ID 号
+     * @param verifyCode 验证码
+     */
+    checkVerifyCode(smsId: string, verifyCode: string): Promise<Boolean | null>;
+    /**
      * 发送重置密码操作验证码
      * @param mobile 接收验证码的手机号
      */

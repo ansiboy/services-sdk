@@ -14,7 +14,6 @@ const errors_1 = require("../errors");
 const events_1 = require("../events");
 /** 与用户相关的服务 */
 class UserService extends service_1.Service {
-    // static currentUser = new ValueStore<User>()
     url(path) {
         if (!settings_1.settings.permissionServiceUrl)
             throw errors_1.errors.serviceUrlCanntNull('permissionService');
@@ -27,6 +26,18 @@ class UserService extends service_1.Service {
     sendRegisterVerifyCode(mobile) {
         let url = this.url('sms/sendVerifyCode');
         return this.postByJson(url, { mobile, type: 'register' });
+    }
+    /**
+     * 校验验证码
+     * @param smsId 验证码信息的 ID 号
+     * @param verifyCode 验证码
+     */
+    checkVerifyCode(smsId, verifyCode) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let url = this.url('sms/checkVerifyCode');
+            let r = yield this.postByJson(url, { smsId, verifyCode });
+            return r;
+        });
     }
     /**
      * 发送重置密码操作验证码

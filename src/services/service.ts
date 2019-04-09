@@ -1,21 +1,22 @@
-import * as chitu from 'maishu-chitu'
 import { settings } from '../settings';
+import { Service as ChiTuSerivce, AjaxOptions } from './chitu-service'
+import { ValueStore } from './chitu-extends';
 
 export interface LoginInfo {
     token: string,
     userId: string,
 }
 
-export class Service extends chitu.Service {
+export class Service extends ChiTuSerivce {
     static readonly LoginInfoStorageName = 'app-login-info'
-    static loginInfo = new chitu.ValueStore<LoginInfo | null>(Service.getStorageLoginInfo())
+    static loginInfo = new ValueStore<LoginInfo | null>(Service.getStorageLoginInfo())
 
     constructor() {
         super();
     }
 
     private static getStorageLoginInfo(): LoginInfo | null {
-        let loginInfoSerialString = localStorage.getItem(Service.LoginInfoStorageName)
+        let loginInfoSerialString = this.getCookie(Service.LoginInfoStorageName)
         if (!loginInfoSerialString)
             return null
 
@@ -32,14 +33,37 @@ export class Service extends chitu.Service {
 
     protected static setStorageLoginInfo(value: LoginInfo | null) {
         if (value == null) {
-            localStorage.removeItem(Service.LoginInfoStorageName)
+            this.removeCookie(Service.LoginInfoStorageName)
             return
         }
 
-        localStorage.setItem(Service.LoginInfoStorageName, JSON.stringify(value))
+        this.setCookie(Service.LoginInfoStorageName, JSON.stringify(value), 1000)
     }
 
-    async ajax<T>(url: string, options?: chitu.AjaxOptions): Promise<T | null> {
+    private static setCookie(name: string, value: string, days: number) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+    private static getCookie(name: string) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+    private static removeCookie(name: string) {
+        document.cookie = name + '=; Max-Age=-99999999;';
+    }
+
+    async ajax<T>(url: string, options?: AjaxOptions): Promise<T | null> {
         options = options || {}
         options.headers = options.headers || {}
         if (Service.loginInfo.value)

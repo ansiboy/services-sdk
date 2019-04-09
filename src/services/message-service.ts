@@ -2,8 +2,9 @@ import { ChatMessage, DataSourceSelectResult, UserPlatformMessage, LastestChatMe
 import { Service } from "./service";
 import { settings } from "../settings";
 import { errors } from "../errors";
+import { Callbacks } from "./chitu-extends";
 
-export let messageSend = chitu.Callbacks<null, ChatMessage>()
+export let messageSend = Callbacks<null, ChatMessage>()
 
 export class MessageService extends Service {
     protected url(path: string) {
