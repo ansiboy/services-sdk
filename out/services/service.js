@@ -9,9 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const settings_1 = require("../settings");
-const chitu_service_1 = require("./chitu-service");
-const chitu_extends_1 = require("./chitu-extends");
-class Service extends chitu_service_1.Service {
+const maishu_chitu_service_1 = require("maishu-chitu-service");
+class Service extends maishu_chitu_service_1.Service {
     constructor() {
         super();
     }
@@ -179,5 +178,5 @@ class Service extends chitu_service_1.Service {
     }
 }
 Service.LoginInfoStorageName = 'app-login-info';
-Service.loginInfo = new chitu_extends_1.ValueStore(Service.getStorageLoginInfo());
+Service.loginInfo = new maishu_chitu_service_1.ValueStore(Service.getStorageLoginInfo());
 exports.Service = Service;

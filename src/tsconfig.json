@@ -1,9 +1,15 @@
 {
     "compilerOptions": {
-        "outDir": "../out/es6",
+        "outDir": "../out",
         "module": "commonjs",
         "target": "es6",
         "strict": true,
-        "declaration": true
+        "declaration": true,
+        "baseUrl": "./",
+        "paths": {
+            "maishu-chitu-service": [
+                "../node_modules/maishu-chitu-service/out/index.d.ts"
+            ]
+        }
     }
 }

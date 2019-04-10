@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const chitu_extends_1 = require("./services/chitu-extends");
+const maishu_chitu_service_1 = require("maishu-chitu-service");
 exports.events = {
     /** 成功调用 login 方法后引发 */
-    login: chitu_extends_1.Callbacks(),
+    login: maishu_chitu_service_1.Callbacks(),
     /** 成功调用 logout 方法后引发 */
-    logout: chitu_extends_1.Callbacks(),
+    logout: maishu_chitu_service_1.Callbacks(),
     /** 成功调用 register 方法后引发 */
-    register: chitu_extends_1.Callbacks(),
+    register: maishu_chitu_service_1.Callbacks(),
 };

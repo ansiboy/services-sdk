@@ -7,7 +7,7 @@ module.exports = function (grunt) {
     let license = `
 /*
  * SERVICE SDK v${pkg.version}
- * https://github.com/ansiboy/dilu
+ * https://github.com/ansiboy/services-sdk
  *
  * Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
  * Licensed under the MIT License.
@@ -43,7 +43,7 @@ module.exports = function (grunt) {
         browserify: {
             dist: {
                 files: {
-                    'dist/index.js': ['out/es6/index.js']
+                    'dist/index.js': ['out/index.js']
                 }
             },
             options: {
@@ -51,16 +51,17 @@ module.exports = function (grunt) {
                     standalone: 'service-sdk',
                 },
                 banner: license,
-                external: ['maishu-chitu', 'maishu-ui-toolkit', 'socket.io']
+                external: ['maishu-chitu', 'maishu-ui-toolkit'],
+                alias: [`./lib/socket.io.js:socket.io`]
             },
         },
-        copy: {
-            dist: {
-                files: [
-                    { expand: true, cwd: 'out/es6', src: ['**/*.d.ts'], dest: 'dist/', filter: 'isFile' },
-                ]
-            }
-        },
+        // copy: {
+        //     dist: {
+        //         files: [
+        //             { expand: true, cwd: 'out/es6', src: ['**/*.d.ts'], dest: 'dist/', filter: 'isFile' },
+        //         ]
+        //     }
+        // },
         shell: {
             src: {
                 command: `tsc -p src`
@@ -68,5 +69,5 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('default', ['shell', 'browserify', 'copy']);// 'babel', 
+    grunt.registerTask('default', ['shell', 'browserify']);// 'babel', 
 }

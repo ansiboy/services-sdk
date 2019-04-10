@@ -1,4 +1,4 @@
-import { ValueStore } from "../services/chitu-extends";
+import { ValueStore } from "maishu-chitu-service";
 import { MessageService } from "./message-service";
 import { ChatMessage, UserPlatformMessage, LastestChatMessage } from "../models";
 export declare class InstanceMessanger {
@@ -7,7 +7,7 @@ export declare class InstanceMessanger {
     /** 聊天消息 */
     lastestChatMessages: ValueStore<LastestChatMessage[]>;
     /** 聊天事件 */
-    chatMessageReceived: import("./chitu-extends").Callback1<null, ChatMessage>;
+    chatMessageReceived: import("maishu-chitu-service").Callback1<null, ChatMessage>;
     private socket?;
     start(userId: string, messageService: MessageService): void;
     stop(): void;

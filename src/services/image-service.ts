@@ -1,5 +1,5 @@
 import { Service } from "./service";
-import * as ui from 'maishu-ui-toolkit'
+// import * as ui from 'maishu-ui-toolkit'
 import { settings } from "../settings";
 import { errors } from "../errors";
 
@@ -18,12 +18,12 @@ export class ImageService extends Service {
      * @param height 图片的高度，如果不指定则为实际图片的高度
      */
     imageSource(id: string, width?: number, height?: number) {
-        if (!id) {
-            width = width == null ? 200 : width
-            height = height == null ? 100 : height
-            id = ui.generateImageBase64(width, height, settings.noImageText)
-            return id;
-        }
+        // if (!id) {
+        //     width = width == null ? 200 : width
+        //     height = height == null ? 100 : height
+        //     id = ui.generateImageBase64(width, height, settings.noImageText)
+        //     return id;
+        // }
         let isBase64 = id.startsWith('data:image')
         if (isBase64) {
             return id;

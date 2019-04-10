@@ -14,9 +14,6 @@ const errors_1 = require("../errors");
 class PermissionService extends service_1.Service {
     constructor() {
         super();
-        this.error.add((sender, err) => {
-            ui.alert({ title: '错误', message: err.message });
-        });
     }
     url(path) {
         if (!settings_1.settings.permissionServiceUrl)

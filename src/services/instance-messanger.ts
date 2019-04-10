@@ -1,4 +1,4 @@
-import { ValueStore, Callbacks } from "../services/chitu-extends";
+import { ValueStore, Callbacks } from "maishu-chitu-service";
 import { MessageService } from "./message-service";
 import io = require('socket.io')
 import { ChatMessage, UserPlatformMessage, LastestChatMessage } from "../models";

@@ -2,7 +2,7 @@ import { ChatMessage, DataSourceSelectResult, UserPlatformMessage, LastestChatMe
 import { Service } from "./service";
 import { settings } from "../settings";
 import { errors } from "../errors";
-import { Callbacks } from "./chitu-extends";
+import { Callbacks } from "maishu-chitu-service";
 
 export let messageSend = Callbacks<null, ChatMessage>()
 
@@ -55,6 +55,11 @@ export class MessageService extends Service {
         return r
     }
 
+    async removeLastestChatMessage(id: string) {
+        let url = this.url('lastest_chat_message/delete')
+        await this.delete(url, { id })
+    }
+
     async getMessage(userId: string, id: string) {
         let url = this.url('user_message/item')
         let r = await this.get<ChatMessage>(url, { userId, id })
@@ -66,21 +71,6 @@ export class MessageService extends Service {
         let r = await this.get<ChatMessage>(url, { userId, id })
         return r
     }
-
-    // /**
-    //  * 发送聊天消息
-    //  * @param content 聊天消息的内容
-    //  * @param toUserId 目标用户
-    //  * @param fromUserId 源用户
-    //  */
-    // async sendChatMessage(content: string, toUserId: string, fromUserId: string): Promise<ChatMessage> {
-    //     let url = this.url('user_message/send')
-    //     let msg: Partial<ChatMessage> = { content, to_user_id: toUserId, from_user_id: fromUserId }
-    //     let r = await this.post<Partial<ChatMessage>>(url, { title: '', content, toUserId, fromUserId })
-    //     Object.assign(msg, r)
-    //     messageSend.fire(null, msg as ChatMessage)
-    //     return msg as ChatMessage
-    // }
 
     /**
      * 把最近的聊天信息标记为已读

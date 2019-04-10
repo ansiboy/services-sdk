@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const service_1 = require("./service");
-const ui = require("maishu-ui-toolkit");
+// import * as ui from 'maishu-ui-toolkit'
 const settings_1 = require("../settings");
 const errors_1 = require("../errors");
 /** 图片服务，实现图片的上传，获取 */
@@ -25,12 +25,12 @@ class ImageService extends service_1.Service {
      * @param height 图片的高度，如果不指定则为实际图片的高度
      */
     imageSource(id, width, height) {
-        if (!id) {
-            width = width == null ? 200 : width;
-            height = height == null ? 100 : height;
-            id = ui.generateImageBase64(width, height, settings_1.settings.noImageText);
-            return id;
-        }
+        // if (!id) {
+        //     width = width == null ? 200 : width
+        //     height = height == null ? 100 : height
+        //     id = ui.generateImageBase64(width, height, settings.noImageText)
+        //     return id;
+        // }
         let isBase64 = id.startsWith('data:image');
         if (isBase64) {
             return id;

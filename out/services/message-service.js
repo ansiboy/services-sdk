@@ -11,8 +11,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const service_1 = require("./service");
 const settings_1 = require("../settings");
 const errors_1 = require("../errors");
-const chitu_extends_1 = require("./chitu-extends");
-exports.messageSend = chitu_extends_1.Callbacks();
+const maishu_chitu_service_1 = require("maishu-chitu-service");
+exports.messageSend = maishu_chitu_service_1.Callbacks();
 class MessageService extends service_1.Service {
     url(path) {
         if (!path)

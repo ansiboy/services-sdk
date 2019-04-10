@@ -1,6 +1,5 @@
 import { settings } from '../settings';
-import { Service as ChiTuSerivce, AjaxOptions } from './chitu-service'
-import { ValueStore } from './chitu-extends';
+import { Service as ChiTuSerivce, AjaxOptions, ValueStore } from 'maishu-chitu-service'
 
 export interface LoginInfo {
     token: string,

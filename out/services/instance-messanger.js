@@ -8,18 +8,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const chitu_extends_1 = require("../services/chitu-extends");
+const maishu_chitu_service_1 = require("maishu-chitu-service");
 const io = require("socket.io");
 const settings_1 = require("../settings");
 const errors_1 = require("../errors");
 class InstanceMessanger {
     constructor() {
         /** 系统消息 */
-        this.userPlatformMessages = new chitu_extends_1.ValueStore([]);
+        this.userPlatformMessages = new maishu_chitu_service_1.ValueStore([]);
         /** 聊天消息 */
-        this.lastestChatMessages = new chitu_extends_1.ValueStore([]);
+        this.lastestChatMessages = new maishu_chitu_service_1.ValueStore([]);
         /** 聊天事件 */
-        this.chatMessageReceived = chitu_extends_1.Callbacks();
+        this.chatMessageReceived = maishu_chitu_service_1.Callbacks();
         this.socket = null;
     }
     start(userId, messageService) {

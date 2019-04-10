@@ -7,10 +7,6 @@ export class PermissionService extends Service {
 
     constructor() {
         super()
-
-        this.error.add((sender, err) => {
-            ui.alert({ title: '错误', message: err.message })
-        })
     }
 
     protected url(path: string) {
