@@ -31,7 +31,7 @@ export class UserService extends Service {
      */
     async checkVerifyCode(smsId: string, verifyCode: string) {
         let url = this.url('sms/checkVerifyCode')
-        let r = await this.postByJson<Boolean>(url, { smsId, verifyCode })
+        let r = await this.postByJson<boolean>(url, { smsId, verifyCode })
         return r
     }
 
