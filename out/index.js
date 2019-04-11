@@ -10,10 +10,8 @@ var toolkit_service_1 = require("./services/toolkit-service");
 exports.ToolkitService = toolkit_service_1.ToolkitService;
 var permission_service_1 = require("./services/permission-service");
 exports.PermissionService = permission_service_1.PermissionService;
-var instance_messanger_1 = require("./services/instance-messanger");
-exports.InstanceMessanger = instance_messanger_1.InstanceMessanger;
-var message_service_1 = require("./services/message-service");
-exports.MessageService = message_service_1.MessageService;
+// export { InstanceMessanger } from './services/instance-messanger'
+// export { MessageService } from './services/message-service'
 var settings_1 = require("./settings");
 exports.settings = settings_1.settings;
 var events_1 = require("./events");

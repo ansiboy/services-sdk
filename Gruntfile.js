@@ -6,7 +6,7 @@ module.exports = function (grunt) {
 
     let license = `
 /*
- * SERVICE SDK v${pkg.version}
+ * ${pkg.name} v${pkg.version}
  * https://github.com/ansiboy/services-sdk
  *
  * Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -15,31 +15,6 @@ module.exports = function (grunt) {
  */`;
 
     grunt.initConfig({
-        babel: {
-            source: {
-                options: {
-                    sourceMap: false,
-                    presets: [
-                        [
-                            "@babel/preset-env",
-                            {
-                                "targets": {
-                                    "browsers": [
-                                        "ie >= 11"
-                                    ]
-                                }
-                            }
-                        ]
-                    ]
-                },
-                files: [{
-                    expand: true,
-                    cwd: `out/es6`,
-                    src: [`**/*.js`],
-                    dest: `out/es5/`
-                }]
-            }
-        },
         browserify: {
             dist: {
                 files: {
@@ -51,17 +26,9 @@ module.exports = function (grunt) {
                     standalone: 'service-sdk',
                 },
                 banner: license,
-                external: ['maishu-chitu', 'maishu-ui-toolkit'],
-                alias: [`./lib/socket.io.js:socket.io`]
+                external: ['maishu-chitu', 'maishu-ui-toolkit']
             },
         },
-        // copy: {
-        //     dist: {
-        //         files: [
-        //             { expand: true, cwd: 'out/es6', src: ['**/*.d.ts'], dest: 'dist/', filter: 'isFile' },
-        //         ]
-        //     }
-        // },
         shell: {
             src: {
                 command: `tsc -p src`
