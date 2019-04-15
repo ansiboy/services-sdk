@@ -1,6 +1,8 @@
 {
     "name": "maishu-services-sdk",
-    "version": "1.4.0",
+    "version": "1.4.5",
+    "main": "./dist/index.js",
+    "types": "./out/index.d.ts",
     "scripts": {
         "build": "grunt"
     },

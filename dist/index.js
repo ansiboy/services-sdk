@@ -1,6 +1,6 @@
 
 /*
- * maishu-services-sdk v1.4.0
+ * maishu-services-sdk v1.4.5
  * https://github.com/ansiboy/services-sdk
  *
  * Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -250,15 +250,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const service_1 = require("./service");
-// import * as ui from 'maishu-ui-toolkit'
-const settings_1 = require("../settings");
 const errors_1 = require("../errors");
 /** 图片服务，实现图片的上传，获取 */
 class ImageService extends service_1.Service {
     url(path) {
-        if (!settings_1.settings.imageServiceUrl)
+        if (!ImageService.baseUrl)
             throw errors_1.errors.serviceUrlCanntNull('imageService');
-        return `${settings_1.settings.imageServiceUrl}/${path}`;
+        return `${ImageService.baseUrl}/${path}`;
     }
     /** 获取图片的 URL
      * @param id 图片的 ID
@@ -266,12 +264,8 @@ class ImageService extends service_1.Service {
      * @param height 图片的高度，如果不指定则为实际图片的高度
      */
     imageSource(id, width, height) {
-        // if (!id) {
-        //     width = width == null ? 200 : width
-        //     height = height == null ? 100 : height
-        //     id = ui.generateImageBase64(width, height, settings.noImageText)
-        //     return id;
-        // }
+        if (!id)
+            throw errors_1.errors.argumentNull('id');
         let isBase64 = id.startsWith('data:image');
         if (isBase64) {
             return id;
@@ -285,6 +279,8 @@ class ImageService extends service_1.Service {
         return url;
     }
     getImageSize(imageBase64) {
+        if (!imageBase64)
+            throw errors_1.errors.argumentNull('imageBase64');
         return new Promise((resolve, reject) => {
             var i = new Image();
             i.onload = function () {
@@ -301,6 +297,12 @@ class ImageService extends service_1.Service {
      */
     resize(imageBase64, width, height) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!imageBase64)
+                throw errors_1.errors.argumentNull('imageBase64');
+            if (!width)
+                throw errors_1.errors.argumentNull('width');
+            if (!height)
+                throw errors_1.errors.argumentNull('height');
             var canvas = document.createElement('canvas'); //.getElementById("canvas");
             var ctx = canvas.getContext("2d");
             canvas.width = width;
@@ -325,6 +327,8 @@ class ImageService extends service_1.Service {
      */
     upload(imageBase64) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!imageBase64)
+                throw errors_1.errors.argumentNull('imageBase64');
             let url = this.url('upload');
             let imageSize = yield this.getImageSize(imageBase64);
             let maxWidth = 800;
@@ -346,6 +350,8 @@ class ImageService extends service_1.Service {
      */
     remove(id) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!id)
+                throw errors_1.errors.argumentNull('id');
             let url = this.url("remove");
             return this.postByJson(url, { id });
         });
@@ -353,7 +359,7 @@ class ImageService extends service_1.Service {
 }
 exports.ImageService = ImageService;
 
-},{"../errors":2,"../settings":10,"./service":7}],6:[function(require,module,exports){
+},{"../errors":2,"./service":7}],6:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -365,22 +371,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const service_1 = require("./service");
-const settings_1 = require("../settings");
 const errors_1 = require("../errors");
+const events_1 = require("../events");
 class PermissionService extends service_1.Service {
     constructor() {
         super();
     }
     url(path) {
-        if (!settings_1.settings.permissionServiceUrl)
+        if (!PermissionService.baseUrl)
             throw errors_1.errors.serviceUrlCanntNull('permissionService');
-        return `${settings_1.settings.permissionServiceUrl}/${path}`;
+        return `${PermissionService.baseUrl}/${path}`;
     }
     //=============================================================
     // 资源相关
     /** 添加资源 */
     addResource(item) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!item)
+                throw errors_1.errors.argumentNull('item');
             let url = this.url('resource/add');
             let result = yield this.postByJson(url, { item });
             Object.assign(item, result);
@@ -390,6 +398,8 @@ class PermissionService extends service_1.Service {
     /** 更新资源 */
     updateResource(item) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!item)
+                throw errors_1.errors.argumentNull('item');
             let url = this.url('resource/update');
             let result = yield this.postByJson(url, { item });
             Object.assign(item, result);
@@ -409,6 +419,8 @@ class PermissionService extends service_1.Service {
     /** 获取资源列表 */
     getResourceList(args) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!args)
+                throw errors_1.errors.argumentNull('args');
             let url = this.url('resource/list');
             if (!args.sortExpression)
                 args.sortExpression = 'sort_number asc';
@@ -427,6 +439,8 @@ class PermissionService extends service_1.Service {
      */
     deleteResource(id) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!id)
+                throw errors_1.errors.argumentNull('id');
             let url = this.url('resource/remove');
             return this.postByJson(url, { id });
         });
@@ -437,6 +451,8 @@ class PermissionService extends service_1.Service {
      */
     getResourceChildCommands(id) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!id)
+                throw errors_1.errors.argumentNull('id');
             let buttonType = 'button';
             let filter = `parent_id = '${id}' and type = '${buttonType}'`;
             let url = `resource/list`;
@@ -461,6 +477,8 @@ class PermissionService extends service_1.Service {
      * @param id 要获取的角色编号
      */
     getRole(id) {
+        if (!id)
+            throw errors_1.errors.argumentNull('id');
         let url = this.url('role/get');
         return this.getByJson(url, { id });
     }
@@ -492,6 +510,10 @@ class PermissionService extends service_1.Service {
     }
     /** 设置用户角色 */
     setUserRoles(userId, roleIds) {
+        if (!userId)
+            throw errors_1.errors.argumentNull('userId');
+        if (!roleIds)
+            throw errors_1.errors.argumentNull('roleIds');
         let url = this.url('user/setRoles');
         return this.postByJson(url, { userId, roleIds });
     }
@@ -510,6 +532,8 @@ class PermissionService extends service_1.Service {
     /** 通过手机获取用户 */
     getUserByMobile(mobile) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!mobile)
+                throw errors_1.errors.argumentNull('mobile');
             let args = {};
             args.filter = `mobile = '${mobile}'`;
             let r = yield this.getUserList(args);
@@ -522,6 +546,8 @@ class PermissionService extends service_1.Service {
      */
     removeUser(userId) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!userId)
+                throw errors_1.errors.argumentNull('userId');
             let url = this.url('application/removeUser');
             return this.deleteByJson(url, { userId });
         });
@@ -538,10 +564,173 @@ class PermissionService extends service_1.Service {
             let result = yield this.getByJson(url, { args });
             if (result == null)
                 throw errors_1.errors.unexpectedNullResult();
-            // for (let i = 0; i < result.dataItems.length; i++) {
-            //     result.dataItems[i].sort_number = (args.startRowIndex || 0) + i + 1
-            // }
             return result;
+        });
+    }
+    /**
+     * 发送注册操作验证码
+     * @param mobile 接收验证码的手机号
+     */
+    sendRegisterVerifyCode(mobile) {
+        let url = this.url('sms/sendVerifyCode');
+        return this.postByJson(url, { mobile, type: 'register' });
+    }
+    /**
+     * 校验验证码
+     * @param smsId 验证码信息的 ID 号
+     * @param verifyCode 验证码
+     */
+    checkVerifyCode(smsId, verifyCode) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!smsId)
+                throw errors_1.errors.argumentNull('smsId');
+            if (!verifyCode)
+                throw errors_1.errors.argumentNull('verifycode');
+            let url = this.url('sms/checkVerifyCode');
+            let r = yield this.postByJson(url, { smsId, verifyCode });
+            return r;
+        });
+    }
+    /**
+     * 发送重置密码操作验证码
+     * @param mobile 接收验证码的手机号
+     */
+    sendResetVerifyCode(mobile) {
+        if (!mobile)
+            throw errors_1.errors.argumentNull('mobile');
+        let url = this.url('sms/sendVerifyCode');
+        return this.postByJson(url, { mobile, type: 'resetPassword' });
+    }
+    /**
+     * 重置密码
+     * @param mobile 手机号
+     * @param password 新密码
+     * @param smsId 短信编号
+     * @param verifyCode 验证码
+     */
+    resetPassword(mobile, password, smsId, verifyCode) {
+        if (!mobile)
+            throw errors_1.errors.argumentNull('mobile');
+        if (!password)
+            throw errors_1.errors.argumentNull('password');
+        if (!smsId)
+            throw errors_1.errors.argumentNull('smsId');
+        if (!verifyCode)
+            throw errors_1.errors.argumentNull('verifyCode');
+        let url = this.url('user/resetPassword');
+        return this.postByJson(url, { mobile, password, smsId, verifyCode });
+    }
+    /**
+     * 重置手机号码
+     * @param mobile 需要重置的新手机号
+     * @param smsId 短信编号
+     * @param verifyCode 验证码
+     */
+    resetMobile(mobile, smsId, verifyCode) {
+        if (!mobile)
+            throw errors_1.errors.argumentNull('mobile');
+        if (!smsId)
+            throw errors_1.errors.argumentNull('smsId');
+        if (!verifyCode)
+            throw errors_1.errors.argumentNull('verifyCode');
+        let url = this.url('user/resetMobile');
+        return this.postByJson(url, { mobile, smsId, verifyCode });
+    }
+    /**
+     * 退出登录
+     */
+    logout() {
+        if (service_1.Service.loginInfo.value == null)
+            return;
+        //TODO: 将服务端 token 设置为失效
+        events_1.events.logout.fire(this, service_1.Service.loginInfo.value);
+        service_1.Service.setStorageLoginInfo(null);
+        service_1.Service.loginInfo.value = null;
+    }
+    /**
+     * 登录
+     * @param username 用户名
+     * @param password 密码
+     */
+    login(username, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!username)
+                throw errors_1.errors.argumentNull('username');
+            if (!password)
+                throw errors_1.errors.argumentNull('password');
+            let url = this.url('user/login');
+            let r = yield this.postByJson(url, { username, password });
+            if (r == null)
+                throw errors_1.errors.unexpectedNullResult();
+            service_1.Service.loginInfo.value = r;
+            service_1.Service.setStorageLoginInfo(r);
+            events_1.events.login.fire(this, r);
+            return r;
+        });
+    }
+    /**
+     * 注册
+     * @param mobile 手机号
+     * @param password 密码
+     * @param smsId 短信编号
+     * @param verifyCode 验证码
+     */
+    register(mobile, password, smsId, verifyCode, data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!mobile)
+                throw errors_1.errors.argumentNull('mobile');
+            if (!password)
+                throw errors_1.errors.argumentNull('password');
+            if (!smsId)
+                throw errors_1.errors.argumentNull('smsId');
+            if (!verifyCode)
+                throw errors_1.errors.argumentNull('verifyCode');
+            let url = this.url('user/register');
+            let r = yield this.postByJson(url, { mobile, password, smsId, verifyCode, data });
+            if (r == null)
+                throw errors_1.errors.unexpectedNullResult();
+            service_1.Service.setStorageLoginInfo(r);
+            events_1.events.register.fire(this, r);
+            return r;
+        });
+    }
+    /**
+     * 获取用户个人信息
+     */
+    me() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let url = this.url('user/me');
+            let user = yield this.getByJson(url);
+            return user;
+        });
+    }
+    /**
+     * 获取用户
+     * @param userId 用户编号
+     */
+    getUser(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let url = this.url('user/item');
+            let user = yield this.getByJson(url, { userId });
+            return user;
+        });
+    }
+    /**
+     * 更新用户信息
+     * @param user 用户
+     */
+    update(user) {
+        let url = this.url('user/update');
+        return this.postByJson(url, { user });
+    }
+    /**
+     * 获取当前登录用户的角色
+     */
+    myRoles() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let url = this.url('user/getRoles');
+            let roles = yield this.getByJson(url);
+            return roles;
         });
     }
 }
@@ -557,7 +746,7 @@ exports.PermissionService = PermissionService;
 //     // roleIds: string[]
 // }
 
-},{"../errors":2,"../settings":10,"./service":7}],7:[function(require,module,exports){
+},{"../errors":2,"../events":3,"./service":7}],7:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -745,7 +934,6 @@ exports.Service = Service;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const service_1 = require("./service");
-const settings_1 = require("../settings");
 const errors_1 = require("../errors");
 class ToolkitService extends service_1.Service {
     constructor() {
@@ -754,10 +942,11 @@ class ToolkitService extends service_1.Service {
     url(path) {
         if (!path)
             throw new Error('Argument path cannt be null or empty.');
-        if (!settings_1.settings.toolServiceUrl)
+        if (!ToolkitService.baseUrl)
             throw errors_1.errors.serviceUrlCanntNull('toolServiceUrl');
-        return `${settings_1.settings.toolServiceUrl}/${path}`;
+        return `${ToolkitService.baseUrl}/${path}`;
     }
+    /** 获取系统自动生成不重复的唯一数字 */
     uniqueNumber() {
         let url = this.url('unique-number');
         return this.getByJson(url);
@@ -765,171 +954,48 @@ class ToolkitService extends service_1.Service {
 }
 exports.ToolkitService = ToolkitService;
 
-},{"../errors":2,"../settings":10,"./service":7}],9:[function(require,module,exports){
+},{"../errors":2,"./service":7}],9:[function(require,module,exports){
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const service_1 = require("./service");
-const settings_1 = require("../settings");
-const errors_1 = require("../errors");
-const events_1 = require("../events");
-/** 与用户相关的服务 */
-class UserService extends service_1.Service {
-    url(path) {
-        if (!settings_1.settings.permissionServiceUrl)
-            throw errors_1.errors.serviceUrlCanntNull('permissionService');
-        return `${settings_1.settings.permissionServiceUrl}/${path}`;
-    }
-    /**
-     * 发送注册操作验证码
-     * @param mobile 接收验证码的手机号
-     */
-    sendRegisterVerifyCode(mobile) {
-        let url = this.url('sms/sendVerifyCode');
-        return this.postByJson(url, { mobile, type: 'register' });
-    }
-    /**
-     * 校验验证码
-     * @param smsId 验证码信息的 ID 号
-     * @param verifyCode 验证码
-     */
-    checkVerifyCode(smsId, verifyCode) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let url = this.url('sms/checkVerifyCode');
-            let r = yield this.postByJson(url, { smsId, verifyCode });
-            return r;
-        });
-    }
-    /**
-     * 发送重置密码操作验证码
-     * @param mobile 接收验证码的手机号
-     */
-    sendResetVerifyCode(mobile) {
-        let url = this.url('sms/sendVerifyCode');
-        return this.postByJson(url, { mobile, type: 'resetPassword' });
-    }
-    /**
-     * 重置密码
-     * @param mobile 手机号
-     * @param password 新密码
-     * @param smsId 短信编号
-     * @param verifyCode 验证码
-     */
-    resetPassword(mobile, password, smsId, verifyCode) {
-        let url = this.url('user/resetPassword');
-        return this.postByJson(url, { mobile, password, smsId, verifyCode });
-    }
-    /**
-     * 重置手机号码
-     * @param mobile 需要重置的新手机号
-     * @param smsId 短信编号
-     * @param verifyCode 验证码
-     */
-    resetMobile(mobile, smsId, verifyCode) {
-        let url = this.url('user/resetMobile');
-        return this.postByJson(url, { mobile, smsId, verifyCode });
-    }
-    /**
-     * 退出登录
-     */
-    logout() {
-        if (UserService.loginInfo.value == null)
-            return;
-        //TODO: 将服务端 token 设置为失效
-        events_1.events.logout.fire(this, UserService.loginInfo.value);
-        service_1.Service.setStorageLoginInfo(null);
-        UserService.loginInfo.value = null;
-    }
-    /**
-     * 登录
-     * @param username 用户名
-     * @param password 密码
-     */
-    login(username, password) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let url = this.url('user/login');
-            let r = yield this.postByJson(url, { username, password });
-            if (r == null)
-                throw errors_1.errors.unexpectedNullResult();
-            UserService.loginInfo.value = r;
-            UserService.setStorageLoginInfo(r);
-            events_1.events.login.fire(this, r);
-            return r;
-        });
-    }
-    /**
-     * 注册
-     * @param mobile 手机号
-     * @param password 密码
-     * @param smsId 短信编号
-     * @param verifyCode 验证码
-     */
-    register(mobile, password, smsId, verifyCode, data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let url = this.url('user/register');
-            let r = yield this.postByJson(url, { mobile, password, smsId, verifyCode, data });
-            if (r == null)
-                throw errors_1.errors.unexpectedNullResult();
-            UserService.setStorageLoginInfo(r);
-            events_1.events.register.fire(this, r);
-            return r;
-        });
-    }
-    /**
-     * 获取用户个人信息
-     */
-    me() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let url = this.url('user/me');
-            let user = yield this.getByJson(url);
-            return user;
-        });
-    }
-    /**
-     * 获取用户
-     * @param userId 用户编号
-     */
-    getUser(userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let url = this.url('user/item');
-            let user = yield this.getByJson(url, { userId });
-            return user;
-        });
-    }
-    /**
-     * 更新用户信息
-     * @param user 用户
-     */
-    update(user) {
-        let url = this.url('user/update');
-        return this.postByJson(url, { user });
-    }
-    /**
-     * 获取当前登录用户的角色
-     */
-    myRoles() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let url = this.url('user/getRoles');
-            let roles = yield this.getByJson(url);
-            return roles;
-        });
-    }
+const permission_service_1 = require("./permission-service");
+/** 与用户相关的服务，这个类已经废弃，请使用  PermissionService*/
+class UserService extends permission_service_1.PermissionService {
 }
 exports.UserService = UserService;
 
-},{"../errors":2,"../events":3,"../settings":10,"./service":7}],10:[function(require,module,exports){
+},{"./permission-service":6}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const image_service_1 = require("./services/image-service");
+const permission_service_1 = require("./services/permission-service");
+const toolkit_service_1 = require("./services/toolkit-service");
 exports.settings = {
-    noImageText: '暂无图片'
+    noImageText: '暂无图片',
+    /** 获取图片服务的 URL 地址 */
+    get imageServiceUrl() {
+        return image_service_1.ImageService.baseUrl;
+    },
+    /** 设置图片服务的 URL 地址 */
+    set imageServiceUrl(value) {
+        image_service_1.ImageService.baseUrl = value;
+    },
+    /** 获取权限管理的 URL 地址 */
+    get permissionServiceUrl() {
+        return permission_service_1.PermissionService.baseUrl;
+    },
+    /** 设置权限管理的 URL 地址 */
+    set permissionServiceUrl(value) {
+        permission_service_1.PermissionService.baseUrl = value;
+    },
+    /** 获取工具类服务的 URL 地址 */
+    get toolServiceUrl() {
+        return toolkit_service_1.ToolkitService.baseUrl;
+    },
+    /** 设置工具类服务的 URL 地址 */
+    set toolServiceUrl(value) {
+        toolkit_service_1.ToolkitService.baseUrl = value;
+    },
 };
 
-},{}]},{},[4])(4)
+},{"./services/image-service":5,"./services/permission-service":6,"./services/toolkit-service":8}]},{},[4])(4)
 });

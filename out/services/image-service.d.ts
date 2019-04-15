@@ -1,6 +1,7 @@
 import { Service } from "./service";
 /** 图片服务，实现图片的上传，获取 */
 export declare class ImageService extends Service {
+    static baseUrl: string;
     protected url(path: string): string;
     /** 获取图片的 URL
      * @param id 图片的 ID

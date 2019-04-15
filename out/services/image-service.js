@@ -9,15 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const service_1 = require("./service");
-// import * as ui from 'maishu-ui-toolkit'
-const settings_1 = require("../settings");
 const errors_1 = require("../errors");
 /** 图片服务，实现图片的上传，获取 */
 class ImageService extends service_1.Service {
     url(path) {
-        if (!settings_1.settings.imageServiceUrl)
+        if (!ImageService.baseUrl)
             throw errors_1.errors.serviceUrlCanntNull('imageService');
-        return `${settings_1.settings.imageServiceUrl}/${path}`;
+        return `${ImageService.baseUrl}/${path}`;
     }
     /** 获取图片的 URL
      * @param id 图片的 ID
@@ -25,12 +23,8 @@ class ImageService extends service_1.Service {
      * @param height 图片的高度，如果不指定则为实际图片的高度
      */
     imageSource(id, width, height) {
-        // if (!id) {
-        //     width = width == null ? 200 : width
-        //     height = height == null ? 100 : height
-        //     id = ui.generateImageBase64(width, height, settings.noImageText)
-        //     return id;
-        // }
+        if (!id)
+            throw errors_1.errors.argumentNull('id');
         let isBase64 = id.startsWith('data:image');
         if (isBase64) {
             return id;
@@ -44,6 +38,8 @@ class ImageService extends service_1.Service {
         return url;
     }
     getImageSize(imageBase64) {
+        if (!imageBase64)
+            throw errors_1.errors.argumentNull('imageBase64');
         return new Promise((resolve, reject) => {
             var i = new Image();
             i.onload = function () {
@@ -60,6 +56,12 @@ class ImageService extends service_1.Service {
      */
     resize(imageBase64, width, height) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!imageBase64)
+                throw errors_1.errors.argumentNull('imageBase64');
+            if (!width)
+                throw errors_1.errors.argumentNull('width');
+            if (!height)
+                throw errors_1.errors.argumentNull('height');
             var canvas = document.createElement('canvas'); //.getElementById("canvas");
             var ctx = canvas.getContext("2d");
             canvas.width = width;
@@ -84,6 +86,8 @@ class ImageService extends service_1.Service {
      */
     upload(imageBase64) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!imageBase64)
+                throw errors_1.errors.argumentNull('imageBase64');
             let url = this.url('upload');
             let imageSize = yield this.getImageSize(imageBase64);
             let maxWidth = 800;
@@ -105,6 +109,8 @@ class ImageService extends service_1.Service {
      */
     remove(id) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!id)
+                throw errors_1.errors.argumentNull('id');
             let url = this.url("remove");
             return this.postByJson(url, { id });
         });

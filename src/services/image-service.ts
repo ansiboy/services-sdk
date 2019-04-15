@@ -1,15 +1,16 @@
 import { Service } from "./service";
-// import * as ui from 'maishu-ui-toolkit'
-import { settings } from "../settings";
 import { errors } from "../errors";
 
 /** 图片服务，实现图片的上传，获取 */
 export class ImageService extends Service {
+
+    static baseUrl: string
+
     protected url(path: string) {
-        if (!settings.imageServiceUrl)
+        if (!ImageService.baseUrl)
             throw errors.serviceUrlCanntNull('imageService')
 
-        return `${settings.imageServiceUrl}/${path}`;
+        return `${ImageService.baseUrl}/${path}`;
     }
 
     /** 获取图片的 URL
@@ -18,12 +19,8 @@ export class ImageService extends Service {
      * @param height 图片的高度，如果不指定则为实际图片的高度
      */
     imageSource(id: string, width?: number, height?: number) {
-        // if (!id) {
-        //     width = width == null ? 200 : width
-        //     height = height == null ? 100 : height
-        //     id = ui.generateImageBase64(width, height, settings.noImageText)
-        //     return id;
-        // }
+        if (!id) throw errors.argumentNull('id')
+
         let isBase64 = id.startsWith('data:image')
         if (isBase64) {
             return id;
@@ -40,6 +37,7 @@ export class ImageService extends Service {
     }
 
     private getImageSize(imageBase64: string) {
+        if (!imageBase64) throw errors.argumentNull('imageBase64')
         return new Promise<{ width: number, height: number }>((resolve, reject) => {
             var i = new Image();
             i.onload = function () {
@@ -57,9 +55,13 @@ export class ImageService extends Service {
      * @param height 目标图片的高度
      */
     async resize(imageBase64: string, width: number, height: number): Promise<string> {
+
+        if (!imageBase64) throw errors.argumentNull('imageBase64')
+        if (!width) throw errors.argumentNull('width')
+        if (!height) throw errors.argumentNull('height')
+
         var canvas = document.createElement('canvas') //.getElementById("canvas");
         var ctx = canvas.getContext("2d");
-
 
         canvas.width = width
         canvas.height = height
@@ -84,6 +86,8 @@ export class ImageService extends Service {
      * @param imageBase64 图片的 base64 数据
      */
     async upload(imageBase64: string) {
+        if (!imageBase64) throw errors.argumentNull('imageBase64')
+
         let url = this.url('upload')
 
         let imageSize = await this.getImageSize(imageBase64)
@@ -106,6 +110,8 @@ export class ImageService extends Service {
      * @param id 删除图片
      */
     async remove(id: string) {
+        if (!id) throw errors.argumentNull('id')
+
         let url = this.url("remove")
         return this.postByJson(url, { id })
     }
