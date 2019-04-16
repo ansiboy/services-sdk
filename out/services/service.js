@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const settings_1 = require("../settings");
+// import { settings } from '../settings';
 const maishu_chitu_service_1 = require("maishu-chitu-service");
 class Service extends maishu_chitu_service_1.Service {
     constructor() {
@@ -68,8 +68,8 @@ class Service extends maishu_chitu_service_1.Service {
             options.headers = options.headers || {};
             if (Service.loginInfo.value)
                 options.headers['token'] = Service.loginInfo.value.token;
-            if (settings_1.settings.applicationId)
-                options.headers['application-id'] = typeof settings_1.settings.applicationId == 'function' ? settings_1.settings.applicationId() : settings_1.settings.applicationId;
+            if (Service.applicationId)
+                options.headers['application-id'] = typeof Service.applicationId == 'function' ? Service.applicationId() : Service.applicationId;
             let data = yield _super.ajax.call(this, url, options);
             if (data == null) {
                 return null;

@@ -1,4 +1,4 @@
-import { settings } from '../settings';
+// import { settings } from '../settings';
 import { Service as ChiTuSerivce, AjaxOptions, ValueStore } from 'maishu-chitu-service'
 
 export interface LoginInfo {
@@ -9,6 +9,7 @@ export interface LoginInfo {
 export class Service extends ChiTuSerivce {
     static readonly LoginInfoStorageName = 'app-login-info'
     static loginInfo = new ValueStore<LoginInfo | null>(Service.getStorageLoginInfo())
+    static applicationId: string | (() => string)
 
     constructor() {
         super();
@@ -68,8 +69,8 @@ export class Service extends ChiTuSerivce {
         if (Service.loginInfo.value)
             options.headers['token'] = Service.loginInfo.value.token
 
-        if (settings.applicationId)
-            options.headers['application-id'] = typeof settings.applicationId == 'function' ? settings.applicationId() : settings.applicationId
+        if (Service.applicationId)
+            options.headers['application-id'] = typeof Service.applicationId == 'function' ? Service.applicationId() : Service.applicationId
 
         let data = await super.ajax<T>(url, options)
         if (data == null) {

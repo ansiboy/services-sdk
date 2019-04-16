@@ -1,6 +1,7 @@
 import { ImageService } from "./services/image-service";
 import { PermissionService } from "./services/permission-service";
 import { ToolkitService } from "./services/toolkit-service";
+import { Service } from "./services/service";
 
 interface Settings {
     /** 图片服务的 URL 地址 */
@@ -16,6 +17,13 @@ interface Settings {
 }
 export let settings: Settings = {
     noImageText: '暂无图片',
+
+    get applicationId() {
+        return Service.applicationId
+    },
+    set applicationId(value) {
+        Service.applicationId = value
+    },
 
     /** 获取图片服务的 URL 地址 */
     get imageServiceUrl() {

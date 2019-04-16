@@ -1,30 +1,22 @@
-
-/*
- * maishu-services-sdk v1.4.8
- * https://github.com/ansiboy/services-sdk
- *
- * Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
- * Licensed under the MIT License.
- *
- */
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.serviceSdk = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 /*!
- * CHITU SERVICE v1.0.8
- * https://github.com/ansiboy/chitu-service
  * 
- * Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
- * Licensed under the MIT License.
+ *  maishu-services-sdk v1.5.0
+ *  https://github.com/ansiboy/services-sdk
+ *  
+ *  Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
+ *  Licensed under the MIT License.
+ * 
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
+		module.exports = factory(require("maishu-chitu-service"));
 	else if(typeof define === 'function' && define.amd)
-		define([], factory);
+		define(["maishu-chitu-service"], factory);
 	else {
-		var a = factory();
+		var a = typeof exports === 'object' ? factory(require("maishu-chitu-service")) : factory(root["maishu-chitu-service"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(window, function() {
+})(window, function(__WEBPACK_EXTERNAL_MODULE_maishu_chitu_service__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -113,18 +105,6 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ({
 
-/***/ "./out/callback.js":
-/*!*************************!*\
-  !*** ./out/callback.js ***!
-  \*************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nclass Callback {\r\n    constructor() {\r\n        this.funcs = new Array();\r\n    }\r\n    add(func) {\r\n        this.funcs.push(func);\r\n    }\r\n    remove(func) {\r\n        this.funcs = this.funcs.filter(o => o != func);\r\n    }\r\n    fire(...args) {\r\n        this.funcs.forEach(o => o(...args));\r\n    }\r\n}\r\nexports.Callback = Callback;\r\nfunction Callbacks() {\r\n    return new Callback();\r\n}\r\nexports.Callbacks = Callbacks;\r\n\n\n//# sourceURL=webpack:///./out/callback.js?");
-
-/***/ }),
-
 /***/ "./out/errors.js":
 /*!***********************!*\
   !*** ./out/errors.js ***!
@@ -137,6 +117,18 @@ eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nex
 
 /***/ }),
 
+/***/ "./out/events.js":
+/*!***********************!*\
+  !*** ./out/events.js ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nconst maishu_chitu_service_1 = __webpack_require__(/*! maishu-chitu-service */ \"maishu-chitu-service\");\r\nexports.events = {\r\n    /** 成功调用 login 方法后引发 */\r\n    login: maishu_chitu_service_1.Callbacks(),\r\n    /** 成功调用 logout 方法后引发 */\r\n    logout: maishu_chitu_service_1.Callbacks(),\r\n    /** 成功调用 register 方法后引发 */\r\n    register: maishu_chitu_service_1.Callbacks(),\r\n};\r\n\n\n//# sourceURL=webpack:///./out/events.js?");
+
+/***/ }),
+
 /***/ "./out/index.js":
 /*!**********************!*\
   !*** ./out/index.js ***!
@@ -145,857 +137,92 @@ eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nex
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nvar service_1 = __webpack_require__(/*! ./service */ \"./out/service.js\");\r\nexports.Service = service_1.Service;\r\nvar callback_1 = __webpack_require__(/*! ./callback */ \"./out/callback.js\");\r\nexports.Callback = callback_1.Callback;\r\nexports.Callbacks = callback_1.Callbacks;\r\nvar value_store_1 = __webpack_require__(/*! ./value-store */ \"./out/value-store.js\");\r\nexports.ValueStore = value_store_1.ValueStore;\r\n\n\n//# sourceURL=webpack:///./out/index.js?");
+eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nvar service_1 = __webpack_require__(/*! ./services/service */ \"./out/services/service.js\");\r\nexports.Service = service_1.Service;\r\nvar image_service_1 = __webpack_require__(/*! ./services/image-service */ \"./out/services/image-service.js\");\r\nexports.ImageService = image_service_1.ImageService;\r\nvar user_service_1 = __webpack_require__(/*! ./services/user-service */ \"./out/services/user-service.js\");\r\nexports.UserService = user_service_1.UserService;\r\nvar toolkit_service_1 = __webpack_require__(/*! ./services/toolkit-service */ \"./out/services/toolkit-service.js\");\r\nexports.ToolkitService = toolkit_service_1.ToolkitService;\r\nvar permission_service_1 = __webpack_require__(/*! ./services/permission-service */ \"./out/services/permission-service.js\");\r\nexports.PermissionService = permission_service_1.PermissionService;\r\n// export { InstanceMessanger } from './services/instance-messanger'\r\n// export { MessageService } from './services/message-service'\r\nvar settings_1 = __webpack_require__(/*! ./settings */ \"./out/settings.js\");\r\nexports.settings = settings_1.settings;\r\nvar events_1 = __webpack_require__(/*! ./events */ \"./out/events.js\");\r\nexports.events = events_1.events;\r\n\n\n//# sourceURL=webpack:///./out/index.js?");
 
 /***/ }),
 
-/***/ "./out/service.js":
-/*!************************!*\
-  !*** ./out/service.js ***!
-  \************************/
+/***/ "./out/services/image-service.js":
+/*!***************************************!*\
+  !*** ./out/services/image-service.js ***!
+  \***************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\r\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\r\n    return new (P || (P = Promise))(function (resolve, reject) {\r\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\r\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\r\n        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }\r\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\r\n    });\r\n};\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nconst callback_1 = __webpack_require__(/*! ./callback */ \"./out/callback.js\");\r\nconst errors_1 = __webpack_require__(/*! ./errors */ \"./out/errors.js\");\r\nclass Service {\r\n    constructor() {\r\n        this.error = callback_1.Callbacks();\r\n    }\r\n    ajax(url, options) {\r\n        // options = options || {} as any\r\n        if (options === undefined)\r\n            options = {};\r\n        let data = options.data;\r\n        let method = options.method;\r\n        let headers = options.headers || {};\r\n        let body;\r\n        if (data != null) {\r\n            let is_json = (headers['content-type'] || '').indexOf('json') >= 0;\r\n            if (is_json) {\r\n                body = JSON.stringify(data);\r\n            }\r\n            else {\r\n                body = new URLSearchParams();\r\n                for (let key in data) {\r\n                    body.append(key, data[key]);\r\n                }\r\n            }\r\n        }\r\n        // return callAjax<T>(url, { headers: headers as any, body, method }, this, this.error);\r\n        return new Promise((reslove, reject) => {\r\n            let options = { headers: headers, body, method };\r\n            let timeId;\r\n            if (options == null)\r\n                throw errors_1.errors.unexpectedNullValue('options');\r\n            if (method == 'get') {\r\n                timeId = setTimeout(() => {\r\n                    let err = new Error(); //new AjaxError(options.method);\r\n                    err.name = 'timeout';\r\n                    err.message = '网络连接超时';\r\n                    reject(err);\r\n                    this.error.fire(this, err);\r\n                    clearTimeout(timeId);\r\n                }, Service.settings.ajaxTimeout * 1000);\r\n            }\r\n            ajax(url, options)\r\n                .then(data => {\r\n                reslove(data);\r\n                if (timeId)\r\n                    clearTimeout(timeId);\r\n            })\r\n                .catch(err => {\r\n                reject(err);\r\n                this.error.fire(this, err);\r\n                if (timeId)\r\n                    clearTimeout(timeId);\r\n            });\r\n        });\r\n    }\r\n    /**\r\n     * 创建服务\r\n     * @param type 服务类型\r\n     */\r\n    createService(type) {\r\n        type = type || Service;\r\n        let service = new type();\r\n        service.error.add((sender, error) => {\r\n            this.error.fire(service, error);\r\n        });\r\n        return service;\r\n    }\r\n}\r\nService.settings = {\r\n    ajaxTimeout: 30,\r\n};\r\nexports.Service = Service;\r\nfunction ajax(url, options) {\r\n    return __awaiter(this, void 0, void 0, function* () {\r\n        let response = yield fetch(url, options);\r\n        let responseText = response.text();\r\n        let p;\r\n        if (typeof responseText == 'string') {\r\n            p = new Promise((reslove, reject) => {\r\n                reslove(responseText);\r\n            });\r\n        }\r\n        else {\r\n            p = responseText;\r\n        }\r\n        let text = yield responseText;\r\n        let textObject;\r\n        let isJSONContextType = (response.headers.get('content-type') || '').indexOf('json') >= 0;\r\n        if (isJSONContextType) {\r\n            textObject = text ? JSON.parse(text) : null;\r\n        }\r\n        else {\r\n            textObject = text;\r\n        }\r\n        if (response.status >= 300) {\r\n            let err = new Error();\r\n            err.method = options.method;\r\n            err.name = `${response.status}`;\r\n            err.message = isJSONContextType ? (textObject.Message || textObject.message) : textObject;\r\n            err.message = err.message || response.statusText;\r\n            throw err;\r\n        }\r\n        return textObject;\r\n    });\r\n}\r\n\n\n//# sourceURL=webpack:///./out/service.js?");
+eval("\r\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\r\n    return new (P || (P = Promise))(function (resolve, reject) {\r\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\r\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\r\n        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }\r\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\r\n    });\r\n};\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nconst service_1 = __webpack_require__(/*! ./service */ \"./out/services/service.js\");\r\nconst errors_1 = __webpack_require__(/*! ../errors */ \"./out/errors.js\");\r\n/** 图片服务，实现图片的上传，获取 */\r\nclass ImageService extends service_1.Service {\r\n    url(path) {\r\n        if (!ImageService.baseUrl)\r\n            throw errors_1.errors.serviceUrlCanntNull('imageService');\r\n        return `${ImageService.baseUrl}/${path}`;\r\n    }\r\n    /** 获取图片的 URL\r\n     * @param id 图片的 ID\r\n     * @param width 图片的宽度，如果不指定则为实际图片的宽度\r\n     * @param height 图片的高度，如果不指定则为实际图片的高度\r\n     */\r\n    imageSource(id, width, height) {\r\n        if (!id)\r\n            throw errors_1.errors.argumentNull('id');\r\n        let isBase64 = id.startsWith('data:image');\r\n        if (isBase64) {\r\n            return id;\r\n        }\r\n        let url = this.url('image');\r\n        url = `${url}?id=${id}`;\r\n        if (width != null)\r\n            url = url + `&width=${width}`;\r\n        if (height != null)\r\n            url = url + `&height=${height}`;\r\n        return url;\r\n    }\r\n    getImageSize(imageBase64) {\r\n        if (!imageBase64)\r\n            throw errors_1.errors.argumentNull('imageBase64');\r\n        return new Promise((resolve, reject) => {\r\n            var i = new Image();\r\n            i.onload = function () {\r\n                resolve({ width: i.width, height: i.height });\r\n            };\r\n            i.src = imageBase64;\r\n        });\r\n    }\r\n    /**\r\n     * 对图片进行缩放\r\n     * @param imageBase64 图片 base64 格式数据\r\n     * @param width 目标图片的宽度\r\n     * @param height 目标图片的高度\r\n     */\r\n    resize(imageBase64, width, height) {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            if (!imageBase64)\r\n                throw errors_1.errors.argumentNull('imageBase64');\r\n            if (!width)\r\n                throw errors_1.errors.argumentNull('width');\r\n            if (!height)\r\n                throw errors_1.errors.argumentNull('height');\r\n            var canvas = document.createElement('canvas'); //.getElementById(\"canvas\");\r\n            var ctx = canvas.getContext(\"2d\");\r\n            canvas.width = width;\r\n            canvas.height = height;\r\n            return yield new Promise((resolve, reject) => {\r\n                var img = new Image();\r\n                img.src = imageBase64;\r\n                img.onload = function () {\r\n                    // width = img.width\r\n                    // height = img.height\r\n                    if (ctx == null)\r\n                        throw 'get canvas context fail';\r\n                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);\r\n                    resolve(canvas.toDataURL());\r\n                };\r\n            });\r\n        });\r\n    }\r\n    /**\r\n     * 上传图片\r\n     * @param imageBase64 图片的 base64 数据\r\n     */\r\n    upload(imageBase64) {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            if (!imageBase64)\r\n                throw errors_1.errors.argumentNull('imageBase64');\r\n            let url = this.url('upload');\r\n            let imageSize = yield this.getImageSize(imageBase64);\r\n            let maxWidth = 800;\r\n            let maxHeight = 800;\r\n            if (imageSize.width > maxWidth) { // || imageSize.height > maxHeight\r\n                let height = imageSize.height / imageSize.width * maxWidth;\r\n                imageBase64 = yield this.resize(imageBase64, maxWidth, height);\r\n            }\r\n            else if (imageSize.height > maxHeight) {\r\n                let width = imageSize.width / imageSize.height * maxHeight;\r\n                imageBase64 = yield this.resize(imageBase64, width, maxHeight);\r\n            }\r\n            return this.postByJson(url, { image: imageBase64 });\r\n        });\r\n    }\r\n    /**\r\n     *\r\n     * @param id 删除图片\r\n     */\r\n    remove(id) {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            if (!id)\r\n                throw errors_1.errors.argumentNull('id');\r\n            let url = this.url(\"remove\");\r\n            return this.postByJson(url, { id });\r\n        });\r\n    }\r\n}\r\nexports.ImageService = ImageService;\r\n\n\n//# sourceURL=webpack:///./out/services/image-service.js?");
 
 /***/ }),
 
-/***/ "./out/value-store.js":
-/*!****************************!*\
-  !*** ./out/value-store.js ***!
-  \****************************/
+/***/ "./out/services/permission-service.js":
+/*!********************************************!*\
+  !*** ./out/services/permission-service.js ***!
+  \********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\n/**\r\n * 实现数据的存储，以及数据修改的通知\r\n */\r\nclass ValueStore {\r\n    constructor(value) {\r\n        this.items = new Array();\r\n        this._value = value === undefined ? null : value;\r\n    }\r\n    add(func, sender) {\r\n        this.items.push({ func, sender });\r\n        return func;\r\n    }\r\n    remove(func) {\r\n        this.items = this.items.filter(o => o.func != func);\r\n    }\r\n    fire(value) {\r\n        this.items.forEach(o => o.func(value, o.sender));\r\n    }\r\n    get value() {\r\n        if (this._value === undefined)\r\n            return null;\r\n        return this._value;\r\n    }\r\n    set value(value) {\r\n        this._value = value;\r\n        this.fire(value);\r\n    }\r\n}\r\nexports.ValueStore = ValueStore;\r\n\n\n//# sourceURL=webpack:///./out/value-store.js?");
+eval("\r\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\r\n    return new (P || (P = Promise))(function (resolve, reject) {\r\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\r\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\r\n        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }\r\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\r\n    });\r\n};\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nconst service_1 = __webpack_require__(/*! ./service */ \"./out/services/service.js\");\r\nconst errors_1 = __webpack_require__(/*! ../errors */ \"./out/errors.js\");\r\nconst events_1 = __webpack_require__(/*! ../events */ \"./out/events.js\");\r\nclass PermissionService extends service_1.Service {\r\n    constructor() {\r\n        super();\r\n    }\r\n    url(path) {\r\n        if (!PermissionService.baseUrl)\r\n            throw errors_1.errors.serviceUrlCanntNull('permissionService');\r\n        return `${PermissionService.baseUrl}/${path}`;\r\n    }\r\n    //=============================================================\r\n    // 资源相关\r\n    /** 添加资源 */\r\n    addResource(item) {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            if (!item)\r\n                throw errors_1.errors.argumentNull('item');\r\n            let url = this.url('resource/add');\r\n            let result = yield this.postByJson(url, { item });\r\n            Object.assign(item, result);\r\n            return result;\r\n        });\r\n    }\r\n    /** 更新资源 */\r\n    updateResource(item) {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            if (!item)\r\n                throw errors_1.errors.argumentNull('item');\r\n            let url = this.url('resource/update');\r\n            let result = yield this.postByJson(url, { item });\r\n            Object.assign(item, result);\r\n            return result;\r\n        });\r\n    }\r\n    /** 获取菜单类型的资源 */\r\n    getMenuResources() {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            let menuType = 'menu';\r\n            let args = {\r\n                filter: `(type = \"${menuType}\")`\r\n            };\r\n            return this.getResourceList(args);\r\n        });\r\n    }\r\n    /** 获取资源列表 */\r\n    getResourceList(args) {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            if (!args)\r\n                throw errors_1.errors.argumentNull('args');\r\n            let url = this.url('resource/list');\r\n            if (!args.sortExpression)\r\n                args.sortExpression = 'sort_number asc';\r\n            let result = yield this.getByJson(url, { args });\r\n            if (result == null)\r\n                throw errors_1.errors.unexpectedNullResult();\r\n            for (let i = 0; i < result.dataItems.length; i++) {\r\n                result.dataItems[i].data = result.dataItems[i].data || {};\r\n            }\r\n            return result;\r\n        });\r\n    }\r\n    /**\r\n     * 删除指定的资源\r\n     * @param id 要删除的资源编号\r\n     */\r\n    deleteResource(id) {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            if (!id)\r\n                throw errors_1.errors.argumentNull('id');\r\n            let url = this.url('resource/remove');\r\n            return this.postByJson(url, { id });\r\n        });\r\n    }\r\n    /**\r\n     * 获取指定资源的子按钮\r\n     * @param id 资源编号\r\n     */\r\n    getResourceChildCommands(id) {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            if (!id)\r\n                throw errors_1.errors.argumentNull('id');\r\n            let buttonType = 'button';\r\n            let filter = `parent_id = '${id}' and type = '${buttonType}'`;\r\n            let url = `resource/list`;\r\n            let result = yield this.getByJson(url, { filter });\r\n            return result;\r\n        });\r\n    }\r\n    //=============================================================\r\n    // 角色相关\r\n    /**\r\n     * 获取角色列表\r\n     */\r\n    getRoles() {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            let url = this.url('role/list');\r\n            let r = yield this.getByJson(url);\r\n            return r || [];\r\n        });\r\n    }\r\n    /**\r\n     * 获取单个角色\r\n     * @param id 要获取的角色编号\r\n     */\r\n    getRole(id) {\r\n        if (!id)\r\n            throw errors_1.errors.argumentNull('id');\r\n        let url = this.url('role/get');\r\n        return this.getByJson(url, { id });\r\n    }\r\n    /**\r\n     *\r\n     * @param roleId 指定的角色编号\r\n     * @param resourceIds 角色所允许访问的资源编号\r\n     */\r\n    setRoleResource(roleId, resourceIds) {\r\n        if (!roleId)\r\n            throw errors_1.errors.argumentNull('roleId');\r\n        if (!resourceIds)\r\n            throw errors_1.errors.argumentNull('resourceIds');\r\n        let url = this.url('role/setResources');\r\n        return this.postByJson(url, { roleId, resourceIds });\r\n    }\r\n    /**\r\n     * 获取角色所允许访问的资源 id\r\n     * @param roleId 指定的角色编号\r\n     */\r\n    getRoleResourceIds(roleId) {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            if (!roleId)\r\n                throw errors_1.errors.argumentNull('roleId');\r\n            let url = this.url('role/resourceIds');\r\n            let r = yield this.getByJson(url, { roleId });\r\n            return r || [];\r\n        });\r\n    }\r\n    /** 设置用户角色 */\r\n    setUserRoles(userId, roleIds) {\r\n        if (!userId)\r\n            throw errors_1.errors.argumentNull('userId');\r\n        if (!roleIds)\r\n            throw errors_1.errors.argumentNull('roleIds');\r\n        let url = this.url('user/setRoles');\r\n        return this.postByJson(url, { userId, roleIds });\r\n    }\r\n    //================================================================\r\n    // 用户相关\r\n    /** 获取用户列表 */\r\n    getUserList(args) {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            let url = this.url('user/list');\r\n            let result = yield this.getByJson(url, { args });\r\n            if (result == null)\r\n                throw errors_1.errors.unexpectedNullResult();\r\n            return result;\r\n        });\r\n    }\r\n    /** 通过手机获取用户 */\r\n    getUserByMobile(mobile) {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            if (!mobile)\r\n                throw errors_1.errors.argumentNull('mobile');\r\n            let args = {};\r\n            args.filter = `mobile = '${mobile}'`;\r\n            let r = yield this.getUserList(args);\r\n            return r.dataItems[0];\r\n        });\r\n    }\r\n    /**\r\n     * 移除当前应用的用户\r\n     * @param userId 要移除的用户编号\r\n     */\r\n    removeUser(userId) {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            if (!userId)\r\n                throw errors_1.errors.argumentNull('userId');\r\n            let url = this.url('application/removeUser');\r\n            return this.deleteByJson(url, { userId });\r\n        });\r\n    }\r\n    /**\r\n     * 获取当前应用的所有用户\r\n     * @param args 数据源选择参数\r\n     */\r\n    getApplicatinUsers(args) {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            if (args == null)\r\n                throw errors_1.errors.argumentNull('args');\r\n            let url = this.url('application/users');\r\n            let result = yield this.getByJson(url, { args });\r\n            if (result == null)\r\n                throw errors_1.errors.unexpectedNullResult();\r\n            return result;\r\n        });\r\n    }\r\n    /**\r\n     * 发送注册操作验证码\r\n     * @param mobile 接收验证码的手机号\r\n     */\r\n    sendRegisterVerifyCode(mobile) {\r\n        let url = this.url('sms/sendVerifyCode');\r\n        return this.postByJson(url, { mobile, type: 'register' });\r\n    }\r\n    /**\r\n     * 校验验证码\r\n     * @param smsId 验证码信息的 ID 号\r\n     * @param verifyCode 验证码\r\n     */\r\n    checkVerifyCode(smsId, verifyCode) {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            if (!smsId)\r\n                throw errors_1.errors.argumentNull('smsId');\r\n            if (!verifyCode)\r\n                throw errors_1.errors.argumentNull('verifycode');\r\n            let url = this.url('sms/checkVerifyCode');\r\n            let r = yield this.postByJson(url, { smsId, verifyCode });\r\n            return r;\r\n        });\r\n    }\r\n    /**\r\n     * 发送重置密码操作验证码\r\n     * @param mobile 接收验证码的手机号\r\n     */\r\n    sendResetVerifyCode(mobile) {\r\n        if (!mobile)\r\n            throw errors_1.errors.argumentNull('mobile');\r\n        let url = this.url('sms/sendVerifyCode');\r\n        return this.postByJson(url, { mobile, type: 'resetPassword' });\r\n    }\r\n    /**\r\n     * 重置密码\r\n     * @param mobile 手机号\r\n     * @param password 新密码\r\n     * @param smsId 短信编号\r\n     * @param verifyCode 验证码\r\n     */\r\n    resetPassword(mobile, password, smsId, verifyCode) {\r\n        if (!mobile)\r\n            throw errors_1.errors.argumentNull('mobile');\r\n        if (!password)\r\n            throw errors_1.errors.argumentNull('password');\r\n        if (!smsId)\r\n            throw errors_1.errors.argumentNull('smsId');\r\n        if (!verifyCode)\r\n            throw errors_1.errors.argumentNull('verifyCode');\r\n        let url = this.url('user/resetPassword');\r\n        return this.postByJson(url, { mobile, password, smsId, verifyCode });\r\n    }\r\n    /**\r\n     * 重置手机号码\r\n     * @param mobile 需要重置的新手机号\r\n     * @param smsId 短信编号\r\n     * @param verifyCode 验证码\r\n     */\r\n    resetMobile(mobile, smsId, verifyCode) {\r\n        if (!mobile)\r\n            throw errors_1.errors.argumentNull('mobile');\r\n        if (!smsId)\r\n            throw errors_1.errors.argumentNull('smsId');\r\n        if (!verifyCode)\r\n            throw errors_1.errors.argumentNull('verifyCode');\r\n        let url = this.url('user/resetMobile');\r\n        return this.postByJson(url, { mobile, smsId, verifyCode });\r\n    }\r\n    /**\r\n     * 退出登录\r\n     */\r\n    logout() {\r\n        if (service_1.Service.loginInfo.value == null)\r\n            return;\r\n        //TODO: 将服务端 token 设置为失效\r\n        events_1.events.logout.fire(this, service_1.Service.loginInfo.value);\r\n        service_1.Service.setStorageLoginInfo(null);\r\n        service_1.Service.loginInfo.value = null;\r\n    }\r\n    /**\r\n     * 登录\r\n     * @param username 用户名\r\n     * @param password 密码\r\n     */\r\n    login(username, password) {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            if (!username)\r\n                throw errors_1.errors.argumentNull('username');\r\n            if (!password)\r\n                throw errors_1.errors.argumentNull('password');\r\n            let url = this.url('user/login');\r\n            let r = yield this.postByJson(url, { username, password });\r\n            if (r == null)\r\n                throw errors_1.errors.unexpectedNullResult();\r\n            service_1.Service.loginInfo.value = r;\r\n            service_1.Service.setStorageLoginInfo(r);\r\n            events_1.events.login.fire(this, r);\r\n            return r;\r\n        });\r\n    }\r\n    /**\r\n     * 注册\r\n     * @param mobile 手机号\r\n     * @param password 密码\r\n     * @param smsId 短信编号\r\n     * @param verifyCode 验证码\r\n     */\r\n    register(mobile, password, smsId, verifyCode, data) {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            if (!mobile)\r\n                throw errors_1.errors.argumentNull('mobile');\r\n            if (!password)\r\n                throw errors_1.errors.argumentNull('password');\r\n            if (!smsId)\r\n                throw errors_1.errors.argumentNull('smsId');\r\n            if (!verifyCode)\r\n                throw errors_1.errors.argumentNull('verifyCode');\r\n            let url = this.url('user/register');\r\n            let r = yield this.postByJson(url, { mobile, password, smsId, verifyCode, data });\r\n            if (r == null)\r\n                throw errors_1.errors.unexpectedNullResult();\r\n            service_1.Service.setStorageLoginInfo(r);\r\n            events_1.events.register.fire(this, r);\r\n            return r;\r\n        });\r\n    }\r\n    /**\r\n     * 获取用户个人信息\r\n     */\r\n    me() {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            let url = this.url('user/me');\r\n            let user = yield this.getByJson(url);\r\n            return user;\r\n        });\r\n    }\r\n    /**\r\n     * 获取用户\r\n     * @param userId 用户编号\r\n     */\r\n    getUser(userId) {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            let url = this.url('user/item');\r\n            let user = yield this.getByJson(url, { userId });\r\n            return user;\r\n        });\r\n    }\r\n    /**\r\n     * 更新用户信息\r\n     * @param user 用户\r\n     */\r\n    update(user) {\r\n        let url = this.url('user/update');\r\n        return this.postByJson(url, { user });\r\n    }\r\n    /**\r\n     * 获取当前登录用户的角色\r\n     */\r\n    myRoles() {\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            let url = this.url('user/getRoles');\r\n            let roles = yield this.getByJson(url);\r\n            return roles;\r\n        });\r\n    }\r\n}\r\nexports.PermissionService = PermissionService;\r\n// export interface User {\r\n//     id: string,\r\n//     user_name: string,\r\n//     mobile: string,\r\n//     email: string,\r\n//     password: string,\r\n//     sort_number: number,\r\n//     data?: any\r\n//     // roleIds: string[]\r\n// }\r\n\n\n//# sourceURL=webpack:///./out/services/permission-service.js?");
+
+/***/ }),
+
+/***/ "./out/services/service.js":
+/*!*********************************!*\
+  !*** ./out/services/service.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\r\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\r\n    return new (P || (P = Promise))(function (resolve, reject) {\r\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\r\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\r\n        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }\r\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\r\n    });\r\n};\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\n// import { settings } from '../settings';\r\nconst maishu_chitu_service_1 = __webpack_require__(/*! maishu-chitu-service */ \"maishu-chitu-service\");\r\nclass Service extends maishu_chitu_service_1.Service {\r\n    constructor() {\r\n        super();\r\n    }\r\n    static getStorageLoginInfo() {\r\n        let loginInfoSerialString = this.getCookie(Service.LoginInfoStorageName);\r\n        if (!loginInfoSerialString)\r\n            return null;\r\n        try {\r\n            let loginInfo = JSON.parse(loginInfoSerialString);\r\n            return loginInfo;\r\n        }\r\n        catch (e) {\r\n            console.error(e);\r\n            console.log(loginInfoSerialString);\r\n            return null;\r\n        }\r\n    }\r\n    static setStorageLoginInfo(value) {\r\n        if (value == null) {\r\n            this.removeCookie(Service.LoginInfoStorageName);\r\n            return;\r\n        }\r\n        this.setCookie(Service.LoginInfoStorageName, JSON.stringify(value), 1000);\r\n    }\r\n    static setCookie(name, value, days) {\r\n        var expires = \"\";\r\n        if (days) {\r\n            var date = new Date();\r\n            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));\r\n            expires = \"; expires=\" + date.toUTCString();\r\n        }\r\n        document.cookie = name + \"=\" + (value || \"\") + expires + \"; path=/\";\r\n    }\r\n    static getCookie(name) {\r\n        var nameEQ = name + \"=\";\r\n        var ca = document.cookie.split(';');\r\n        for (var i = 0; i < ca.length; i++) {\r\n            var c = ca[i];\r\n            while (c.charAt(0) == ' ')\r\n                c = c.substring(1, c.length);\r\n            if (c.indexOf(nameEQ) == 0)\r\n                return c.substring(nameEQ.length, c.length);\r\n        }\r\n        return null;\r\n    }\r\n    static removeCookie(name) {\r\n        document.cookie = name + '=; Max-Age=-99999999;';\r\n    }\r\n    ajax(url, options) {\r\n        const _super = Object.create(null, {\r\n            ajax: { get: () => super.ajax }\r\n        });\r\n        return __awaiter(this, void 0, void 0, function* () {\r\n            options = options || {};\r\n            options.headers = options.headers || {};\r\n            if (Service.loginInfo.value)\r\n                options.headers['token'] = Service.loginInfo.value.token;\r\n            if (Service.applicationId)\r\n                options.headers['application-id'] = typeof Service.applicationId == 'function' ? Service.applicationId() : Service.applicationId;\r\n            let data = yield _super.ajax.call(this, url, options);\r\n            if (data == null) {\r\n                return null;\r\n            }\r\n            let obj = data;\r\n            if (obj.code && obj.message) {\r\n                throw new Error(obj.message);\r\n            }\r\n            if (obj != null && obj['DataItems'] != null && obj['TotalRowCount'] != null) {\r\n                let d = {};\r\n                let keys = Object.keys(data);\r\n                for (let i = 0; i < keys.length; i++) {\r\n                    let key = keys[i];\r\n                    let k = key[0].toLowerCase() + key.substr(1);\r\n                    d[k] = obj[key];\r\n                }\r\n                data = d;\r\n            }\r\n            this.travelJSON(data);\r\n            return data;\r\n        });\r\n    }\r\n    /**\r\n     * 遍历 JSON 对象各个字段，将日期字符串转换为 Date 对象\r\n     * @param obj 要转换的 JSON 对象\r\n     */\r\n    travelJSON(obj) {\r\n        if (typeof obj === 'string' && this.isDateString(obj)) {\r\n            return new Date(obj);\r\n        }\r\n        else if (typeof obj === 'string') {\r\n            return obj;\r\n        }\r\n        var stack = new Array();\r\n        stack.push(obj);\r\n        while (stack.length > 0) {\r\n            var item = stack.pop();\r\n            for (var key in item) {\r\n                var value = item[key];\r\n                if (value == null)\r\n                    continue;\r\n                if (value instanceof Array) {\r\n                    for (var i = 0; i < value.length; i++) {\r\n                        stack.push(value[i]);\r\n                    }\r\n                    continue;\r\n                }\r\n                if (typeof value == 'object') {\r\n                    stack.push(value);\r\n                    continue;\r\n                }\r\n                if (typeof value == 'string' && this.isDateString(value)) {\r\n                    item[key] = new Date(value);\r\n                }\r\n            }\r\n        }\r\n        return obj;\r\n    }\r\n    isDateString(text) {\r\n        const datePattern = /\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}/;\r\n        const datePattern1 = /\\d{4}-\\d{2}-\\d{2}\\s+\\d{2}:\\d{2}/;\r\n        return text.match(datePattern) != null || text.match(datePattern1) != null;\r\n    }\r\n    getByJson(url, data) {\r\n        if (data && Object.getOwnPropertyNames(data).length > 0)\r\n            url = `${url}?${JSON.stringify(data)}`;\r\n        let headers = { \"content-type\": 'application/json' };\r\n        return this.ajax(url, { headers, method: 'get' });\r\n    }\r\n    putByJson(url, data) {\r\n        let headers = { \"content-type\": 'application/json' };\r\n        return this.ajax(url, { headers, data, method: 'put' });\r\n    }\r\n    postByJson(url, data) {\r\n        let headers = { \"content-type\": 'application/json' };\r\n        return this.ajax(url, { headers, data, method: 'post' });\r\n    }\r\n    deleteByJson(url, data) {\r\n        let headers = { \"content-type\": 'application/json' };\r\n        return this.ajax(url, { headers, data, method: 'delete' });\r\n    }\r\n    get(url, data) {\r\n        data = data || {};\r\n        let params = \"\";\r\n        for (let key in data) {\r\n            if (data[key] == null)\r\n                continue;\r\n            params = params ? `${params}&${key}=${data[key]}` : `${key}=${data[key]}`;\r\n        }\r\n        if (params) {\r\n            url = `${url}?${params}`;\r\n        }\r\n        return this.ajax(url, { method: 'get' });\r\n    }\r\n    put(url, data) {\r\n        let headers = { \"content-type\": 'application/x-www-form-urlencoded' };\r\n        return this.ajax(url, { headers, data, method: 'put' });\r\n    }\r\n    post(url, data) {\r\n        let headers = { \"content-type\": 'application/x-www-form-urlencoded' };\r\n        return this.ajax(url, { headers, data, method: 'post', });\r\n    }\r\n    delete(url, data) {\r\n        let headers = { \"content-type\": 'application/x-www-form-urlencoded' };\r\n        return this.ajax(url, { headers, data, method: 'delete' });\r\n    }\r\n}\r\nService.LoginInfoStorageName = 'app-login-info';\r\nService.loginInfo = new maishu_chitu_service_1.ValueStore(Service.getStorageLoginInfo());\r\nexports.Service = Service;\r\n\n\n//# sourceURL=webpack:///./out/services/service.js?");
+
+/***/ }),
+
+/***/ "./out/services/toolkit-service.js":
+/*!*****************************************!*\
+  !*** ./out/services/toolkit-service.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nconst service_1 = __webpack_require__(/*! ./service */ \"./out/services/service.js\");\r\nconst errors_1 = __webpack_require__(/*! ../errors */ \"./out/errors.js\");\r\nclass ToolkitService extends service_1.Service {\r\n    constructor() {\r\n        super();\r\n    }\r\n    url(path) {\r\n        if (!path)\r\n            throw new Error('Argument path cannt be null or empty.');\r\n        if (!ToolkitService.baseUrl)\r\n            throw errors_1.errors.serviceUrlCanntNull('toolServiceUrl');\r\n        return `${ToolkitService.baseUrl}/${path}`;\r\n    }\r\n    /** 获取系统自动生成不重复的唯一数字 */\r\n    uniqueNumber() {\r\n        let url = this.url('unique-number');\r\n        return this.getByJson(url);\r\n    }\r\n}\r\nexports.ToolkitService = ToolkitService;\r\n\n\n//# sourceURL=webpack:///./out/services/toolkit-service.js?");
+
+/***/ }),
+
+/***/ "./out/services/user-service.js":
+/*!**************************************!*\
+  !*** ./out/services/user-service.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nconst permission_service_1 = __webpack_require__(/*! ./permission-service */ \"./out/services/permission-service.js\");\r\n/** 与用户相关的服务，这个类已经废弃，请使用  PermissionService*/\r\nclass UserService extends permission_service_1.PermissionService {\r\n}\r\nexports.UserService = UserService;\r\n\n\n//# sourceURL=webpack:///./out/services/user-service.js?");
+
+/***/ }),
+
+/***/ "./out/settings.js":
+/*!*************************!*\
+  !*** ./out/settings.js ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nconst image_service_1 = __webpack_require__(/*! ./services/image-service */ \"./out/services/image-service.js\");\r\nconst permission_service_1 = __webpack_require__(/*! ./services/permission-service */ \"./out/services/permission-service.js\");\r\nconst toolkit_service_1 = __webpack_require__(/*! ./services/toolkit-service */ \"./out/services/toolkit-service.js\");\r\nconst service_1 = __webpack_require__(/*! ./services/service */ \"./out/services/service.js\");\r\nexports.settings = {\r\n    noImageText: '暂无图片',\r\n    get applicationId() {\r\n        return service_1.Service.applicationId;\r\n    },\r\n    set applicationId(value) {\r\n        service_1.Service.applicationId = value;\r\n    },\r\n    /** 获取图片服务的 URL 地址 */\r\n    get imageServiceUrl() {\r\n        return image_service_1.ImageService.baseUrl;\r\n    },\r\n    /** 设置图片服务的 URL 地址 */\r\n    set imageServiceUrl(value) {\r\n        image_service_1.ImageService.baseUrl = value;\r\n    },\r\n    /** 获取权限管理的 URL 地址 */\r\n    get permissionServiceUrl() {\r\n        return permission_service_1.PermissionService.baseUrl;\r\n    },\r\n    /** 设置权限管理的 URL 地址 */\r\n    set permissionServiceUrl(value) {\r\n        permission_service_1.PermissionService.baseUrl = value;\r\n    },\r\n    /** 获取工具类服务的 URL 地址 */\r\n    get toolServiceUrl() {\r\n        return toolkit_service_1.ToolkitService.baseUrl;\r\n    },\r\n    /** 设置工具类服务的 URL 地址 */\r\n    set toolServiceUrl(value) {\r\n        toolkit_service_1.ToolkitService.baseUrl = value;\r\n    },\r\n};\r\n\n\n//# sourceURL=webpack:///./out/settings.js?");
+
+/***/ }),
+
+/***/ "maishu-chitu-service":
+/*!***************************************!*\
+  !*** external "maishu-chitu-service" ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = __WEBPACK_EXTERNAL_MODULE_maishu_chitu_service__;\n\n//# sourceURL=webpack:///external_%22maishu-chitu-service%22?");
 
 /***/ })
 
 /******/ });
-});
-},{}],2:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.errors = {
-    serviceUrlCanntNull(serviceName) {
-        let msg = `Service '${serviceName}' base url can not null.`;
-        return new Error(msg);
-    },
-    unexpectedNullResult() {
-        let msg = `Null result is unexpected.`;
-        return new Error(msg);
-    },
-    unexpectedNullValue(name) {
-        let msg = `variable ${name} is unexpected null value.`;
-        return new Error(msg);
-    },
-    argumentNull(name) {
-        let msg = `Arugment ${name} cannt null or empty.`;
-        return new Error(msg);
-    },
-    fieldNull(field, itemName) {
-        let msg = `${itemName} ${field} cannt be null or empty`;
-        return new Error(msg);
-    },
-    instanceMessangerStart() {
-        let msg = `Instance messanger is start.`;
-        return new Error(msg);
-    }
-};
-
-},{}],3:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const maishu_chitu_service_1 = require("maishu-chitu-service");
-exports.events = {
-    /** 成功调用 login 方法后引发 */
-    login: maishu_chitu_service_1.Callbacks(),
-    /** 成功调用 logout 方法后引发 */
-    logout: maishu_chitu_service_1.Callbacks(),
-    /** 成功调用 register 方法后引发 */
-    register: maishu_chitu_service_1.Callbacks(),
-};
-
-},{"maishu-chitu-service":1}],4:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var service_1 = require("./services/service");
-exports.Service = service_1.Service;
-var image_service_1 = require("./services/image-service");
-exports.ImageService = image_service_1.ImageService;
-var user_service_1 = require("./services/user-service");
-exports.UserService = user_service_1.UserService;
-var toolkit_service_1 = require("./services/toolkit-service");
-exports.ToolkitService = toolkit_service_1.ToolkitService;
-var permission_service_1 = require("./services/permission-service");
-exports.PermissionService = permission_service_1.PermissionService;
-// export { InstanceMessanger } from './services/instance-messanger'
-// export { MessageService } from './services/message-service'
-var settings_1 = require("./settings");
-exports.settings = settings_1.settings;
-var events_1 = require("./events");
-exports.events = events_1.events;
-
-},{"./events":3,"./services/image-service":5,"./services/permission-service":6,"./services/service":7,"./services/toolkit-service":8,"./services/user-service":9,"./settings":10}],5:[function(require,module,exports){
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const service_1 = require("./service");
-const errors_1 = require("../errors");
-/** 图片服务，实现图片的上传，获取 */
-class ImageService extends service_1.Service {
-    url(path) {
-        if (!ImageService.baseUrl)
-            throw errors_1.errors.serviceUrlCanntNull('imageService');
-        return `${ImageService.baseUrl}/${path}`;
-    }
-    /** 获取图片的 URL
-     * @param id 图片的 ID
-     * @param width 图片的宽度，如果不指定则为实际图片的宽度
-     * @param height 图片的高度，如果不指定则为实际图片的高度
-     */
-    imageSource(id, width, height) {
-        if (!id)
-            throw errors_1.errors.argumentNull('id');
-        let isBase64 = id.startsWith('data:image');
-        if (isBase64) {
-            return id;
-        }
-        let url = this.url('image');
-        url = `${url}?id=${id}`;
-        if (width != null)
-            url = url + `&width=${width}`;
-        if (height != null)
-            url = url + `&height=${height}`;
-        return url;
-    }
-    getImageSize(imageBase64) {
-        if (!imageBase64)
-            throw errors_1.errors.argumentNull('imageBase64');
-        return new Promise((resolve, reject) => {
-            var i = new Image();
-            i.onload = function () {
-                resolve({ width: i.width, height: i.height });
-            };
-            i.src = imageBase64;
-        });
-    }
-    /**
-     * 对图片进行缩放
-     * @param imageBase64 图片 base64 格式数据
-     * @param width 目标图片的宽度
-     * @param height 目标图片的高度
-     */
-    resize(imageBase64, width, height) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!imageBase64)
-                throw errors_1.errors.argumentNull('imageBase64');
-            if (!width)
-                throw errors_1.errors.argumentNull('width');
-            if (!height)
-                throw errors_1.errors.argumentNull('height');
-            var canvas = document.createElement('canvas'); //.getElementById("canvas");
-            var ctx = canvas.getContext("2d");
-            canvas.width = width;
-            canvas.height = height;
-            return yield new Promise((resolve, reject) => {
-                var img = new Image();
-                img.src = imageBase64;
-                img.onload = function () {
-                    // width = img.width
-                    // height = img.height
-                    if (ctx == null)
-                        throw 'get canvas context fail';
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    resolve(canvas.toDataURL());
-                };
-            });
-        });
-    }
-    /**
-     * 上传图片
-     * @param imageBase64 图片的 base64 数据
-     */
-    upload(imageBase64) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!imageBase64)
-                throw errors_1.errors.argumentNull('imageBase64');
-            let url = this.url('upload');
-            let imageSize = yield this.getImageSize(imageBase64);
-            let maxWidth = 800;
-            let maxHeight = 800;
-            if (imageSize.width > maxWidth) { // || imageSize.height > maxHeight
-                let height = imageSize.height / imageSize.width * maxWidth;
-                imageBase64 = yield this.resize(imageBase64, maxWidth, height);
-            }
-            else if (imageSize.height > maxHeight) {
-                let width = imageSize.width / imageSize.height * maxHeight;
-                imageBase64 = yield this.resize(imageBase64, width, maxHeight);
-            }
-            return this.postByJson(url, { image: imageBase64 });
-        });
-    }
-    /**
-     *
-     * @param id 删除图片
-     */
-    remove(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!id)
-                throw errors_1.errors.argumentNull('id');
-            let url = this.url("remove");
-            return this.postByJson(url, { id });
-        });
-    }
-}
-exports.ImageService = ImageService;
-
-},{"../errors":2,"./service":7}],6:[function(require,module,exports){
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const service_1 = require("./service");
-const errors_1 = require("../errors");
-const events_1 = require("../events");
-class PermissionService extends service_1.Service {
-    constructor() {
-        super();
-    }
-    url(path) {
-        if (!PermissionService.baseUrl)
-            throw errors_1.errors.serviceUrlCanntNull('permissionService');
-        return `${PermissionService.baseUrl}/${path}`;
-    }
-    //=============================================================
-    // 资源相关
-    /** 添加资源 */
-    addResource(item) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!item)
-                throw errors_1.errors.argumentNull('item');
-            let url = this.url('resource/add');
-            let result = yield this.postByJson(url, { item });
-            Object.assign(item, result);
-            return result;
-        });
-    }
-    /** 更新资源 */
-    updateResource(item) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!item)
-                throw errors_1.errors.argumentNull('item');
-            let url = this.url('resource/update');
-            let result = yield this.postByJson(url, { item });
-            Object.assign(item, result);
-            return result;
-        });
-    }
-    /** 获取菜单类型的资源 */
-    getMenuResources() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let menuType = 'menu';
-            let args = {
-                filter: `(type = "${menuType}")`
-            };
-            return this.getResourceList(args);
-        });
-    }
-    /** 获取资源列表 */
-    getResourceList(args) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!args)
-                throw errors_1.errors.argumentNull('args');
-            let url = this.url('resource/list');
-            if (!args.sortExpression)
-                args.sortExpression = 'sort_number asc';
-            let result = yield this.getByJson(url, { args });
-            if (result == null)
-                throw errors_1.errors.unexpectedNullResult();
-            for (let i = 0; i < result.dataItems.length; i++) {
-                result.dataItems[i].data = result.dataItems[i].data || {};
-            }
-            return result;
-        });
-    }
-    /**
-     * 删除指定的资源
-     * @param id 要删除的资源编号
-     */
-    deleteResource(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!id)
-                throw errors_1.errors.argumentNull('id');
-            let url = this.url('resource/remove');
-            return this.postByJson(url, { id });
-        });
-    }
-    /**
-     * 获取指定资源的子按钮
-     * @param id 资源编号
-     */
-    getResourceChildCommands(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!id)
-                throw errors_1.errors.argumentNull('id');
-            let buttonType = 'button';
-            let filter = `parent_id = '${id}' and type = '${buttonType}'`;
-            let url = `resource/list`;
-            let result = yield this.getByJson(url, { filter });
-            return result;
-        });
-    }
-    //=============================================================
-    // 角色相关
-    /**
-     * 获取角色列表
-     */
-    getRoles() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let url = this.url('role/list');
-            let r = yield this.getByJson(url);
-            return r || [];
-        });
-    }
-    /**
-     * 获取单个角色
-     * @param id 要获取的角色编号
-     */
-    getRole(id) {
-        if (!id)
-            throw errors_1.errors.argumentNull('id');
-        let url = this.url('role/get');
-        return this.getByJson(url, { id });
-    }
-    /**
-     *
-     * @param roleId 指定的角色编号
-     * @param resourceIds 角色所允许访问的资源编号
-     */
-    setRoleResource(roleId, resourceIds) {
-        if (!roleId)
-            throw errors_1.errors.argumentNull('roleId');
-        if (!resourceIds)
-            throw errors_1.errors.argumentNull('resourceIds');
-        let url = this.url('role/setResources');
-        return this.postByJson(url, { roleId, resourceIds });
-    }
-    /**
-     * 获取角色所允许访问的资源 id
-     * @param roleId 指定的角色编号
-     */
-    getRoleResourceIds(roleId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!roleId)
-                throw errors_1.errors.argumentNull('roleId');
-            let url = this.url('role/resourceIds');
-            let r = yield this.getByJson(url, { roleId });
-            return r || [];
-        });
-    }
-    /** 设置用户角色 */
-    setUserRoles(userId, roleIds) {
-        if (!userId)
-            throw errors_1.errors.argumentNull('userId');
-        if (!roleIds)
-            throw errors_1.errors.argumentNull('roleIds');
-        let url = this.url('user/setRoles');
-        return this.postByJson(url, { userId, roleIds });
-    }
-    //================================================================
-    // 用户相关
-    /** 获取用户列表 */
-    getUserList(args) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let url = this.url('user/list');
-            let result = yield this.getByJson(url, { args });
-            if (result == null)
-                throw errors_1.errors.unexpectedNullResult();
-            return result;
-        });
-    }
-    /** 通过手机获取用户 */
-    getUserByMobile(mobile) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!mobile)
-                throw errors_1.errors.argumentNull('mobile');
-            let args = {};
-            args.filter = `mobile = '${mobile}'`;
-            let r = yield this.getUserList(args);
-            return r.dataItems[0];
-        });
-    }
-    /**
-     * 移除当前应用的用户
-     * @param userId 要移除的用户编号
-     */
-    removeUser(userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!userId)
-                throw errors_1.errors.argumentNull('userId');
-            let url = this.url('application/removeUser');
-            return this.deleteByJson(url, { userId });
-        });
-    }
-    /**
-     * 获取当前应用的所有用户
-     * @param args 数据源选择参数
-     */
-    getApplicatinUsers(args) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (args == null)
-                throw errors_1.errors.argumentNull('args');
-            let url = this.url('application/users');
-            let result = yield this.getByJson(url, { args });
-            if (result == null)
-                throw errors_1.errors.unexpectedNullResult();
-            return result;
-        });
-    }
-    /**
-     * 发送注册操作验证码
-     * @param mobile 接收验证码的手机号
-     */
-    sendRegisterVerifyCode(mobile) {
-        let url = this.url('sms/sendVerifyCode');
-        return this.postByJson(url, { mobile, type: 'register' });
-    }
-    /**
-     * 校验验证码
-     * @param smsId 验证码信息的 ID 号
-     * @param verifyCode 验证码
-     */
-    checkVerifyCode(smsId, verifyCode) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!smsId)
-                throw errors_1.errors.argumentNull('smsId');
-            if (!verifyCode)
-                throw errors_1.errors.argumentNull('verifycode');
-            let url = this.url('sms/checkVerifyCode');
-            let r = yield this.postByJson(url, { smsId, verifyCode });
-            return r;
-        });
-    }
-    /**
-     * 发送重置密码操作验证码
-     * @param mobile 接收验证码的手机号
-     */
-    sendResetVerifyCode(mobile) {
-        if (!mobile)
-            throw errors_1.errors.argumentNull('mobile');
-        let url = this.url('sms/sendVerifyCode');
-        return this.postByJson(url, { mobile, type: 'resetPassword' });
-    }
-    /**
-     * 重置密码
-     * @param mobile 手机号
-     * @param password 新密码
-     * @param smsId 短信编号
-     * @param verifyCode 验证码
-     */
-    resetPassword(mobile, password, smsId, verifyCode) {
-        if (!mobile)
-            throw errors_1.errors.argumentNull('mobile');
-        if (!password)
-            throw errors_1.errors.argumentNull('password');
-        if (!smsId)
-            throw errors_1.errors.argumentNull('smsId');
-        if (!verifyCode)
-            throw errors_1.errors.argumentNull('verifyCode');
-        let url = this.url('user/resetPassword');
-        return this.postByJson(url, { mobile, password, smsId, verifyCode });
-    }
-    /**
-     * 重置手机号码
-     * @param mobile 需要重置的新手机号
-     * @param smsId 短信编号
-     * @param verifyCode 验证码
-     */
-    resetMobile(mobile, smsId, verifyCode) {
-        if (!mobile)
-            throw errors_1.errors.argumentNull('mobile');
-        if (!smsId)
-            throw errors_1.errors.argumentNull('smsId');
-        if (!verifyCode)
-            throw errors_1.errors.argumentNull('verifyCode');
-        let url = this.url('user/resetMobile');
-        return this.postByJson(url, { mobile, smsId, verifyCode });
-    }
-    /**
-     * 退出登录
-     */
-    logout() {
-        if (service_1.Service.loginInfo.value == null)
-            return;
-        //TODO: 将服务端 token 设置为失效
-        events_1.events.logout.fire(this, service_1.Service.loginInfo.value);
-        service_1.Service.setStorageLoginInfo(null);
-        service_1.Service.loginInfo.value = null;
-    }
-    /**
-     * 登录
-     * @param username 用户名
-     * @param password 密码
-     */
-    login(username, password) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!username)
-                throw errors_1.errors.argumentNull('username');
-            if (!password)
-                throw errors_1.errors.argumentNull('password');
-            let url = this.url('user/login');
-            let r = yield this.postByJson(url, { username, password });
-            if (r == null)
-                throw errors_1.errors.unexpectedNullResult();
-            service_1.Service.loginInfo.value = r;
-            service_1.Service.setStorageLoginInfo(r);
-            events_1.events.login.fire(this, r);
-            return r;
-        });
-    }
-    /**
-     * 注册
-     * @param mobile 手机号
-     * @param password 密码
-     * @param smsId 短信编号
-     * @param verifyCode 验证码
-     */
-    register(mobile, password, smsId, verifyCode, data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!mobile)
-                throw errors_1.errors.argumentNull('mobile');
-            if (!password)
-                throw errors_1.errors.argumentNull('password');
-            if (!smsId)
-                throw errors_1.errors.argumentNull('smsId');
-            if (!verifyCode)
-                throw errors_1.errors.argumentNull('verifyCode');
-            let url = this.url('user/register');
-            let r = yield this.postByJson(url, { mobile, password, smsId, verifyCode, data });
-            if (r == null)
-                throw errors_1.errors.unexpectedNullResult();
-            service_1.Service.setStorageLoginInfo(r);
-            events_1.events.register.fire(this, r);
-            return r;
-        });
-    }
-    /**
-     * 获取用户个人信息
-     */
-    me() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let url = this.url('user/me');
-            let user = yield this.getByJson(url);
-            return user;
-        });
-    }
-    /**
-     * 获取用户
-     * @param userId 用户编号
-     */
-    getUser(userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let url = this.url('user/item');
-            let user = yield this.getByJson(url, { userId });
-            return user;
-        });
-    }
-    /**
-     * 更新用户信息
-     * @param user 用户
-     */
-    update(user) {
-        let url = this.url('user/update');
-        return this.postByJson(url, { user });
-    }
-    /**
-     * 获取当前登录用户的角色
-     */
-    myRoles() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let url = this.url('user/getRoles');
-            let roles = yield this.getByJson(url);
-            return roles;
-        });
-    }
-}
-exports.PermissionService = PermissionService;
-// export interface User {
-//     id: string,
-//     user_name: string,
-//     mobile: string,
-//     email: string,
-//     password: string,
-//     sort_number: number,
-//     data?: any
-//     // roleIds: string[]
-// }
-
-},{"../errors":2,"../events":3,"./service":7}],7:[function(require,module,exports){
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const settings_1 = require("../settings");
-const maishu_chitu_service_1 = require("maishu-chitu-service");
-class Service extends maishu_chitu_service_1.Service {
-    constructor() {
-        super();
-    }
-    static getStorageLoginInfo() {
-        let loginInfoSerialString = this.getCookie(Service.LoginInfoStorageName);
-        if (!loginInfoSerialString)
-            return null;
-        try {
-            let loginInfo = JSON.parse(loginInfoSerialString);
-            return loginInfo;
-        }
-        catch (e) {
-            console.error(e);
-            console.log(loginInfoSerialString);
-            return null;
-        }
-    }
-    static setStorageLoginInfo(value) {
-        if (value == null) {
-            this.removeCookie(Service.LoginInfoStorageName);
-            return;
-        }
-        this.setCookie(Service.LoginInfoStorageName, JSON.stringify(value), 1000);
-    }
-    static setCookie(name, value, days) {
-        var expires = "";
-        if (days) {
-            var date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            expires = "; expires=" + date.toUTCString();
-        }
-        document.cookie = name + "=" + (value || "") + expires + "; path=/";
-    }
-    static getCookie(name) {
-        var nameEQ = name + "=";
-        var ca = document.cookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ')
-                c = c.substring(1, c.length);
-            if (c.indexOf(nameEQ) == 0)
-                return c.substring(nameEQ.length, c.length);
-        }
-        return null;
-    }
-    static removeCookie(name) {
-        document.cookie = name + '=; Max-Age=-99999999;';
-    }
-    ajax(url, options) {
-        const _super = Object.create(null, {
-            ajax: { get: () => super.ajax }
-        });
-        return __awaiter(this, void 0, void 0, function* () {
-            options = options || {};
-            options.headers = options.headers || {};
-            if (Service.loginInfo.value)
-                options.headers['token'] = Service.loginInfo.value.token;
-            if (settings_1.settings.applicationId)
-                options.headers['application-id'] = typeof settings_1.settings.applicationId == 'function' ? settings_1.settings.applicationId() : settings_1.settings.applicationId;
-            let data = yield _super.ajax.call(this, url, options);
-            if (data == null) {
-                return null;
-            }
-            let obj = data;
-            if (obj.code && obj.message) {
-                throw new Error(obj.message);
-            }
-            if (obj != null && obj['DataItems'] != null && obj['TotalRowCount'] != null) {
-                let d = {};
-                let keys = Object.keys(data);
-                for (let i = 0; i < keys.length; i++) {
-                    let key = keys[i];
-                    let k = key[0].toLowerCase() + key.substr(1);
-                    d[k] = obj[key];
-                }
-                data = d;
-            }
-            this.travelJSON(data);
-            return data;
-        });
-    }
-    /**
-     * 遍历 JSON 对象各个字段，将日期字符串转换为 Date 对象
-     * @param obj 要转换的 JSON 对象
-     */
-    travelJSON(obj) {
-        if (typeof obj === 'string' && this.isDateString(obj)) {
-            return new Date(obj);
-        }
-        else if (typeof obj === 'string') {
-            return obj;
-        }
-        var stack = new Array();
-        stack.push(obj);
-        while (stack.length > 0) {
-            var item = stack.pop();
-            for (var key in item) {
-                var value = item[key];
-                if (value == null)
-                    continue;
-                if (value instanceof Array) {
-                    for (var i = 0; i < value.length; i++) {
-                        stack.push(value[i]);
-                    }
-                    continue;
-                }
-                if (typeof value == 'object') {
-                    stack.push(value);
-                    continue;
-                }
-                if (typeof value == 'string' && this.isDateString(value)) {
-                    item[key] = new Date(value);
-                }
-            }
-        }
-        return obj;
-    }
-    isDateString(text) {
-        const datePattern = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
-        const datePattern1 = /\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/;
-        return text.match(datePattern) != null || text.match(datePattern1) != null;
-    }
-    getByJson(url, data) {
-        if (data && Object.getOwnPropertyNames(data).length > 0)
-            url = `${url}?${JSON.stringify(data)}`;
-        let headers = { "content-type": 'application/json' };
-        return this.ajax(url, { headers, method: 'get' });
-    }
-    putByJson(url, data) {
-        let headers = { "content-type": 'application/json' };
-        return this.ajax(url, { headers, data, method: 'put' });
-    }
-    postByJson(url, data) {
-        let headers = { "content-type": 'application/json' };
-        return this.ajax(url, { headers, data, method: 'post' });
-    }
-    deleteByJson(url, data) {
-        let headers = { "content-type": 'application/json' };
-        return this.ajax(url, { headers, data, method: 'delete' });
-    }
-    get(url, data) {
-        data = data || {};
-        let params = "";
-        for (let key in data) {
-            if (data[key] == null)
-                continue;
-            params = params ? `${params}&${key}=${data[key]}` : `${key}=${data[key]}`;
-        }
-        if (params) {
-            url = `${url}?${params}`;
-        }
-        return this.ajax(url, { method: 'get' });
-    }
-    put(url, data) {
-        let headers = { "content-type": 'application/x-www-form-urlencoded' };
-        return this.ajax(url, { headers, data, method: 'put' });
-    }
-    post(url, data) {
-        let headers = { "content-type": 'application/x-www-form-urlencoded' };
-        return this.ajax(url, { headers, data, method: 'post', });
-    }
-    delete(url, data) {
-        let headers = { "content-type": 'application/x-www-form-urlencoded' };
-        return this.ajax(url, { headers, data, method: 'delete' });
-    }
-}
-Service.LoginInfoStorageName = 'app-login-info';
-Service.loginInfo = new maishu_chitu_service_1.ValueStore(Service.getStorageLoginInfo());
-exports.Service = Service;
-
-},{"../settings":10,"maishu-chitu-service":1}],8:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const service_1 = require("./service");
-const errors_1 = require("../errors");
-class ToolkitService extends service_1.Service {
-    constructor() {
-        super();
-    }
-    url(path) {
-        if (!path)
-            throw new Error('Argument path cannt be null or empty.');
-        if (!ToolkitService.baseUrl)
-            throw errors_1.errors.serviceUrlCanntNull('toolServiceUrl');
-        return `${ToolkitService.baseUrl}/${path}`;
-    }
-    /** 获取系统自动生成不重复的唯一数字 */
-    uniqueNumber() {
-        let url = this.url('unique-number');
-        return this.getByJson(url);
-    }
-}
-exports.ToolkitService = ToolkitService;
-
-},{"../errors":2,"./service":7}],9:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const permission_service_1 = require("./permission-service");
-/** 与用户相关的服务，这个类已经废弃，请使用  PermissionService*/
-class UserService extends permission_service_1.PermissionService {
-}
-exports.UserService = UserService;
-
-},{"./permission-service":6}],10:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const image_service_1 = require("./services/image-service");
-const permission_service_1 = require("./services/permission-service");
-const toolkit_service_1 = require("./services/toolkit-service");
-exports.settings = {
-    noImageText: '暂无图片',
-    /** 获取图片服务的 URL 地址 */
-    get imageServiceUrl() {
-        return image_service_1.ImageService.baseUrl;
-    },
-    /** 设置图片服务的 URL 地址 */
-    set imageServiceUrl(value) {
-        image_service_1.ImageService.baseUrl = value;
-    },
-    /** 获取权限管理的 URL 地址 */
-    get permissionServiceUrl() {
-        return permission_service_1.PermissionService.baseUrl;
-    },
-    /** 设置权限管理的 URL 地址 */
-    set permissionServiceUrl(value) {
-        permission_service_1.PermissionService.baseUrl = value;
-    },
-    /** 获取工具类服务的 URL 地址 */
-    get toolServiceUrl() {
-        return toolkit_service_1.ToolkitService.baseUrl;
-    },
-    /** 设置工具类服务的 URL 地址 */
-    set toolServiceUrl(value) {
-        toolkit_service_1.ToolkitService.baseUrl = value;
-    },
-};
-
-},{"./services/image-service":5,"./services/permission-service":6,"./services/toolkit-service":8}]},{},[4])(4)
 });

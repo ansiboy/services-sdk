@@ -6,6 +6,7 @@ export interface LoginInfo {
 export declare class Service extends ChiTuSerivce {
     static readonly LoginInfoStorageName = "app-login-info";
     static loginInfo: ValueStore<LoginInfo | null>;
+    static applicationId: string | (() => string);
     constructor();
     private static getStorageLoginInfo;
     protected static setStorageLoginInfo(value: LoginInfo | null): void;
