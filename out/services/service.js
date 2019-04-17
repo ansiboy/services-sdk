@@ -156,12 +156,25 @@ class Service extends maishu_chitu_service_1.Service {
         for (let key in data) {
             if (data[key] == null)
                 continue;
-            params = params ? `${params}&${key}=${data[key]}` : `${key}=${data[key]}`;
+            let value = `${data[key]}`;
+            if (!this.isEncoded(value)) {
+                value = encodeURIComponent(value);
+            }
+            params = params ? `${params}&${key}=${value}` : `${key}=${value}`;
         }
         if (params) {
             url = `${url}?${params}`;
         }
         return this.ajax(url, { method: 'get' });
+    }
+    isEncoded(uri) {
+        try {
+            uri = uri || '';
+            return uri !== decodeURIComponent(uri);
+        }
+        catch (e) {
+            return false;
+        }
     }
     put(url, data) {
         let headers = { "content-type": 'application/x-www-form-urlencoded' };

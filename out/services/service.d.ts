@@ -25,6 +25,7 @@ export declare class Service extends ChiTuSerivce {
     protected postByJson<T>(url: string, data?: any): Promise<T | null>;
     protected deleteByJson<T>(url: string, data: any): Promise<T | null>;
     protected get<T>(url: string, data?: any): Promise<T | null>;
+    private isEncoded;
     protected put<T>(url: string, data?: any): Promise<T | null>;
     protected post<T>(url: string, data?: any): Promise<T | null>;
     protected delete<T>(url: string, data: any): Promise<T | null>;
