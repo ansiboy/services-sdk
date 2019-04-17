@@ -9,6 +9,7 @@ export declare class ImageService extends Service {
      * @param height 图片的高度，如果不指定则为实际图片的高度
      */
     imageSource(id: string, width?: number, height?: number): string;
+    private generateImageBase64;
     private getImageSize;
     /**
      * 对图片进行缩放
@@ -30,3 +31,9 @@ export declare class ImageService extends Service {
      */
     remove(id: string): Promise<{} | null>;
 }
+export declare type CanvasDraw = (ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number) => void;
+export declare type DrawOption = {
+    fontSize?: number;
+    bgColor?: string;
+    textColor?: string;
+};

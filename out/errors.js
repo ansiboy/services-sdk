@@ -24,5 +24,8 @@ exports.errors = {
     instanceMessangerStart() {
         let msg = `Instance messanger is start.`;
         return new Error(msg);
+    },
+    notSupportedInNode() {
+        let msg = `Not implement in node environment.`;
     }
 };

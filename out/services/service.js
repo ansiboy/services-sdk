@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// import { settings } from '../settings';
 const maishu_chitu_service_1 = require("maishu-chitu-service");
 class Service extends maishu_chitu_service_1.Service {
     constructor() {

@@ -1,13 +1,13 @@
 {
     "name": "maishu-services-sdk",
-    "version": "1.5.2",
+    "version": "1.5.10",
     "main": "./dist/index.js",
     "types": "./out/index.d.ts",
     "scripts": {
         "build": "grunt"
     },
     "dependencies": {
-        "maishu-chitu-service": "^1.1.0"
+        "maishu-chitu-service": "^1.1.2"
     },
     "devDependencies": {
         "grunt": "^1.0.1",

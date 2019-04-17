@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const service_1 = require("./service");
 const errors_1 = require("../errors");
+const settings_1 = require("../settings");
 /** 图片服务，实现图片的上传，获取 */
 class ImageService extends service_1.Service {
     url(path) {
@@ -23,8 +24,12 @@ class ImageService extends service_1.Service {
      * @param height 图片的高度，如果不指定则为实际图片的高度
      */
     imageSource(id, width, height) {
-        if (!id)
-            throw errors_1.errors.argumentNull('id');
+        if (!id) {
+            width = width == null ? 200 : width;
+            height = height == null ? 100 : height;
+            id = this.generateImageBase64(width, height, settings_1.settings.noImageText);
+            return id;
+        }
         let isBase64 = id.startsWith('data:image');
         if (isBase64) {
             return id;
@@ -36,6 +41,20 @@ class ImageService extends service_1.Service {
         if (height != null)
             url = url + `&height=${height}`;
         return url;
+    }
+    generateImageBase64(width, height, obj, options) {
+        if (document == null) {
+            throw errors_1.errors.notSupportedInNode();
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = width; //img_width;
+        canvas.height = height; //img_height;
+        var ctx = canvas.getContext('2d');
+        if (ctx == null)
+            throw new Error('ccreate canvas context fail.');
+        let draw = typeof obj == 'string' ? draws.text(obj, options) : obj;
+        draw(ctx, width, height);
+        return canvas.toDataURL();
     }
     getImageSize(imageBase64) {
         if (!imageBase64)
@@ -117,3 +136,28 @@ class ImageService extends service_1.Service {
     }
 }
 exports.ImageService = ImageService;
+let draws = {
+    text: (imageText, options) => {
+        return (ctx, canvasWidth, canvasHeight) => {
+            // let fontSize1 = Math.floor(canvasHeight / 3 * 0.8);
+            let fontSize = Math.floor((canvasWidth / imageText.length) * 0.6);
+            let bgColor = 'whitesmoke';
+            let textColor = '#999';
+            // let fontSize = Math.min(fontSize1, fontSize2);
+            options = options || {};
+            ctx.fillStyle = options.bgColor || bgColor; //'whitesmoke';
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+            // 设置字体
+            ctx.font = `Bold ${options.fontSize}px Arial`;
+            // 设置对齐方式
+            ctx.textAlign = "left";
+            // 设置填充颜色
+            ctx.fillStyle = options.textColor || textColor; //"#999";
+            let textWidth = fontSize * imageText.length;
+            let startX = Math.floor((canvasWidth - textWidth) * 0.5);
+            let startY = Math.floor((canvasHeight - (options.fontSize || fontSize)) * 0.3);
+            // 设置字体内容，以及在画布上的位置
+            ctx.fillText(imageText, startX, Math.floor(canvasHeight * 0.6));
+        };
+    }
+};
