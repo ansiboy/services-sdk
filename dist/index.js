@@ -1,6 +1,6 @@
 /*!
  * 
- *  maishu-services-sdk v1.5.0
+ *  maishu-services-sdk v1.5.2
  *  https://github.com/ansiboy/services-sdk
  *  
  *  Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
