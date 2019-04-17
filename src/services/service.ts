@@ -173,7 +173,11 @@ export class Service extends ChiTuSerivce {
             if (data[key] == null)
                 continue
 
-            params = params ? `${params}&${key}=${data[key]}` : `${key}=${data[key]}`;
+            let value = `${data[key]}`
+            if (!this.isEncoded(value)) {
+                value = encodeURIComponent(value)
+            }
+            params = params ? `${params}&${key}=${value}` : `${key}=${value}`;
         }
 
         if (params) {
@@ -181,6 +185,16 @@ export class Service extends ChiTuSerivce {
         }
 
         return this.ajax<T>(url, { method: 'get' })
+    }
+
+    private isEncoded(uri: string) {
+        try {
+            uri = uri || '';
+            return uri !== decodeURIComponent(uri);
+        }
+        catch (e) {
+            return false
+        }
     }
 
     protected put<T>(url: string, data?: any) {
