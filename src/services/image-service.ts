@@ -1,5 +1,6 @@
 import { Service } from "./service";
 import { errors } from "../errors";
+import { settings } from "../settings";
 
 /** 图片服务，实现图片的上传，获取 */
 export class ImageService extends Service {
@@ -19,7 +20,12 @@ export class ImageService extends Service {
      * @param height 图片的高度，如果不指定则为实际图片的高度
      */
     imageSource(id: string, width?: number, height?: number) {
-        if (!id) throw errors.argumentNull('id')
+        if (!id) {
+            width = width == null ? 200 : width
+            height = height == null ? 100 : height
+            id = this.generateImageBase64(width, height, settings.noImageText)
+            return id;
+        }
 
         let isBase64 = id.startsWith('data:image')
         if (isBase64) {
@@ -34,6 +40,24 @@ export class ImageService extends Service {
             url = url + `&height=${height}`
 
         return url
+    }
+
+    private generateImageBase64(width: number, height: number, text: string, options?: DrawOption): string
+    private generateImageBase64(width: number, height: number, draw: CanvasDraw): string
+    private generateImageBase64(width: number, height: number, obj: CanvasDraw | string, options?: DrawOption): string {
+        if (document == null) {
+            throw errors.notSupportedInNode()
+        }
+
+        var canvas = document.createElement('canvas');
+        canvas.width = width; //img_width;
+        canvas.height = height; //img_height;
+        var ctx = canvas.getContext('2d');
+        if (ctx == null) throw new Error('ccreate canvas context fail.')
+        let draw = typeof obj == 'string' ? draws.text(obj, options) : obj;
+        draw(ctx, width, height)
+
+        return canvas.toDataURL();
     }
 
     private getImageSize(imageBase64: string) {
@@ -116,3 +140,37 @@ export class ImageService extends Service {
         return this.postByJson(url, { id })
     }
 }
+
+export type CanvasDraw = (ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number) => void
+export type DrawOption = { fontSize?: number, bgColor?: string, textColor?: string };
+let draws = {
+    text: (imageText: string, options?: DrawOption): CanvasDraw => {
+
+        return (ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number) => {
+
+            // let fontSize1 = Math.floor(canvasHeight / 3 * 0.8);
+            let fontSize = Math.floor((canvasWidth / imageText.length) * 0.6);
+            let bgColor = 'whitesmoke';
+            let textColor = '#999';
+            // let fontSize = Math.min(fontSize1, fontSize2);
+
+            options = options || {}
+
+            ctx.fillStyle = options.bgColor || bgColor; //'whitesmoke';
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+            // 设置字体
+            ctx.font = `Bold ${options.fontSize}px Arial`;
+            // 设置对齐方式
+            ctx.textAlign = "left";
+            // 设置填充颜色
+            ctx.fillStyle = options.textColor || textColor; //"#999";
+
+            let textWidth = fontSize * imageText.length;
+            let startX = Math.floor((canvasWidth - textWidth) * 0.5);
+            let startY = Math.floor((canvasHeight - (options.fontSize || fontSize)) * 0.3);
+            // 设置字体内容，以及在画布上的位置
+            ctx.fillText(imageText, startX, Math.floor(canvasHeight * 0.6));
+        }
+    }
+};

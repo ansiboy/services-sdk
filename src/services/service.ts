@@ -1,4 +1,3 @@
-// import { settings } from '../settings';
 import { Service as ChiTuSerivce, AjaxOptions, ValueStore } from 'maishu-chitu-service'
 
 export interface LoginInfo {
