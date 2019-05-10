@@ -133,8 +133,9 @@ class Service extends maishu_chitu_service_1.Service {
         return text.match(datePattern) != null || text.match(datePattern1) != null;
     }
     getByJson(url, data) {
-        if (data && Object.getOwnPropertyNames(data).length > 0)
-            url = `${url}?${JSON.stringify(data)}`;
+        if (data && Object.getOwnPropertyNames(data).length > 0) {
+            url = `${url}?${encodeURIComponent(JSON.stringify(data))}`;
+        }
         let headers = { "content-type": 'application/json' };
         return this.ajax(url, { headers, method: 'get' });
     }

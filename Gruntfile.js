@@ -1,77 +1,46 @@
 
+const webpackES6Config = require('./webpack.config.js');
+let webpackES5Config = Object.assign({}, webpackES6Config)
+webpackES5Config.entry = __dirname + "/out-es5/index.js"//已多次提及的唯一入口文件
+webpackES5Config.output = Object.assign({}, webpackES5Config.output)
+webpackES5Config.output.filename = "index.es5.js"
+
 module.exports = function (grunt) {
 
     require('load-grunt-tasks')(grunt);
 
-    let pkg = grunt.file.readJSON('package.json');
-
-    let license = `
-/*
- * ${pkg.name} v${pkg.version}
- * https://github.com/ansiboy/services-sdk
- *
- * Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
- * Licensed under the MIT License.
- *
- */
-`;
-
     grunt.initConfig({
-        browserify: {
-            dist: {
-                files: {
-                    'dist/index.js': ['out/index.js']
-                }
-            },
+        babel: {
             options: {
-                browserifyOptions: {
-                    standalone: 'service-sdk',
-                },
-                banner: license,
-                external: ['maishu-chitu-service'],
-                alias: [
-                    "./node_modules/maishu-chitu-service/out/index:maishu-chitu-service"
+                sourceMap: true,
+                presets: [
+                    ['@babel/preset-env', {
+                        targets: {
+                            "chrome": "58",
+                            "ie": "11"
+                        }
+                    }]
                 ]
             },
-        },
-        concat: {
-            chitudts: {
-                options: {
-                    stripBanners: true,
-                    banner: license
-                },
-                src: ['./dist/index.js'],
-                dest: './dist/index.js'
-            },
-
-        },
-        requirejs: {
-            dev: {
-                options: {
-                    baseUrl: `./`,
-                    include: ['./out/index.js'],
-                    out: `dist/index.js`,
-                    optimize: "none",
-                    // namespace: 'maishu-services-sdk',
-                    paths: {
-                        "maishu-chitu-service": "empty:",
-                        "maishu-services-sdk": "out/index.js"
-                    },
-                    shim: {
-                    },
-
-                },
+            dist: {
+                files: [{
+                    expand: true,
+                    cwd: 'out',
+                    src: ['**/*.js'],
+                    dest: 'out-es5/'
+                }]
             }
         },
         shell: {
             src: {
                 command: `tsc -p src`
-            },
-            webpack: {
-                command: `webpack`
             }
-        }
+        },
+        webpack: {
+            es6: webpackES6Config,
+            es5: webpackES5Config,
+        },
     });
 
-    grunt.registerTask('default', ['shell:src', 'shell:webpack']);
+    grunt.registerTask('default', ['shell', 'babel', 'webpack']);
 }

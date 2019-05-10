@@ -15,7 +15,8 @@ module.exports = {
         libraryTarget: 'umd'
     },
     mode: 'development',
-    // externals: ['maishu-chitu-service'],
+    devtool: 'source-map',
+    externals: ['maishu-chitu-service'],
     plugins: [
         new webpack.BannerPlugin(license),
     ],

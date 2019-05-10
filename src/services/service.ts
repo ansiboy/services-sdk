@@ -143,8 +143,9 @@ export class Service extends ChiTuSerivce {
     }
 
     public getByJson<T>(url: string, data?: any) {
-        if (data && Object.getOwnPropertyNames(data).length > 0)
-            url = `${url}?${JSON.stringify(data)}`;
+        if (data && Object.getOwnPropertyNames(data).length > 0) {
+            url = `${url}?${encodeURIComponent(JSON.stringify(data))}`;
+        }
 
         let headers = { "content-type": 'application/json' };
         return this.ajax<T>(url, { headers, method: 'get' })
