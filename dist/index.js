@@ -1,6 +1,6 @@
 /*!
  * 
- *  maishu-services-sdk v1.5.24
+ *  maishu-services-sdk v1.5.28
  *  https://github.com/ansiboy/services-sdk
  *  
  *  Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -723,6 +723,9 @@ class PermissionService extends service_1.Service {
      */
     me() {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!service_1.Service.loginInfo.value) {
+                return null;
+            }
             let url = this.url('user/me');
             let user = yield this.getByJson(url);
             return user;
@@ -839,7 +842,8 @@ class Service extends maishu_chitu_service_1.Service {
         return null;
     }
     static removeCookie(name) {
-        document.cookie = name + '=; Max-Age=-99999999;';
+        // document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        this.setCookie(name, '');
     }
     ajax(url, options) {
         const _super = Object.create(null, {

@@ -903,15 +903,23 @@ function (_service_1$Service) {
           while (1) {
             switch (_context16.prev = _context16.next) {
               case 0:
+                if (service_1.Service.loginInfo.value) {
+                  _context16.next = 2;
+                  break;
+                }
+
+                return _context16.abrupt("return", null);
+
+              case 2:
                 url = this.url('user/me');
-                _context16.next = 3;
+                _context16.next = 5;
                 return this.getByJson(url);
 
-              case 3:
+              case 5:
                 user = _context16.sent;
                 return _context16.abrupt("return", user);
 
-              case 5:
+              case 7:
               case "end":
                 return _context16.stop();
             }

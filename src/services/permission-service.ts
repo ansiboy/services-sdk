@@ -328,6 +328,9 @@ export class PermissionService extends Service {
      * 获取用户个人信息
      */
     async me() {
+        if (!Service.loginInfo.value) {
+            return null
+        }
         let url = this.url('user/me')
         let user = await this.getByJson<User>(url)
         return user

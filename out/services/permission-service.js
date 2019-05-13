@@ -337,6 +337,9 @@ class PermissionService extends service_1.Service {
      */
     me() {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!service_1.Service.loginInfo.value) {
+                return null;
+            }
             let url = this.url('user/me');
             let user = yield this.getByJson(url);
             return user;

@@ -56,7 +56,8 @@ class Service extends maishu_chitu_service_1.Service {
         return null;
     }
     static removeCookie(name) {
-        document.cookie = name + '=; Max-Age=-99999999;';
+        // document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        this.setCookie(name, '');
     }
     ajax(url, options) {
         const _super = Object.create(null, {

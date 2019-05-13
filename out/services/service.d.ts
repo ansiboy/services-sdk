@@ -8,7 +8,7 @@ export declare class Service extends ChiTuSerivce {
     static loginInfo: ValueStore<LoginInfo | null>;
     static applicationId: string | (() => string);
     constructor();
-    private static getStorageLoginInfo;
+    static getStorageLoginInfo(): LoginInfo | null;
     protected static setStorageLoginInfo(value: LoginInfo | null): void;
     private static setCookie;
     private static getCookie;

@@ -14,7 +14,7 @@ export class Service extends ChiTuSerivce {
         super();
     }
 
-    private static getStorageLoginInfo(): LoginInfo | null {
+    static getStorageLoginInfo(): LoginInfo | null {
         let loginInfoSerialString = this.getCookie(Service.LoginInfoStorageName)
         if (!loginInfoSerialString)
             return null
@@ -39,7 +39,7 @@ export class Service extends ChiTuSerivce {
         this.setCookie(Service.LoginInfoStorageName, JSON.stringify(value), 1000)
     }
 
-    private static setCookie(name: string, value: string, days: number) {
+    private static setCookie(name: string, value: string, days?: number) {
         var expires = "";
         if (days) {
             var date = new Date();
@@ -59,7 +59,8 @@ export class Service extends ChiTuSerivce {
         return null;
     }
     private static removeCookie(name: string) {
-        document.cookie = name + '=; Max-Age=-99999999;';
+        // document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        this.setCookie(name, '')
     }
 
     async ajax<T>(url: string, options?: AjaxOptions): Promise<T | null> {
