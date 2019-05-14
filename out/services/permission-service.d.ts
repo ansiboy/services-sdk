@@ -1,6 +1,5 @@
 import { Service, LoginInfo } from "./service";
 import { User, Resource, Role } from "../models";
-import { AjaxOptions } from "maishu-chitu-service";
 export declare class PermissionService extends Service {
     static baseUrl: string;
     constructor();
@@ -134,7 +133,6 @@ export declare class PermissionService extends Service {
      * 获取当前登录用户的角色
      */
     myRoles(): Promise<Role[] | null>;
-    ajax<T>(url: string, options?: AjaxOptions): Promise<T | null>;
 }
 interface DataSourceSelectArguments {
     startRowIndex?: number;

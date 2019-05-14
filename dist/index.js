@@ -1,6 +1,6 @@
 /*!
  * 
- *  maishu-services-sdk v1.6.3
+ *  maishu-services-sdk v1.6.4
  *  https://github.com/ansiboy/services-sdk
  *  
  *  Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -758,15 +758,6 @@ class PermissionService extends service_1.Service {
             let url = this.url('user/getRoles');
             let roles = yield this.getByJson(url);
             return roles;
-        });
-    }
-    ajax(url, options) {
-        const _super = Object.create(null, {
-            ajax: { get: () => super.ajax }
-        });
-        return __awaiter(this, void 0, void 0, function* () {
-            debugger;
-            return _super.ajax.call(this, url, options);
         });
     }
 }
