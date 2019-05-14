@@ -374,6 +374,15 @@ class PermissionService extends service_1.Service {
             return roles;
         });
     }
+    ajax(url, options) {
+        const _super = Object.create(null, {
+            ajax: { get: () => super.ajax }
+        });
+        return __awaiter(this, void 0, void 0, function* () {
+            debugger;
+            return _super.ajax.call(this, url, options);
+        });
+    }
 }
 exports.PermissionService = PermissionService;
 // export interface User {

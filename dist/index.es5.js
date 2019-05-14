@@ -1,6 +1,6 @@
 /*!
  * 
- *  maishu-services-sdk v1.5.28
+ *  maishu-services-sdk v1.6.3
  *  https://github.com/ansiboy/services-sdk
  *  
  *  Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -620,6 +620,10 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
@@ -1612,6 +1616,37 @@ function (_service_1$Service) {
             }
           }
         }, _callee18, this);
+      }));
+    }
+  }, {
+    key: "ajax",
+    value: function ajax(url, options) {
+      var _this = this;
+
+      var _super = Object.create(null, {
+        ajax: {
+          get: function get() {
+            return _get(_getPrototypeOf(PermissionService.prototype), "ajax", _this);
+          }
+        }
+      });
+
+      return __awaiter(this, void 0, void 0,
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee19() {
+        return regeneratorRuntime.wrap(function _callee19$(_context19) {
+          while (1) {
+            switch (_context19.prev = _context19.next) {
+              case 0:
+                debugger;
+                return _context19.abrupt("return", _super.ajax.call(this, url, options));
+
+              case 2:
+              case "end":
+                return _context19.stop();
+            }
+          }
+        }, _callee19, this);
       }));
     }
   }]);

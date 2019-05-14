@@ -2,6 +2,7 @@ import { Service, LoginInfo } from "./service";
 import { errors } from "../errors";
 import { User, Resource, ResourceType, Role } from "../models";
 import { events } from "../events";
+import { AjaxOptions } from "maishu-chitu-service";
 
 export class PermissionService extends Service {
 
@@ -362,6 +363,11 @@ export class PermissionService extends Service {
         let url = this.url('user/getRoles')
         let roles = await this.getByJson<Role[]>(url)
         return roles
+    }
+
+    async ajax<T>(url: string, options?: AjaxOptions): Promise<T | null> {
+        debugger
+        return super.ajax(url, options)
     }
 }
 
