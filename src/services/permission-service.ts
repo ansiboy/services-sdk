@@ -364,11 +364,6 @@ export class PermissionService extends Service {
         let roles = await this.getByJson<Role[]>(url)
         return roles
     }
-
-    async ajax<T>(url: string, options?: AjaxOptions): Promise<T | null> {
-        debugger
-        return super.ajax(url, options)
-    }
 }
 
 
