@@ -357,12 +357,24 @@ class PermissionService extends service_1.Service {
         });
     }
     /**
-     * 更新用户信息
-     * @param user 用户
+     * 添加用户信息
+     * @param item 用户
      */
-    update(user) {
+    addUser(item) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let url = this.url('user/add');
+            let result;
+            let r = yield this.postByJson(url, { item });
+            return r;
+        });
+    }
+    /**
+     * 更新用户信息
+     * @param item 用户
+     */
+    updateUser(item) {
         let url = this.url('user/update');
-        return this.postByJson(url, { user });
+        return this.postByJson(url, { user: item });
     }
     /**
      * 获取当前登录用户的角色

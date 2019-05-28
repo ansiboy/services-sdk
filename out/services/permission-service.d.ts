@@ -125,10 +125,17 @@ export declare class PermissionService extends Service {
      */
     getUser(userId: string): Promise<User | null>;
     /**
-     * 更新用户信息
-     * @param user 用户
+     * 添加用户信息
+     * @param item 用户
      */
-    update(user: User): Promise<{} | null>;
+    addUser(item: Partial<User>): Promise<{
+        id: string;
+    } | null>;
+    /**
+     * 更新用户信息
+     * @param item 用户
+     */
+    updateUser(item: User): Promise<{} | null>;
     /**
      * 获取当前登录用户的角色
      */

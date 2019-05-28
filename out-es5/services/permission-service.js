@@ -962,16 +962,50 @@ function (_service_1$Service) {
       }));
     }
     /**
-     * 更新用户信息
-     * @param user 用户
+     * 添加用户信息
+     * @param item 用户
      */
 
   }, {
-    key: "update",
-    value: function update(user) {
+    key: "addUser",
+    value: function addUser(item) {
+      return __awaiter(this, void 0, void 0,
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee18() {
+        var url, result, r;
+        return regeneratorRuntime.wrap(function _callee18$(_context18) {
+          while (1) {
+            switch (_context18.prev = _context18.next) {
+              case 0:
+                url = this.url('user/add');
+                _context18.next = 3;
+                return this.postByJson(url, {
+                  item: item
+                });
+
+              case 3:
+                r = _context18.sent;
+                return _context18.abrupt("return", r);
+
+              case 5:
+              case "end":
+                return _context18.stop();
+            }
+          }
+        }, _callee18, this);
+      }));
+    }
+    /**
+     * 更新用户信息
+     * @param item 用户
+     */
+
+  }, {
+    key: "updateUser",
+    value: function updateUser(item) {
       var url = this.url('user/update');
       return this.postByJson(url, {
-        user: user
+        user: item
       });
     }
     /**
@@ -983,26 +1017,26 @@ function (_service_1$Service) {
     value: function myRoles() {
       return __awaiter(this, void 0, void 0,
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee18() {
+      regeneratorRuntime.mark(function _callee19() {
         var url, roles;
-        return regeneratorRuntime.wrap(function _callee18$(_context18) {
+        return regeneratorRuntime.wrap(function _callee19$(_context19) {
           while (1) {
-            switch (_context18.prev = _context18.next) {
+            switch (_context19.prev = _context19.next) {
               case 0:
                 url = this.url('user/getRoles');
-                _context18.next = 3;
+                _context19.next = 3;
                 return this.getByJson(url);
 
               case 3:
-                roles = _context18.sent;
-                return _context18.abrupt("return", roles);
+                roles = _context19.sent;
+                return _context19.abrupt("return", roles);
 
               case 5:
               case "end":
-                return _context18.stop();
+                return _context19.stop();
             }
           }
-        }, _callee18, this);
+        }, _callee19, this);
       }));
     }
   }]);

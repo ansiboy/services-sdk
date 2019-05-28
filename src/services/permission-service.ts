@@ -348,12 +348,23 @@ export class PermissionService extends Service {
     }
 
     /**
-     * 更新用户信息
-     * @param user 用户
+     * 添加用户信息
+     * @param item 用户
      */
-    update(user: User) {
+    async addUser(item: Partial<User>) {
+        let url = this.url('user/add')
+        let result: { id: string }
+        let r = await this.postByJson<typeof result>(url, { item })
+        return r
+    }
+
+    /**
+     * 更新用户信息
+     * @param item 用户
+     */
+    updateUser(item: User) {
         let url = this.url('user/update')
-        return this.postByJson(url, { user })
+        return this.postByJson(url, { user: item })
     }
 
     /**
