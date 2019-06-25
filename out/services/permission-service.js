@@ -386,6 +386,15 @@ class PermissionService extends service_1.Service {
             return roles;
         });
     }
+    /**
+     * 给指定的用户添加角色
+     * @param userId 用户编号
+     * @param roleIds 多个角色编号
+     */
+    addUserRoles(userId, roleIds) {
+        let url = this.url('user/addRoles');
+        return this.postByJson(url, { userId, roleIds });
+    }
 }
 exports.PermissionService = PermissionService;
 // export interface User {

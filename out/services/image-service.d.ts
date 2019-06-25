@@ -24,12 +24,12 @@ export declare class ImageService extends Service {
      */
     upload(imageBase64: string): Promise<{
         id: string;
-    } | null>;
+    }>;
     /**
      *
      * @param id 删除图片
      */
-    remove(id: string): Promise<{} | null>;
+    remove(id: string): Promise<unknown>;
 }
 export declare type CanvasDraw = (ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number) => void;
 export declare type DrawOption = {

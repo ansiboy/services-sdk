@@ -1,6 +1,6 @@
 /*!
  * 
- *  maishu-services-sdk v1.7.0
+ *  maishu-services-sdk v1.9.2
  *  https://github.com/ansiboy/services-sdk
  *  
  *  Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -16,7 +16,7 @@
 		var a = typeof exports === 'object' ? factory(require("maishu-chitu-service")) : factory(root["maishu-chitu-service"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(window, function(__WEBPACK_EXTERNAL_MODULE_maishu_chitu_service__) {
+})(typeof window === 'undefined' ? global : window, function(__WEBPACK_EXTERNAL_MODULE_maishu_chitu_service__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -1648,6 +1648,21 @@ function (_service_1$Service) {
         }, _callee19, this);
       }));
     }
+    /**
+     * 给指定的用户添加角色
+     * @param userId 用户编号
+     * @param roleIds 多个角色编号
+     */
+
+  }, {
+    key: "addUserRoles",
+    value: function addUserRoles(userId, roleIds) {
+      var url = this.url('user/addRoles');
+      return this.postByJson(url, {
+        userId: userId,
+        roleIds: roleIds
+      });
+    }
   }]);
 
   return PermissionService;
@@ -1870,128 +1885,6 @@ function (_maishu_chitu_service) {
       var datePattern1 = /\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/;
       return text.match(datePattern) != null || text.match(datePattern1) != null;
     }
-  }, {
-    key: "getByJson",
-    value: function getByJson(url, data) {
-      if (data && Object.getOwnPropertyNames(data).length > 0) {
-        url = "".concat(url, "?").concat(encodeURIComponent(JSON.stringify(data)));
-      }
-
-      var headers = {
-        "content-type": 'application/json'
-      };
-      return this.ajax(url, {
-        headers: headers,
-        method: 'get'
-      });
-    }
-  }, {
-    key: "putByJson",
-    value: function putByJson(url, data) {
-      var headers = {
-        "content-type": 'application/json'
-      };
-      return this.ajax(url, {
-        headers: headers,
-        data: data,
-        method: 'put'
-      });
-    }
-  }, {
-    key: "postByJson",
-    value: function postByJson(url, data) {
-      var headers = {
-        "content-type": 'application/json'
-      };
-      return this.ajax(url, {
-        headers: headers,
-        data: data,
-        method: 'post'
-      });
-    }
-  }, {
-    key: "deleteByJson",
-    value: function deleteByJson(url, data) {
-      var headers = {
-        "content-type": 'application/json'
-      };
-      return this.ajax(url, {
-        headers: headers,
-        data: data,
-        method: 'delete'
-      });
-    }
-  }, {
-    key: "get",
-    value: function get(url, data) {
-      data = data || {};
-      var params = "";
-
-      for (var key in data) {
-        if (data[key] == null) continue;
-        var value = "".concat(data[key]);
-
-        if (!this.isEncoded(value)) {
-          value = encodeURIComponent(value);
-        }
-
-        params = params ? "".concat(params, "&").concat(key, "=").concat(value) : "".concat(key, "=").concat(value);
-      }
-
-      if (params) {
-        url = "".concat(url, "?").concat(params);
-      }
-
-      return this.ajax(url, {
-        method: 'get'
-      });
-    }
-  }, {
-    key: "isEncoded",
-    value: function isEncoded(uri) {
-      try {
-        uri = uri || '';
-        return uri !== decodeURIComponent(uri);
-      } catch (e) {
-        return false;
-      }
-    }
-  }, {
-    key: "put",
-    value: function put(url, data) {
-      var headers = {
-        "content-type": 'application/x-www-form-urlencoded'
-      };
-      return this.ajax(url, {
-        headers: headers,
-        data: data,
-        method: 'put'
-      });
-    }
-  }, {
-    key: "post",
-    value: function post(url, data) {
-      var headers = {
-        "content-type": 'application/x-www-form-urlencoded'
-      };
-      return this.ajax(url, {
-        headers: headers,
-        data: data,
-        method: 'post'
-      });
-    }
-  }, {
-    key: "delete",
-    value: function _delete(url, data) {
-      var headers = {
-        "content-type": 'application/x-www-form-urlencoded'
-      };
-      return this.ajax(url, {
-        headers: headers,
-        data: data,
-        method: 'delete'
-      });
-    }
   }], [{
     key: "getStorageLoginInfo",
     value: function getStorageLoginInfo() {
@@ -2033,6 +1926,7 @@ function (_maishu_chitu_service) {
   }, {
     key: "getCookie",
     value: function getCookie(name) {
+      if (typeof document == 'undefined') return null;
       var nameEQ = name + "=";
       var ca = document.cookie.split(';');
 

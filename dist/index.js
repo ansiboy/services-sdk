@@ -1,6 +1,6 @@
 /*!
  * 
- *  maishu-services-sdk v1.7.0
+ *  maishu-services-sdk v1.9.2
  *  https://github.com/ansiboy/services-sdk
  *  
  *  Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -16,7 +16,7 @@
 		var a = typeof exports === 'object' ? factory(require("maishu-chitu-service")) : factory(root["maishu-chitu-service"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(window, function(__WEBPACK_EXTERNAL_MODULE_maishu_chitu_service__) {
+})(typeof window === 'undefined' ? global : window, function(__WEBPACK_EXTERNAL_MODULE_maishu_chitu_service__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -772,6 +772,15 @@ class PermissionService extends service_1.Service {
             return roles;
         });
     }
+    /**
+     * 给指定的用户添加角色
+     * @param userId 用户编号
+     * @param roleIds 多个角色编号
+     */
+    addUserRoles(userId, roleIds) {
+        let url = this.url('user/addRoles');
+        return this.postByJson(url, { userId, roleIds });
+    }
 }
 exports.PermissionService = PermissionService;
 // export interface User {
@@ -842,6 +851,8 @@ class Service extends maishu_chitu_service_1.Service {
         document.cookie = name + "=" + (value || "") + expires + "; path=/";
     }
     static getCookie(name) {
+        if (typeof document == 'undefined')
+            return null;
         var nameEQ = name + "=";
         var ca = document.cookie.split(';');
         for (var i = 0; i < ca.length; i++) {
@@ -930,63 +941,6 @@ class Service extends maishu_chitu_service_1.Service {
         const datePattern = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
         const datePattern1 = /\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/;
         return text.match(datePattern) != null || text.match(datePattern1) != null;
-    }
-    getByJson(url, data) {
-        if (data && Object.getOwnPropertyNames(data).length > 0) {
-            url = `${url}?${encodeURIComponent(JSON.stringify(data))}`;
-        }
-        let headers = { "content-type": 'application/json' };
-        return this.ajax(url, { headers, method: 'get' });
-    }
-    putByJson(url, data) {
-        let headers = { "content-type": 'application/json' };
-        return this.ajax(url, { headers, data, method: 'put' });
-    }
-    postByJson(url, data) {
-        let headers = { "content-type": 'application/json' };
-        return this.ajax(url, { headers, data, method: 'post' });
-    }
-    deleteByJson(url, data) {
-        let headers = { "content-type": 'application/json' };
-        return this.ajax(url, { headers, data, method: 'delete' });
-    }
-    get(url, data) {
-        data = data || {};
-        let params = "";
-        for (let key in data) {
-            if (data[key] == null)
-                continue;
-            let value = `${data[key]}`;
-            if (!this.isEncoded(value)) {
-                value = encodeURIComponent(value);
-            }
-            params = params ? `${params}&${key}=${value}` : `${key}=${value}`;
-        }
-        if (params) {
-            url = `${url}?${params}`;
-        }
-        return this.ajax(url, { method: 'get' });
-    }
-    isEncoded(uri) {
-        try {
-            uri = uri || '';
-            return uri !== decodeURIComponent(uri);
-        }
-        catch (e) {
-            return false;
-        }
-    }
-    put(url, data) {
-        let headers = { "content-type": 'application/x-www-form-urlencoded' };
-        return this.ajax(url, { headers, data, method: 'put' });
-    }
-    post(url, data) {
-        let headers = { "content-type": 'application/x-www-form-urlencoded' };
-        return this.ajax(url, { headers, data, method: 'post', });
-    }
-    delete(url, data) {
-        let headers = { "content-type": 'application/x-www-form-urlencoded' };
-        return this.ajax(url, { headers, data, method: 'delete' });
     }
 }
 Service.LoginInfoStorageName = 'app-login-info';

@@ -1039,6 +1039,21 @@ function (_service_1$Service) {
         }, _callee19, this);
       }));
     }
+    /**
+     * 给指定的用户添加角色
+     * @param userId 用户编号
+     * @param roleIds 多个角色编号
+     */
+
+  }, {
+    key: "addUserRoles",
+    value: function addUserRoles(userId, roleIds) {
+      var url = this.url('user/addRoles');
+      return this.postByJson(url, {
+        userId: userId,
+        roleIds: roleIds
+      });
+    }
   }]);
 
   return PermissionService;

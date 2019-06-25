@@ -375,6 +375,16 @@ export class PermissionService extends Service {
         let roles = await this.getByJson<Role[]>(url)
         return roles
     }
+
+    /**
+     * 给指定的用户添加角色
+     * @param userId 用户编号
+     * @param roleIds 多个角色编号
+     */
+    addUserRoles(userId: string, roleIds: string[]) {
+        let url = this.url('user/addRoles')
+        return this.postByJson(url, { userId, roleIds })
+    }
 }
 
 
