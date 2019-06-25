@@ -49,6 +49,9 @@ export class Service extends ChiTuSerivce {
         document.cookie = name + "=" + (value || "") + expires + "; path=/";
     }
     private static getCookie(name: string) {
+        if (typeof document == 'undefined')
+            return null;
+
         var nameEQ = name + "=";
         var ca = document.cookie.split(';');
         for (var i = 0; i < ca.length; i++) {
@@ -143,74 +146,74 @@ export class Service extends ChiTuSerivce {
         return text.match(datePattern) != null || text.match(datePattern1) != null
     }
 
-    public getByJson<T>(url: string, data?: any) {
-        if (data && Object.getOwnPropertyNames(data).length > 0) {
-            url = `${url}?${encodeURIComponent(JSON.stringify(data))}`;
-        }
+    // public getByJson<T>(url: string, data?: any) {
+    //     if (data && Object.getOwnPropertyNames(data).length > 0) {
+    //         url = `${url}?${encodeURIComponent(JSON.stringify(data))}`;
+    //     }
 
-        let headers = { "content-type": 'application/json' };
-        return this.ajax<T>(url, { headers, method: 'get' })
-    }
+    //     let headers = { "content-type": 'application/json' };
+    //     return this.ajax<T>(url, { headers, method: 'get' })
+    // }
 
-    protected putByJson<T>(url: string, data?: any) {
-        let headers = { "content-type": 'application/json' };
-        return this.ajax<T>(url, { headers, data, method: 'put' });
-    }
+    // protected putByJson<T>(url: string, data?: any) {
+    //     let headers = { "content-type": 'application/json' };
+    //     return this.ajax<T>(url, { headers, data, method: 'put' });
+    // }
 
-    protected postByJson<T>(url: string, data?: any) {
-        let headers = { "content-type": 'application/json' };
-        return this.ajax<T>(url, { headers, data, method: 'post' });
-    }
+    // protected postByJson<T>(url: string, data?: any) {
+    //     let headers = { "content-type": 'application/json' };
+    //     return this.ajax<T>(url, { headers, data, method: 'post' });
+    // }
 
-    protected deleteByJson<T>(url: string, data: any) {
-        let headers = { "content-type": 'application/json' };
-        return this.ajax<T>(url, { headers, data, method: 'delete' });
-    }
+    // protected deleteByJson<T>(url: string, data: any) {
+    //     let headers = { "content-type": 'application/json' };
+    //     return this.ajax<T>(url, { headers, data, method: 'delete' });
+    // }
 
 
-    protected get<T>(url: string, data?: any) {
-        data = data || {};
-        let params = "";
-        for (let key in data) {
-            if (data[key] == null)
-                continue
+    // protected get<T>(url: string, data?: any) {
+    //     data = data || {};
+    //     let params = "";
+    //     for (let key in data) {
+    //         if (data[key] == null)
+    //             continue
 
-            let value = `${data[key]}`
-            if (!this.isEncoded(value)) {
-                value = encodeURIComponent(value)
-            }
-            params = params ? `${params}&${key}=${value}` : `${key}=${value}`;
-        }
+    //         let value = `${data[key]}`
+    //         if (!this.isEncoded(value)) {
+    //             value = encodeURIComponent(value)
+    //         }
+    //         params = params ? `${params}&${key}=${value}` : `${key}=${value}`;
+    //     }
 
-        if (params) {
-            url = `${url}?${params}`;
-        }
+    //     if (params) {
+    //         url = `${url}?${params}`;
+    //     }
 
-        return this.ajax<T>(url, { method: 'get' })
-    }
+    //     return this.ajax<T>(url, { method: 'get' })
+    // }
 
-    private isEncoded(uri: string) {
-        try {
-            uri = uri || '';
-            return uri !== decodeURIComponent(uri);
-        }
-        catch (e) {
-            return false
-        }
-    }
+    // private isEncoded(uri: string) {
+    //     try {
+    //         uri = uri || '';
+    //         return uri !== decodeURIComponent(uri);
+    //     }
+    //     catch (e) {
+    //         return false
+    //     }
+    // }
 
-    protected put<T>(url: string, data?: any) {
-        let headers = { "content-type": 'application/x-www-form-urlencoded' };
-        return this.ajax<T>(url, { headers, data, method: 'put' });
-    }
+    // protected put<T>(url: string, data?: any) {
+    //     let headers = { "content-type": 'application/x-www-form-urlencoded' };
+    //     return this.ajax<T>(url, { headers, data, method: 'put' });
+    // }
 
-    protected post<T>(url: string, data?: any) {
-        let headers = { "content-type": 'application/x-www-form-urlencoded' };
-        return this.ajax<T>(url, { headers, data, method: 'post', });
-    }
+    // protected post<T>(url: string, data?: any) {
+    //     let headers = { "content-type": 'application/x-www-form-urlencoded' };
+    //     return this.ajax<T>(url, { headers, data, method: 'post', });
+    // }
 
-    protected delete<T>(url: string, data: any) {
-        let headers = { "content-type": 'application/x-www-form-urlencoded' };
-        return this.ajax<T>(url, { headers, data, method: 'delete' });
-    }
+    // protected delete<T>(url: string, data: any) {
+    //     let headers = { "content-type": 'application/x-www-form-urlencoded' };
+    //     return this.ajax<T>(url, { headers, data, method: 'delete' });
+    // }
 }
