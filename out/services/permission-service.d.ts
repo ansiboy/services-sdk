@@ -1,5 +1,5 @@
 import { Service, LoginInfo } from "./service";
-import { User, Resource, Role } from "../models";
+import { User, Resource, Role, MenuItem } from "../models";
 export declare class PermissionService extends Service {
     static baseUrl: string;
     constructor();
@@ -12,6 +12,7 @@ export declare class PermissionService extends Service {
     updateResource(item: Partial<Resource>): Promise<unknown>;
     /** 获取菜单类型的资源 */
     getMenuResources(): Promise<DataSourceSelectResult<Resource>>;
+    getMenuItem(id: string): Promise<MenuItem | null>;
     /** 获取资源列表 */
     getResourceList(args: DataSourceSelectArguments): Promise<DataSourceSelectResult<Resource>>;
     /**
@@ -146,6 +147,11 @@ export declare class PermissionService extends Service {
      * @param roleIds 多个角色编号
      */
     addUserRoles(userId: string, roleIds: string[]): Promise<unknown>;
+    /**
+     * 获取用角色
+     * @param userId 用户编号
+     */
+    getUserRoles(userId: string): Promise<Role[]>;
 }
 interface DataSourceSelectArguments {
     startRowIndex?: number;

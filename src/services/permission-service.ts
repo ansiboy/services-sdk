@@ -1,6 +1,6 @@
 import { Service, LoginInfo } from "./service";
 import { errors } from "../errors";
-import { User, Resource, ResourceType, Role } from "../models";
+import { User, Resource, ResourceType, Role, MenuItem } from "../models";
 import { events } from "../events";
 import { AjaxOptions } from "maishu-chitu-service";
 
@@ -49,6 +49,18 @@ export class PermissionService extends Service {
             filter: `(type = "${menuType}")`
         }
         return this.getResourceList(args)
+    }
+
+    async getMenuItem(id: string): Promise<MenuItem | null> {
+        let args: DataSourceSelectArguments = {};
+        args.filter = `id = '${id}' or parent_id = '${id}'`
+        let r = await this.getResourceList(args)
+        let dataItem = r.dataItems.filter(o => o.id == id)[0] as MenuItem
+        if (!dataItem) return null
+        dataItem.children = r.dataItems.filter(o => o.parent_id == id)
+            .map(o => Object.assign({ children: [], visible: o.data.visible }, o))
+
+        return dataItem
     }
 
     /** 获取资源列表 */
@@ -384,6 +396,16 @@ export class PermissionService extends Service {
     addUserRoles(userId: string, roleIds: string[]) {
         let url = this.url('user/addRoles')
         return this.postByJson(url, { userId, roleIds })
+    }
+
+    /**
+     * 获取用角色
+     * @param userId 用户编号
+     */
+    async getUserRoles(userId: string): Promise<Role[]> {
+        let url = this.url('role/userRoles');
+        let r = await this.getByJson<{ [userId: string]: Role[] }>(url, { userIds: [userId] });
+        return r[userId];
     }
 }
 

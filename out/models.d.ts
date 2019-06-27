@@ -68,3 +68,14 @@ export interface DataSourceSelectArguments {
     sortExpression?: string;
     filter?: string;
 }
+export interface MenuItem extends Resource {
+    id?: string;
+    name: string;
+    path?: string;
+    icon?: string;
+    parent?: MenuItem;
+    children?: MenuItem[];
+    visible?: boolean;
+    originalChildren?: MenuItem[];
+    parent_id: string;
+}

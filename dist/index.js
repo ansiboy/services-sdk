@@ -1,6 +1,6 @@
 /*!
  * 
- *  maishu-services-sdk v1.9.2
+ *  maishu-services-sdk v1.9.6
  *  https://github.com/ansiboy/services-sdk
  *  
  *  Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -440,6 +440,19 @@ class PermissionService extends service_1.Service {
             return this.getResourceList(args);
         });
     }
+    getMenuItem(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let args = {};
+            args.filter = `id = '${id}' or parent_id = '${id}'`;
+            let r = yield this.getResourceList(args);
+            let dataItem = r.dataItems.filter(o => o.id == id)[0];
+            if (!dataItem)
+                return null;
+            dataItem.children = r.dataItems.filter(o => o.parent_id == id)
+                .map(o => Object.assign({ children: [], visible: o.data.visible }, o));
+            return dataItem;
+        });
+    }
     /** 获取资源列表 */
     getResourceList(args) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -780,6 +793,17 @@ class PermissionService extends service_1.Service {
     addUserRoles(userId, roleIds) {
         let url = this.url('user/addRoles');
         return this.postByJson(url, { userId, roleIds });
+    }
+    /**
+     * 获取用角色
+     * @param userId 用户编号
+     */
+    getUserRoles(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let url = this.url('role/userRoles');
+            let r = yield this.getByJson(url, { userIds: [userId] });
+            return r[userId];
+        });
     }
 }
 exports.PermissionService = PermissionService;
