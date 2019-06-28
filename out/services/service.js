@@ -35,6 +35,9 @@ class Service extends maishu_chitu_service_1.Service {
         this.setCookie(Service.LoginInfoStorageName, JSON.stringify(value), 1000);
     }
     static setCookie(name, value, days) {
+        // nodejs 没有 document
+        if (typeof document == 'undefined')
+            return;
         var expires = "";
         if (days) {
             var date = new Date();

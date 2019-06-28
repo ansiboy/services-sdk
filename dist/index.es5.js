@@ -1,6 +1,6 @@
 /*!
  * 
- *  maishu-services-sdk v1.9.6
+ *  maishu-services-sdk v1.10.0
  *  https://github.com/ansiboy/services-sdk
  *  
  *  Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -1995,6 +1995,8 @@ function (_maishu_chitu_service) {
   }, {
     key: "setCookie",
     value: function setCookie(name, value, days) {
+      // nodejs 没有 document
+      if (typeof document == 'undefined') return;
       var expires = "";
 
       if (days) {

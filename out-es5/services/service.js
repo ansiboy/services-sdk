@@ -220,6 +220,8 @@ function (_maishu_chitu_service) {
   }, {
     key: "setCookie",
     value: function setCookie(name, value, days) {
+      // nodejs 没有 document
+      if (typeof document == 'undefined') return;
       var expires = "";
 
       if (days) {
