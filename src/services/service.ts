@@ -40,6 +40,10 @@ export class Service extends ChiTuSerivce {
     }
 
     private static setCookie(name: string, value: string, days?: number) {
+        // nodejs 没有 document
+        if (typeof document == 'undefined')
+            return;
+
         var expires = "";
         if (days) {
             var date = new Date();
