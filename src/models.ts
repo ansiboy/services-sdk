@@ -1,8 +1,8 @@
 export type ResourceType = 'menu' | 'button'
-export type Category = 'platform' | 'distributor'
+export type CategoryCode = 'platform' | 'distributor'
 
 export interface Resource {
-    id?: string,
+    id: string,
     name: string,
     path?: string,
     parent_id: string,
@@ -10,15 +10,16 @@ export interface Resource {
     type: ResourceType,
     create_date_time?: Date,
     data: any,
-    category: Category
+    icon?: string,
 }
 
 export interface Role {
-    id?: string,
+    id: string,
     name: string,
     data: {
         resource_types: ResourceType[]
-    }
+    },
+    category?: string
 }
 
 export interface User {
@@ -30,6 +31,13 @@ export interface User {
     openid?: string,
     create_date_time: Date,
     data: { [key: string]: any }
+}
+
+export interface Token {
+    id: string,
+    content: string,
+    contentType: string,
+    createDateTime: Date,
 }
 
 //===================================================
@@ -79,14 +87,3 @@ export interface DataSourceSelectArguments {
     filter?: string;
 }
 
-export interface MenuItem extends Resource {
-    id?: string;
-    name: string;
-    path?: string;
-    icon?: string;
-    parent?: MenuItem;
-    children?: MenuItem[];
-    visible?: boolean;
-    originalChildren?: MenuItem[],
-    parent_id: string,
-}

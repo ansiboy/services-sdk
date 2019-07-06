@@ -1,7 +1,7 @@
 export declare type ResourceType = 'menu' | 'button';
-export declare type Category = 'platform' | 'distributor';
+export declare type CategoryCode = 'platform' | 'distributor';
 export interface Resource {
-    id?: string;
+    id: string;
     name: string;
     path?: string;
     parent_id: string;
@@ -9,14 +9,15 @@ export interface Resource {
     type: ResourceType;
     create_date_time?: Date;
     data: any;
-    category: Category;
+    icon?: string;
 }
 export interface Role {
-    id?: string;
+    id: string;
     name: string;
     data: {
         resource_types: ResourceType[];
     };
+    category?: string;
 }
 export interface User {
     id: string;
@@ -29,6 +30,12 @@ export interface User {
     data: {
         [key: string]: any;
     };
+}
+export interface Token {
+    id: string;
+    content: string;
+    contentType: string;
+    createDateTime: Date;
 }
 export interface ChatMessage {
     id: string;
@@ -67,15 +74,4 @@ export interface DataSourceSelectArguments {
     maximumRows?: number;
     sortExpression?: string;
     filter?: string;
-}
-export interface MenuItem extends Resource {
-    id?: string;
-    name: string;
-    path?: string;
-    icon?: string;
-    parent?: MenuItem;
-    children?: MenuItem[];
-    visible?: boolean;
-    originalChildren?: MenuItem[];
-    parent_id: string;
 }
