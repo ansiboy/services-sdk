@@ -1,6 +1,6 @@
 import { Service, LoginInfo } from "./service";
 import { errors } from "../errors";
-import { User, Resource, ResourceType, Role, Token } from "../models";
+import { User, Resource, ResourceType, Role, Token, Path } from "../models";
 import { events } from "../events";
 
 export class PermissionService extends Service {
@@ -28,26 +28,47 @@ export class PermissionService extends Service {
     }
 
     role = {
+        /**
+         * 获取角色列表
+         */
         list: () => {
             let url = this.url("role/list")
             return this.get<Role[]>(url);
         },
+
+        /**
+         * 获取单个角色
+         * @param id 要获取的角色编号
+         */
         item: (id: string) => {
             let url = this.url("role/item");
             return this.get<Role>(url, { id });
         },
+
+        /**
+         * 添加角色
+         * @param name 要添加的角色名称
+         * @param remark 要添加的角色备注
+         */
         add: (item: Partial<Role>) => {
             let url = this.url("role/add");
             return this.postByJson(url, { item })
         },
+
+        /**
+         * 删除角色
+         * @param id 要删除的角色编号
+         */
         remove: (id: string) => {
             let url = this.url("role/remove");
             return this.postByJson(url, { id });
         },
+
         update: (item: Partial<Role>) => {
             let url = this.url("role/update");
             return this.postByJson(url, { item });
         },
+
         resource: {
             /**
              * 获取角色所允许访问的资源 id
@@ -98,6 +119,17 @@ export class PermissionService extends Service {
             let url = this.url('user/update');
             let result = await this.postByJson(url, { user: item });
             return result;
+        },
+
+        /**
+         * 添加用户信息
+         * @param item 用户
+         */
+        add: async (item: Partial<User>, roleIds?: string[]) => {
+            let url = this.url('user/add')
+            let result: { id: string, roles: Role[] }
+            let r = await this.postByJson<typeof result>(url, { item, roleIds })
+            return r
         }
     }
 
@@ -112,6 +144,20 @@ export class PermissionService extends Service {
             let r = await this.postByJson<{ id: String }>(url, { item });
             return r;
         }
+    }
+
+    path = {
+        list: async (args: DataSourceSelectArguments) => {
+            let url = this.url("path/list");
+            let r = this.getByJson<DataSourceSelectResult<Token>>(url, { args });
+            return r;
+        },
+        add: async (item: Partial<Path>) => {
+            let url = this.url("path/add");
+            let r = this.postByJson<{ id: string, create_date_time: Date }>(url, { item });
+            return r;
+        }
+
     }
 
     // //=============================================================
@@ -185,19 +231,14 @@ export class PermissionService extends Service {
     //=============================================================
     // 角色相关
 
-    /**
-     * 获取角色列表
-     */
-    async getRoles(): Promise<Role[]> {
-        let url = this.url('role/list')
-        let r = await this.getByJson<Role[]>(url)
-        return r || []
-    }
 
-    /**
-     * 获取单个角色
-     * @param id 要获取的角色编号
-     */
+    // async getRoles(): Promise<Role[]> {
+    //     let url = this.url('role/list')
+    //     let r = await this.getByJson<Role[]>(url)
+    //     return r || []
+    // }
+
+
     getRole(id: string): Promise<Role | null> {
         if (!id) throw errors.argumentNull('id')
 
@@ -238,28 +279,21 @@ export class PermissionService extends Service {
         return this.postByJson(url, { userId, roleIds })
     }
 
-    /**
-     * 添加角色
-     * @param name 要添加的角色名称
-     * @param remark 要添加的角色备注
-     */
-    addRole(name: string, remark?: string) {
-        if (!name) throw errors.argumentNull("name");
 
-        let url = this.url("role/add");
-        return this.postByJson(url, { name, remark });
-    }
+    // addRole(name: string, remark?: string) {
+    //     if (!name) throw errors.argumentNull("name");
 
-    /**
-     * 删除角色
-     * @param id 要删除的角色编号
-     */
-    removeRole(id: string) {
-        if (!id) throw errors.argumentNull("id");
+    //     let url = this.url("role/add");
+    //     return this.postByJson(url, { name, remark });
+    // }
 
-        let url = this.url("role/remove");
-        return this.postByJson(url, { id });
-    }
+
+    // removeRole(id: string) {
+    //     if (!id) throw errors.argumentNull("id");
+
+    //     let url = this.url("role/remove");
+    //     return this.postByJson(url, { id });
+    // }
 
     //================================================================
     // 用户相关
@@ -456,16 +490,13 @@ export class PermissionService extends Service {
         return user
     }
 
-    /**
-     * 添加用户信息
-     * @param item 用户
-     */
-    async addUser(item: Partial<User>) {
-        let url = this.url('user/add')
-        let result: { id: string }
-        let r = await this.postByJson<typeof result>(url, { item })
-        return r
-    }
+
+    // async addUser(item: Partial<User>) {
+    //     let url = this.url('user/add')
+    //     let result: { id: string }
+    //     let r = await this.postByJson<typeof result>(url, { item })
+    //     return r
+    // }
 
     /**
      * 更新用户信息

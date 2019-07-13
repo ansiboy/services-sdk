@@ -40,6 +40,12 @@ export interface Token {
     createDateTime: Date,
 }
 
+export interface Path {
+    id: string,
+    create_date_time: Date,
+    value: string,
+}
+
 //===================================================
 // 消息实体类
 export interface ChatMessage {

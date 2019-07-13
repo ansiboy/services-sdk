@@ -1,6 +1,6 @@
 /*!
  * 
- *  maishu-services-sdk v1.12.0
+ *  maishu-services-sdk v1.13.4
  *  https://github.com/ansiboy/services-sdk
  *  
  *  Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -676,6 +676,7 @@ function (_service_1$Service) {
     _classCallCheck(this, PermissionService);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(PermissionService).call(this));
+    _this.self = _assertThisInitialized(_this);
     _this.currentUser = {
       resource: {
         list: function list() {
@@ -686,11 +687,19 @@ function (_service_1$Service) {
       }
     };
     _this.role = {
+      /**
+       * 获取角色列表
+       */
       list: function list() {
         var url = _this.url("role/list");
 
         return _this.get(url);
       },
+
+      /**
+       * 获取单个角色
+       * @param id 要获取的角色编号
+       */
       item: function item(id) {
         var url = _this.url("role/item");
 
@@ -698,6 +707,12 @@ function (_service_1$Service) {
           id: id
         });
       },
+
+      /**
+       * 添加角色
+       * @param name 要添加的角色名称
+       * @param remark 要添加的角色备注
+       */
       add: function add(item) {
         var url = _this.url("role/add");
 
@@ -705,6 +720,11 @@ function (_service_1$Service) {
           item: item
         });
       },
+
+      /**
+       * 删除角色
+       * @param id 要删除的角色编号
+       */
       remove: function remove(id) {
         var url = _this.url("role/remove");
 
@@ -861,33 +881,43 @@ function (_service_1$Service) {
             }
           }, _callee3, this);
         }));
-      }
-    };
-    _this.token = {
-      list: function list(args) {
+      },
+
+      /**
+       * 添加用户信息
+       * @param item 用户
+       */
+      add: function add(item, roleIds) {
         return __awaiter(_assertThisInitialized(_this), void 0, void 0,
         /*#__PURE__*/
         regeneratorRuntime.mark(function _callee4() {
-          var url, r;
+          var url, result, r;
           return regeneratorRuntime.wrap(function _callee4$(_context4) {
             while (1) {
               switch (_context4.prev = _context4.next) {
                 case 0:
-                  url = this.url('token/list');
-                  r = this.getByJson(url, {
-                    args: args
+                  url = this.url('user/add');
+                  _context4.next = 3;
+                  return this.postByJson(url, {
+                    item: item,
+                    roleIds: roleIds
                   });
-                  return _context4.abrupt("return", r);
 
                 case 3:
+                  r = _context4.sent;
+                  return _context4.abrupt("return", r);
+
+                case 5:
                 case "end":
                   return _context4.stop();
               }
             }
           }, _callee4, this);
         }));
-      },
-      add: function add(item) {
+      }
+    };
+    _this.token = {
+      list: function list(args) {
         return __awaiter(_assertThisInitialized(_this), void 0, void 0,
         /*#__PURE__*/
         regeneratorRuntime.mark(function _callee5() {
@@ -896,22 +926,45 @@ function (_service_1$Service) {
             while (1) {
               switch (_context5.prev = _context5.next) {
                 case 0:
-                  url = this.url("token/add");
-                  _context5.next = 3;
-                  return this.postByJson(url, {
-                    item: item
+                  url = this.url('token/list');
+                  r = this.getByJson(url, {
+                    args: args
                   });
-
-                case 3:
-                  r = _context5.sent;
                   return _context5.abrupt("return", r);
 
-                case 5:
+                case 3:
                 case "end":
                   return _context5.stop();
               }
             }
           }, _callee5, this);
+        }));
+      },
+      add: function add(item) {
+        return __awaiter(_assertThisInitialized(_this), void 0, void 0,
+        /*#__PURE__*/
+        regeneratorRuntime.mark(function _callee6() {
+          var url, r;
+          return regeneratorRuntime.wrap(function _callee6$(_context6) {
+            while (1) {
+              switch (_context6.prev = _context6.next) {
+                case 0:
+                  url = this.url("token/add");
+                  _context6.next = 3;
+                  return this.postByJson(url, {
+                    item: item
+                  });
+
+                case 3:
+                  r = _context6.sent;
+                  return _context6.abrupt("return", r);
+
+                case 5:
+                case "end":
+                  return _context6.stop();
+              }
+            }
+          }, _callee6, this);
         }));
       }
     };
@@ -979,42 +1032,11 @@ function (_service_1$Service) {
     // }
     //=============================================================
     // 角色相关
-
-    /**
-     * 获取角色列表
-     */
-
-  }, {
-    key: "getRoles",
-    value: function getRoles() {
-      return __awaiter(this, void 0, void 0,
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee6() {
-        var url, r;
-        return regeneratorRuntime.wrap(function _callee6$(_context6) {
-          while (1) {
-            switch (_context6.prev = _context6.next) {
-              case 0:
-                url = this.url('role/list');
-                _context6.next = 3;
-                return this.getByJson(url);
-
-              case 3:
-                r = _context6.sent;
-                return _context6.abrupt("return", r || []);
-
-              case 5:
-              case "end":
-                return _context6.stop();
-            }
-          }
-        }, _callee6, this);
-      }));
-    }
-    /**
-     * 获取单个角色
-     * @param id 要获取的角色编号
-     */
+    // async getRoles(): Promise<Role[]> {
+    //     let url = this.url('role/list')
+    //     let r = await this.getByJson<Role[]>(url)
+    //     return r || []
+    // }
 
   }, {
     key: "getRole",
@@ -1096,37 +1118,17 @@ function (_service_1$Service) {
         userId: userId,
         roleIds: roleIds
       });
-    }
-    /**
-     * 添加角色
-     * @param name 要添加的角色名称
-     * @param remark 要添加的角色备注
-     */
-
-  }, {
-    key: "addRole",
-    value: function addRole(name, remark) {
-      if (!name) throw errors_1.errors.argumentNull("name");
-      var url = this.url("role/add");
-      return this.postByJson(url, {
-        name: name,
-        remark: remark
-      });
-    }
-    /**
-     * 删除角色
-     * @param id 要删除的角色编号
-     */
-
-  }, {
-    key: "removeRole",
-    value: function removeRole(id) {
-      if (!id) throw errors_1.errors.argumentNull("id");
-      var url = this.url("role/remove");
-      return this.postByJson(url, {
-        id: id
-      });
-    } //================================================================
+    } // addRole(name: string, remark?: string) {
+    //     if (!name) throw errors.argumentNull("name");
+    //     let url = this.url("role/add");
+    //     return this.postByJson(url, { name, remark });
+    // }
+    // removeRole(id: string) {
+    //     if (!id) throw errors.argumentNull("id");
+    //     let url = this.url("role/remove");
+    //     return this.postByJson(url, { id });
+    // }
+    //================================================================
     // 用户相关
 
     /** 获取用户列表 */
@@ -1652,41 +1654,13 @@ function (_service_1$Service) {
           }
         }, _callee16, this);
       }));
-    }
-    /**
-     * 添加用户信息
-     * @param item 用户
-     */
+    } // async addUser(item: Partial<User>) {
+    //     let url = this.url('user/add')
+    //     let result: { id: string }
+    //     let r = await this.postByJson<typeof result>(url, { item })
+    //     return r
+    // }
 
-  }, {
-    key: "addUser",
-    value: function addUser(item) {
-      return __awaiter(this, void 0, void 0,
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee17() {
-        var url, result, r;
-        return regeneratorRuntime.wrap(function _callee17$(_context17) {
-          while (1) {
-            switch (_context17.prev = _context17.next) {
-              case 0:
-                url = this.url('user/add');
-                _context17.next = 3;
-                return this.postByJson(url, {
-                  item: item
-                });
-
-              case 3:
-                r = _context17.sent;
-                return _context17.abrupt("return", r);
-
-              case 5:
-              case "end":
-                return _context17.stop();
-            }
-          }
-        }, _callee17, this);
-      }));
-    }
     /**
      * 更新用户信息
      * @param item 用户
@@ -1709,26 +1683,26 @@ function (_service_1$Service) {
     value: function myRoles() {
       return __awaiter(this, void 0, void 0,
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee18() {
+      regeneratorRuntime.mark(function _callee17() {
         var url, roles;
-        return regeneratorRuntime.wrap(function _callee18$(_context18) {
+        return regeneratorRuntime.wrap(function _callee17$(_context17) {
           while (1) {
-            switch (_context18.prev = _context18.next) {
+            switch (_context17.prev = _context17.next) {
               case 0:
                 url = this.url('user/getRoles');
-                _context18.next = 3;
+                _context17.next = 3;
                 return this.getByJson(url);
 
               case 3:
-                roles = _context18.sent;
-                return _context18.abrupt("return", roles);
+                roles = _context17.sent;
+                return _context17.abrupt("return", roles);
 
               case 5:
               case "end":
-                return _context18.stop();
+                return _context17.stop();
             }
           }
-        }, _callee18, this);
+        }, _callee17, this);
       }));
     }
     /**
@@ -1756,28 +1730,28 @@ function (_service_1$Service) {
     value: function getUserRoles(userId) {
       return __awaiter(this, void 0, void 0,
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee19() {
+      regeneratorRuntime.mark(function _callee18() {
         var url, r;
-        return regeneratorRuntime.wrap(function _callee19$(_context19) {
+        return regeneratorRuntime.wrap(function _callee18$(_context18) {
           while (1) {
-            switch (_context19.prev = _context19.next) {
+            switch (_context18.prev = _context18.next) {
               case 0:
                 url = this.url('role/userRoles');
-                _context19.next = 3;
+                _context18.next = 3;
                 return this.getByJson(url, {
                   userIds: [userId]
                 });
 
               case 3:
-                r = _context19.sent;
-                return _context19.abrupt("return", r[userId]);
+                r = _context18.sent;
+                return _context18.abrupt("return", r[userId]);
 
               case 5:
               case "end":
-                return _context19.stop();
+                return _context18.stop();
             }
           }
-        }, _callee19, this);
+        }, _callee18, this);
       }));
     }
   }]);

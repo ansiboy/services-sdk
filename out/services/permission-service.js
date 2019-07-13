@@ -14,6 +14,7 @@ const events_1 = require("../events");
 class PermissionService extends service_1.Service {
     constructor() {
         super();
+        this.self = this;
         this.currentUser = {
             resource: {
                 list: () => {
@@ -23,18 +24,34 @@ class PermissionService extends service_1.Service {
             }
         };
         this.role = {
+            /**
+             * 获取角色列表
+             */
             list: () => {
                 let url = this.url("role/list");
                 return this.get(url);
             },
+            /**
+             * 获取单个角色
+             * @param id 要获取的角色编号
+             */
             item: (id) => {
                 let url = this.url("role/item");
                 return this.get(url, { id });
             },
+            /**
+             * 添加角色
+             * @param name 要添加的角色名称
+             * @param remark 要添加的角色备注
+             */
             add: (item) => {
                 let url = this.url("role/add");
                 return this.postByJson(url, { item });
             },
+            /**
+             * 删除角色
+             * @param id 要删除的角色编号
+             */
             remove: (id) => {
                 let url = this.url("role/remove");
                 return this.postByJson(url, { id });
@@ -91,6 +108,16 @@ class PermissionService extends service_1.Service {
                 let url = this.url('user/update');
                 let result = yield this.postByJson(url, { user: item });
                 return result;
+            }),
+            /**
+             * 添加用户信息
+             * @param item 用户
+             */
+            add: (item, roleIds) => __awaiter(this, void 0, void 0, function* () {
+                let url = this.url('user/add');
+                let result;
+                let r = yield this.postByJson(url, { item, roleIds });
+                return r;
             })
         };
         this.token = {
@@ -167,20 +194,11 @@ class PermissionService extends service_1.Service {
     // }
     //=============================================================
     // 角色相关
-    /**
-     * 获取角色列表
-     */
-    getRoles() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let url = this.url('role/list');
-            let r = yield this.getByJson(url);
-            return r || [];
-        });
-    }
-    /**
-     * 获取单个角色
-     * @param id 要获取的角色编号
-     */
+    // async getRoles(): Promise<Role[]> {
+    //     let url = this.url('role/list')
+    //     let r = await this.getByJson<Role[]>(url)
+    //     return r || []
+    // }
     getRole(id) {
         if (!id)
             throw errors_1.errors.argumentNull('id');
@@ -222,27 +240,16 @@ class PermissionService extends service_1.Service {
         let url = this.url('user/setRoles');
         return this.postByJson(url, { userId, roleIds });
     }
-    /**
-     * 添加角色
-     * @param name 要添加的角色名称
-     * @param remark 要添加的角色备注
-     */
-    addRole(name, remark) {
-        if (!name)
-            throw errors_1.errors.argumentNull("name");
-        let url = this.url("role/add");
-        return this.postByJson(url, { name, remark });
-    }
-    /**
-     * 删除角色
-     * @param id 要删除的角色编号
-     */
-    removeRole(id) {
-        if (!id)
-            throw errors_1.errors.argumentNull("id");
-        let url = this.url("role/remove");
-        return this.postByJson(url, { id });
-    }
+    // addRole(name: string, remark?: string) {
+    //     if (!name) throw errors.argumentNull("name");
+    //     let url = this.url("role/add");
+    //     return this.postByJson(url, { name, remark });
+    // }
+    // removeRole(id: string) {
+    //     if (!id) throw errors.argumentNull("id");
+    //     let url = this.url("role/remove");
+    //     return this.postByJson(url, { id });
+    // }
     //================================================================
     // 用户相关
     /** 获取用户列表 */
@@ -444,18 +451,12 @@ class PermissionService extends service_1.Service {
             return user;
         });
     }
-    /**
-     * 添加用户信息
-     * @param item 用户
-     */
-    addUser(item) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let url = this.url('user/add');
-            let result;
-            let r = yield this.postByJson(url, { item });
-            return r;
-        });
-    }
+    // async addUser(item: Partial<User>) {
+    //     let url = this.url('user/add')
+    //     let result: { id: string }
+    //     let r = await this.postByJson<typeof result>(url, { item })
+    //     return r
+    // }
     /**
      * 更新用户信息
      * @param item 用户

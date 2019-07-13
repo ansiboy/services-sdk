@@ -2,6 +2,7 @@ import { Service, LoginInfo } from "./service";
 import { User, Resource, Role, Token } from "../models";
 export declare class PermissionService extends Service {
     static baseUrl: string;
+    private self;
     constructor();
     protected url(path: string): string;
     currentUser: {
@@ -10,9 +11,25 @@ export declare class PermissionService extends Service {
         };
     };
     role: {
+        /**
+         * 获取角色列表
+         */
         list: () => Promise<Role[]>;
+        /**
+         * 获取单个角色
+         * @param id 要获取的角色编号
+         */
         item: (id: string) => Promise<Role>;
+        /**
+         * 添加角色
+         * @param name 要添加的角色名称
+         * @param remark 要添加的角色备注
+         */
         add: (item: Partial<Role>) => Promise<unknown>;
+        /**
+         * 删除角色
+         * @param id 要删除的角色编号
+         */
         remove: (id: string) => Promise<unknown>;
         update: (item: Partial<Role>) => Promise<unknown>;
         resource: {
@@ -37,6 +54,14 @@ export declare class PermissionService extends Service {
     user: {
         list: (args?: DataSourceSelectArguments | undefined) => Promise<DataSourceSelectResult<User>>;
         update: (item: Partial<User>) => Promise<unknown>;
+        /**
+         * 添加用户信息
+         * @param item 用户
+         */
+        add: (item: Partial<User>, roleIds?: string[] | undefined) => Promise<{
+            id: string;
+            roles: Role[];
+        }>;
     };
     token: {
         list: (args: DataSourceSelectArguments) => Promise<DataSourceSelectResult<Token>>;
@@ -44,14 +69,6 @@ export declare class PermissionService extends Service {
             id: String;
         }>;
     };
-    /**
-     * 获取角色列表
-     */
-    getRoles(): Promise<Role[]>;
-    /**
-     * 获取单个角色
-     * @param id 要获取的角色编号
-     */
     getRole(id: string): Promise<Role | null>;
     /**
      *
@@ -66,17 +83,6 @@ export declare class PermissionService extends Service {
     getRoleResourceIds(roleId: string): Promise<string[]>;
     /** 设置用户角色 */
     setUserRoles(userId: string, roleIds: string[]): Promise<unknown>;
-    /**
-     * 添加角色
-     * @param name 要添加的角色名称
-     * @param remark 要添加的角色备注
-     */
-    addRole(name: string, remark?: string): Promise<unknown>;
-    /**
-     * 删除角色
-     * @param id 要删除的角色编号
-     */
-    removeRole(id: string): Promise<unknown>;
     /** 获取用户列表 */
     getUserList(args?: DataSourceSelectArguments): Promise<DataSourceSelectResult<User>>;
     /** 通过手机获取用户 */
@@ -155,13 +161,6 @@ export declare class PermissionService extends Service {
      * @param userId 用户编号
      */
     getUser(userId: string): Promise<User | null>;
-    /**
-     * 添加用户信息
-     * @param item 用户
-     */
-    addUser(item: Partial<User>): Promise<{
-        id: string;
-    }>;
     /**
      * 更新用户信息
      * @param item 用户
