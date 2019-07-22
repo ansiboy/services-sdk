@@ -10,10 +10,6 @@ export class Service extends ChiTuSerivce {
     static loginInfo = new ValueStore<LoginInfo | null>(Service.getStorageLoginInfo())
     static applicationId: string | (() => string)
 
-    constructor() {
-        super();
-    }
-
     static getStorageLoginInfo(): LoginInfo | null {
         let loginInfoSerialString = this.getCookie(Service.LoginInfoStorageName)
         if (!loginInfoSerialString)
@@ -141,76 +137,5 @@ export class Service extends ChiTuSerivce {
         const datePattern = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
         const datePattern1 = /\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/;
         return text.match(datePattern) != null || text.match(datePattern1) != null
-    }
-
-    public getByJson<T>(url: string, data?: any) {
-        if (data && Object.getOwnPropertyNames(data).length > 0) {
-            url = `${url}?${encodeURIComponent(JSON.stringify(data))}`;
-        }
-
-        let headers = { "content-type": 'application/json' };
-        return this.ajax<T>(url, { headers, method: 'get' })
-    }
-
-    protected putByJson<T>(url: string, data?: any) {
-        let headers = { "content-type": 'application/json' };
-        return this.ajax<T>(url, { headers, data, method: 'put' });
-    }
-
-    protected postByJson<T>(url: string, data?: any) {
-        let headers = { "content-type": 'application/json' };
-        return this.ajax<T>(url, { headers, data, method: 'post' });
-    }
-
-    protected deleteByJson<T>(url: string, data: any) {
-        let headers = { "content-type": 'application/json' };
-        return this.ajax<T>(url, { headers, data, method: 'delete' });
-    }
-
-
-    protected get<T>(url: string, data?: any) {
-        data = data || {};
-        let params = "";
-        for (let key in data) {
-            if (data[key] == null)
-                continue
-
-            let value = `${data[key]}`
-            if (!this.isEncoded(value)) {
-                value = encodeURIComponent(value)
-            }
-            params = params ? `${params}&${key}=${value}` : `${key}=${value}`;
-        }
-
-        if (params) {
-            url = `${url}?${params}`;
-        }
-
-        return this.ajax<T>(url, { method: 'get' })
-    }
-
-    private isEncoded(uri: string) {
-        try {
-            uri = uri || '';
-            return uri !== decodeURIComponent(uri);
-        }
-        catch (e) {
-            return false
-        }
-    }
-
-    protected put<T>(url: string, data?: any) {
-        let headers = { "content-type": 'application/x-www-form-urlencoded' };
-        return this.ajax<T>(url, { headers, data, method: 'put' });
-    }
-
-    protected post<T>(url: string, data?: any) {
-        let headers = { "content-type": 'application/x-www-form-urlencoded' };
-        return this.ajax<T>(url, { headers, data, method: 'post', });
-    }
-
-    protected delete<T>(url: string, data: any) {
-        let headers = { "content-type": 'application/x-www-form-urlencoded' };
-        return this.ajax<T>(url, { headers, data, method: 'delete' });
     }
 }
