@@ -1,6 +1,6 @@
 /*!
  * 
- *  maishu-services-sdk v1.7.0
+ *  maishu-services-sdk v1.12.0
  *  https://github.com/ansiboy/services-sdk
  *  
  *  Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -16,7 +16,7 @@
 		var a = typeof exports === 'object' ? factory(require("maishu-chitu-service")) : factory(root["maishu-chitu-service"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(window, function(__WEBPACK_EXTERNAL_MODULE_maishu_chitu_service__) {
+})(typeof window === 'undefined' ? global : window, function(__WEBPACK_EXTERNAL_MODULE_maishu_chitu_service__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -400,90 +400,157 @@ const events_1 = __webpack_require__(/*! ../events */ "./out/events.js");
 class PermissionService extends service_1.Service {
     constructor() {
         super();
+        this.currentUser = {
+            resource: {
+                list: () => {
+                    let url = this.url("current-user/resource/list");
+                    return this.get(url);
+                }
+            }
+        };
+        this.role = {
+            list: () => {
+                let url = this.url("role/list");
+                return this.get(url);
+            },
+            item: (id) => {
+                let url = this.url("role/item");
+                return this.get(url, { id });
+            },
+            add: (item) => {
+                let url = this.url("role/add");
+                return this.postByJson(url, { item });
+            },
+            remove: (id) => {
+                let url = this.url("role/remove");
+                return this.postByJson(url, { id });
+            },
+            update: (item) => {
+                let url = this.url("role/update");
+                return this.postByJson(url, { item });
+            },
+            resource: {
+                /**
+                 * 获取角色所允许访问的资源 id
+                 * @param roleId 指定的角色编号
+                 */
+                ids: (roleId) => __awaiter(this, void 0, void 0, function* () {
+                    if (!roleId)
+                        throw errors_1.errors.argumentNull('roleId');
+                    let url = this.url('role/resourceIds');
+                    let r = yield this.getByJson(url, { roleId });
+                    return r || [];
+                })
+            }
+        };
+        this.resource = {
+            list: (args) => {
+                let url = this.url("resource/list");
+                return this.getByJson(url, { args });
+            },
+            item: (id) => {
+                let url = this.url("resource/item");
+                return this.getByJson(url, { id });
+            },
+            remove: (id) => {
+                let url = this.url("resource/remove");
+                return this.post(url, { id });
+            },
+            add: (item) => {
+                let url = this.url("resource/add");
+                return this.postByJson(url, { item });
+            },
+            update: (item) => {
+                let url = this.url("resource/update");
+                return this.postByJson(url, { item });
+            }
+        };
+        this.user = {
+            list: (args) => __awaiter(this, void 0, void 0, function* () {
+                let url = this.url('user/list');
+                let result = yield this.getByJson(url, { args });
+                if (result == null)
+                    throw errors_1.errors.unexpectedNullResult();
+                return result;
+            }),
+            update: (item) => __awaiter(this, void 0, void 0, function* () {
+                let url = this.url('user/update');
+                let result = yield this.postByJson(url, { user: item });
+                return result;
+            })
+        };
+        this.token = {
+            list: (args) => __awaiter(this, void 0, void 0, function* () {
+                let url = this.url('token/list');
+                let r = this.getByJson(url, { args });
+                return r;
+            }),
+            add: (item) => __awaiter(this, void 0, void 0, function* () {
+                let url = this.url("token/add");
+                let r = yield this.postByJson(url, { item });
+                return r;
+            })
+        };
     }
     url(path) {
         if (!PermissionService.baseUrl)
             throw errors_1.errors.serviceUrlCanntNull('permissionService');
         return `${PermissionService.baseUrl}/${path}`;
     }
-    //=============================================================
-    // 资源相关
-    /** 添加资源 */
-    addResource(item) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!item)
-                throw errors_1.errors.argumentNull('item');
-            let url = this.url('resource/add');
-            let result = yield this.postByJson(url, { item });
-            Object.assign(item, result);
-            return result;
-        });
-    }
-    /** 更新资源 */
-    updateResource(item) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!item)
-                throw errors_1.errors.argumentNull('item');
-            let url = this.url('resource/update');
-            let result = yield this.postByJson(url, { item });
-            Object.assign(item, result);
-            return result;
-        });
-    }
-    /** 获取菜单类型的资源 */
-    getMenuResources() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let menuType = 'menu';
-            let args = {
-                filter: `(type = "${menuType}")`
-            };
-            return this.getResourceList(args);
-        });
-    }
-    /** 获取资源列表 */
-    getResourceList(args) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!args)
-                throw errors_1.errors.argumentNull('args');
-            let url = this.url('resource/list');
-            if (!args.sortExpression)
-                args.sortExpression = 'sort_number asc';
-            let result = yield this.getByJson(url, { args });
-            if (result == null)
-                throw errors_1.errors.unexpectedNullResult();
-            for (let i = 0; i < result.dataItems.length; i++) {
-                result.dataItems[i].data = result.dataItems[i].data || {};
-            }
-            return result;
-        });
-    }
-    /**
-     * 删除指定的资源
-     * @param id 要删除的资源编号
-     */
-    deleteResource(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!id)
-                throw errors_1.errors.argumentNull('id');
-            let url = this.url('resource/remove');
-            return this.postByJson(url, { id });
-        });
-    }
-    /**
-     * 获取指定资源的子按钮
-     * @param id 资源编号
-     */
-    getResourceChildCommands(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!id)
-                throw errors_1.errors.argumentNull('id');
-            let buttonType = 'button';
-            let filter = `parent_id = '${id}' and type = '${buttonType}'`;
-            let url = `resource/list`;
-            let result = yield this.getByJson(url, { filter });
-            return result;
-        });
-    }
+    // //=============================================================
+    // // 资源相关
+    // /** 添加资源 */
+    // async addResource(item: Partial<Resource>) {
+    //     if (!item) throw errors.argumentNull('item')
+    //     let url = this.url('resource/add')
+    //     let result = await this.postByJson<{ id: string }>(url, { item })
+    //     Object.assign(item, result)
+    //     return result
+    // }
+    // /** 更新资源 */
+    // async updateResource(item: Partial<Resource>) {
+    //     if (!item) throw errors.argumentNull('item')
+    //     let url = this.url('resource/update')
+    //     let result = await this.postByJson(url, { item })
+    //     Object.assign(item, result)
+    //     return result
+    // }
+    // /** 获取资源列表 */
+    // async getResourceList(args: DataSourceSelectArguments): Promise<DataSourceSelectResult<Resource>> {
+    //     if (!args) throw errors.argumentNull('args')
+    //     let url = this.url('resource/list')
+    //     if (!args.sortExpression)
+    //         args.sortExpression = 'sort_number asc'
+    //     type T = Resource & { data?: { visible?: boolean } }
+    //     let result = await this.getByJson<DataSourceSelectResult<T>>(url, { args })
+    //     if (result == null)
+    //         throw errors.unexpectedNullResult()
+    //     for (let i = 0; i < result.dataItems.length; i++) {
+    //         result.dataItems[i].data = result.dataItems[i].data || {}
+    //     }
+    //     return result
+    // }
+    // /**
+    //  * 删除指定的资源
+    //  * @param id 要删除的资源编号
+    //  */
+    // async deleteResource(id: string) {
+    //     if (!id) throw errors.argumentNull('id')
+    //     let url = this.url('resource/remove')
+    //     return this.postByJson(url, { id })
+    // }
+    // /**
+    //  * 获取指定资源的子按钮
+    //  * @param id 资源编号
+    //  */
+    // async getResourceChildCommands(id: string) {
+    //     if (!id) throw errors.argumentNull('id')
+    //     let buttonType: ResourceType = 'button'
+    //     let filter = `parent_id = '${id}' and type = '${buttonType}'`
+    //     let url = `resource/list`
+    //     let result = await this.getByJson(url, { filter })
+    //     return result
+    // }
     //=============================================================
     // 角色相关
     /**
@@ -540,6 +607,27 @@ class PermissionService extends service_1.Service {
             throw errors_1.errors.argumentNull('roleIds');
         let url = this.url('user/setRoles');
         return this.postByJson(url, { userId, roleIds });
+    }
+    /**
+     * 添加角色
+     * @param name 要添加的角色名称
+     * @param remark 要添加的角色备注
+     */
+    addRole(name, remark) {
+        if (!name)
+            throw errors_1.errors.argumentNull("name");
+        let url = this.url("role/add");
+        return this.postByJson(url, { name, remark });
+    }
+    /**
+     * 删除角色
+     * @param id 要删除的角色编号
+     */
+    removeRole(id) {
+        if (!id)
+            throw errors_1.errors.argumentNull("id");
+        let url = this.url("role/remove");
+        return this.postByJson(url, { id });
     }
     //================================================================
     // 用户相关
@@ -772,18 +860,28 @@ class PermissionService extends service_1.Service {
             return roles;
         });
     }
+    /**
+     * 给指定的用户添加角色
+     * @param userId 用户编号
+     * @param roleIds 多个角色编号
+     */
+    addUserRoles(userId, roleIds) {
+        let url = this.url('user/addRoles');
+        return this.postByJson(url, { userId, roleIds });
+    }
+    /**
+     * 获取用角色
+     * @param userId 用户编号
+     */
+    getUserRoles(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let url = this.url('role/userRoles');
+            let r = yield this.getByJson(url, { userIds: [userId] });
+            return r[userId];
+        });
+    }
 }
 exports.PermissionService = PermissionService;
-// export interface User {
-//     id: string,
-//     user_name: string,
-//     mobile: string,
-//     email: string,
-//     password: string,
-//     sort_number: number,
-//     data?: any
-//     // roleIds: string[]
-// }
 
 
 /***/ }),
@@ -833,6 +931,9 @@ class Service extends maishu_chitu_service_1.Service {
         this.setCookie(Service.LoginInfoStorageName, JSON.stringify(value), 1000);
     }
     static setCookie(name, value, days) {
+        // nodejs 没有 document
+        if (typeof document == 'undefined')
+            return;
         var expires = "";
         if (days) {
             var date = new Date();
@@ -842,6 +943,8 @@ class Service extends maishu_chitu_service_1.Service {
         document.cookie = name + "=" + (value || "") + expires + "; path=/";
     }
     static getCookie(name) {
+        if (typeof document == 'undefined')
+            return null;
         var nameEQ = name + "=";
         var ca = document.cookie.split(';');
         for (var i = 0; i < ca.length; i++) {
@@ -930,63 +1033,6 @@ class Service extends maishu_chitu_service_1.Service {
         const datePattern = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
         const datePattern1 = /\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/;
         return text.match(datePattern) != null || text.match(datePattern1) != null;
-    }
-    getByJson(url, data) {
-        if (data && Object.getOwnPropertyNames(data).length > 0) {
-            url = `${url}?${encodeURIComponent(JSON.stringify(data))}`;
-        }
-        let headers = { "content-type": 'application/json' };
-        return this.ajax(url, { headers, method: 'get' });
-    }
-    putByJson(url, data) {
-        let headers = { "content-type": 'application/json' };
-        return this.ajax(url, { headers, data, method: 'put' });
-    }
-    postByJson(url, data) {
-        let headers = { "content-type": 'application/json' };
-        return this.ajax(url, { headers, data, method: 'post' });
-    }
-    deleteByJson(url, data) {
-        let headers = { "content-type": 'application/json' };
-        return this.ajax(url, { headers, data, method: 'delete' });
-    }
-    get(url, data) {
-        data = data || {};
-        let params = "";
-        for (let key in data) {
-            if (data[key] == null)
-                continue;
-            let value = `${data[key]}`;
-            if (!this.isEncoded(value)) {
-                value = encodeURIComponent(value);
-            }
-            params = params ? `${params}&${key}=${value}` : `${key}=${value}`;
-        }
-        if (params) {
-            url = `${url}?${params}`;
-        }
-        return this.ajax(url, { method: 'get' });
-    }
-    isEncoded(uri) {
-        try {
-            uri = uri || '';
-            return uri !== decodeURIComponent(uri);
-        }
-        catch (e) {
-            return false;
-        }
-    }
-    put(url, data) {
-        let headers = { "content-type": 'application/x-www-form-urlencoded' };
-        return this.ajax(url, { headers, data, method: 'put' });
-    }
-    post(url, data) {
-        let headers = { "content-type": 'application/x-www-form-urlencoded' };
-        return this.ajax(url, { headers, data, method: 'post', });
-    }
-    delete(url, data) {
-        let headers = { "content-type": 'application/x-www-form-urlencoded' };
-        return this.ajax(url, { headers, data, method: 'delete' });
     }
 }
 Service.LoginInfoStorageName = 'app-login-info';

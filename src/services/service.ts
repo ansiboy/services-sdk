@@ -36,6 +36,10 @@ export class Service extends ChiTuSerivce {
     }
 
     private static setCookie(name: string, value: string, days?: number) {
+        // nodejs 没有 document
+        if (typeof document == 'undefined')
+            return;
+
         var expires = "";
         if (days) {
             var date = new Date();
@@ -45,6 +49,9 @@ export class Service extends ChiTuSerivce {
         document.cookie = name + "=" + (value || "") + expires + "; path=/";
     }
     private static getCookie(name: string) {
+        if (typeof document == 'undefined')
+            return null;
+
         var nameEQ = name + "=";
         var ca = document.cookie.split(';');
         for (var i = 0; i < ca.length; i++) {

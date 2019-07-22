@@ -35,6 +35,9 @@ class Service extends maishu_chitu_service_1.Service {
         this.setCookie(Service.LoginInfoStorageName, JSON.stringify(value), 1000);
     }
     static setCookie(name, value, days) {
+        // nodejs 没有 document
+        if (typeof document == 'undefined')
+            return;
         var expires = "";
         if (days) {
             var date = new Date();
@@ -44,6 +47,8 @@ class Service extends maishu_chitu_service_1.Service {
         document.cookie = name + "=" + (value || "") + expires + "; path=/";
     }
     static getCookie(name) {
+        if (typeof document == 'undefined')
+            return null;
         var nameEQ = name + "=";
         var ca = document.cookie.split(';');
         for (var i = 0; i < ca.length; i++) {
@@ -132,63 +137,6 @@ class Service extends maishu_chitu_service_1.Service {
         const datePattern = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
         const datePattern1 = /\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/;
         return text.match(datePattern) != null || text.match(datePattern1) != null;
-    }
-    getByJson(url, data) {
-        if (data && Object.getOwnPropertyNames(data).length > 0) {
-            url = `${url}?${encodeURIComponent(JSON.stringify(data))}`;
-        }
-        let headers = { "content-type": 'application/json' };
-        return this.ajax(url, { headers, method: 'get' });
-    }
-    putByJson(url, data) {
-        let headers = { "content-type": 'application/json' };
-        return this.ajax(url, { headers, data, method: 'put' });
-    }
-    postByJson(url, data) {
-        let headers = { "content-type": 'application/json' };
-        return this.ajax(url, { headers, data, method: 'post' });
-    }
-    deleteByJson(url, data) {
-        let headers = { "content-type": 'application/json' };
-        return this.ajax(url, { headers, data, method: 'delete' });
-    }
-    get(url, data) {
-        data = data || {};
-        let params = "";
-        for (let key in data) {
-            if (data[key] == null)
-                continue;
-            let value = `${data[key]}`;
-            if (!this.isEncoded(value)) {
-                value = encodeURIComponent(value);
-            }
-            params = params ? `${params}&${key}=${value}` : `${key}=${value}`;
-        }
-        if (params) {
-            url = `${url}?${params}`;
-        }
-        return this.ajax(url, { method: 'get' });
-    }
-    isEncoded(uri) {
-        try {
-            uri = uri || '';
-            return uri !== decodeURIComponent(uri);
-        }
-        catch (e) {
-            return false;
-        }
-    }
-    put(url, data) {
-        let headers = { "content-type": 'application/x-www-form-urlencoded' };
-        return this.ajax(url, { headers, data, method: 'put' });
-    }
-    post(url, data) {
-        let headers = { "content-type": 'application/x-www-form-urlencoded' };
-        return this.ajax(url, { headers, data, method: 'post', });
-    }
-    delete(url, data) {
-        let headers = { "content-type": 'application/x-www-form-urlencoded' };
-        return this.ajax(url, { headers, data, method: 'delete' });
     }
 }
 Service.LoginInfoStorageName = 'app-login-info';

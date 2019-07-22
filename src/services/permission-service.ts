@@ -1,8 +1,7 @@
 import { Service, LoginInfo } from "./service";
 import { errors } from "../errors";
-import { User, Resource, ResourceType, Role } from "../models";
+import { User, Resource, ResourceType, Role, Token } from "../models";
 import { events } from "../events";
-import { AjaxOptions } from "maishu-chitu-service";
 
 export class PermissionService extends Service {
 
@@ -19,82 +18,169 @@ export class PermissionService extends Service {
         return `${PermissionService.baseUrl}/${path}`
     }
 
-    //=============================================================
-    // 资源相关
-
-    /** 添加资源 */
-    async addResource(item: Partial<Resource>) {
-        if (!item) throw errors.argumentNull('item')
-
-        let url = this.url('resource/add')
-        let result = await this.postByJson<{ id: string }>(url, { item })
-        Object.assign(item, result)
-        return result
-    }
-
-    /** 更新资源 */
-    async updateResource(item: Partial<Resource>) {
-        if (!item) throw errors.argumentNull('item')
-
-        let url = this.url('resource/update')
-        let result = await this.postByJson(url, { item })
-        Object.assign(item, result)
-        return result
-    }
-
-    /** 获取菜单类型的资源 */
-    async getMenuResources() {
-        let menuType: ResourceType = 'menu'
-        let args: DataSourceSelectArguments = {
-            filter: `(type = "${menuType}")`
+    currentUser = {
+        resource: {
+            list: () => {
+                let url = this.url("current-user/resource/list");
+                return this.get<Resource[]>(url);
+            }
         }
-        return this.getResourceList(args)
     }
 
-    /** 获取资源列表 */
-    async getResourceList(args: DataSourceSelectArguments): Promise<DataSourceSelectResult<Resource>> {
-        if (!args) throw errors.argumentNull('args')
-
-        let url = this.url('resource/list')
-        if (!args.sortExpression)
-            args.sortExpression = 'sort_number asc'
-
-        type T = Resource & { data?: { visible?: boolean } }
-        let result = await this.getByJson<DataSourceSelectResult<T>>(url, { args })
-        if (result == null)
-            throw errors.unexpectedNullResult()
-
-        for (let i = 0; i < result.dataItems.length; i++) {
-            result.dataItems[i].data = result.dataItems[i].data || {}
+    role = {
+        list: () => {
+            let url = this.url("role/list")
+            return this.get<Role[]>(url);
+        },
+        item: (id: string) => {
+            let url = this.url("role/item");
+            return this.get<Role>(url, { id });
+        },
+        add: (item: Partial<Role>) => {
+            let url = this.url("role/add");
+            return this.postByJson(url, { item })
+        },
+        remove: (id: string) => {
+            let url = this.url("role/remove");
+            return this.postByJson(url, { id });
+        },
+        update: (item: Partial<Role>) => {
+            let url = this.url("role/update");
+            return this.postByJson(url, { item });
+        },
+        resource: {
+            /**
+             * 获取角色所允许访问的资源 id
+             * @param roleId 指定的角色编号
+             */
+            ids: async (roleId: string) => {
+                if (!roleId) throw errors.argumentNull('roleId')
+                let url = this.url('role/resourceIds')
+                let r = await this.getByJson<string[]>(url, { roleId })
+                return r || []
+            }
         }
+    };
 
-        return result
+    resource = {
+        list: (args?: DataSourceSelectArguments) => {
+            let url = this.url("resource/list");
+            return this.getByJson<DataSourceSelectResult<Resource>>(url, { args });
+        },
+        item: (id: string) => {
+            let url = this.url("resource/item");
+            return this.getByJson<Resource>(url, { id })
+        },
+        remove: (id: string) => {
+            let url = this.url("resource/remove");
+            return this.post(url, { id });
+        },
+        add: (item: Partial<Resource>) => {
+            let url = this.url("resource/add");
+            return this.postByJson<{ id: string }>(url, { item })
+        },
+        update: (item: Partial<Resource>) => {
+            let url = this.url("resource/update");
+            return this.postByJson<{ id: string }>(url, { item })
+        }
+    };
+
+    user = {
+        list: async (args?: DataSourceSelectArguments) => {
+            let url = this.url('user/list');
+            let result = await this.getByJson<DataSourceSelectResult<User>>(url, { args });
+            if (result == null)
+                throw errors.unexpectedNullResult();
+
+            return result;
+        },
+        update: async (item: Partial<User>) => {
+            let url = this.url('user/update');
+            let result = await this.postByJson(url, { user: item });
+            return result;
+        }
     }
 
-    /**
-     * 删除指定的资源
-     * @param id 要删除的资源编号
-     */
-    async deleteResource(id: string) {
-        if (!id) throw errors.argumentNull('id')
-
-        let url = this.url('resource/remove')
-        return this.postByJson(url, { id })
+    token = {
+        list: async (args: DataSourceSelectArguments) => {
+            let url = this.url('token/list');
+            let r = this.getByJson<DataSourceSelectResult<Token>>(url, { args });
+            return r;
+        },
+        add: async (item: Partial<Token>) => {
+            let url = this.url("token/add");
+            let r = await this.postByJson<{ id: String }>(url, { item });
+            return r;
+        }
     }
 
-    /**
-     * 获取指定资源的子按钮
-     * @param id 资源编号
-     */
-    async getResourceChildCommands(id: string) {
-        if (!id) throw errors.argumentNull('id')
+    // //=============================================================
+    // // 资源相关
 
-        let buttonType: ResourceType = 'button'
-        let filter = `parent_id = '${id}' and type = '${buttonType}'`
-        let url = `resource/list`
-        let result = await this.getByJson(url, { filter })
-        return result
-    }
+    // /** 添加资源 */
+    // async addResource(item: Partial<Resource>) {
+    //     if (!item) throw errors.argumentNull('item')
+
+    //     let url = this.url('resource/add')
+    //     let result = await this.postByJson<{ id: string }>(url, { item })
+    //     Object.assign(item, result)
+    //     return result
+    // }
+
+    // /** 更新资源 */
+    // async updateResource(item: Partial<Resource>) {
+    //     if (!item) throw errors.argumentNull('item')
+
+    //     let url = this.url('resource/update')
+    //     let result = await this.postByJson(url, { item })
+    //     Object.assign(item, result)
+    //     return result
+    // }
+
+    // /** 获取资源列表 */
+    // async getResourceList(args: DataSourceSelectArguments): Promise<DataSourceSelectResult<Resource>> {
+    //     if (!args) throw errors.argumentNull('args')
+
+    //     let url = this.url('resource/list')
+    //     if (!args.sortExpression)
+    //         args.sortExpression = 'sort_number asc'
+
+    //     type T = Resource & { data?: { visible?: boolean } }
+    //     let result = await this.getByJson<DataSourceSelectResult<T>>(url, { args })
+    //     if (result == null)
+    //         throw errors.unexpectedNullResult()
+
+    //     for (let i = 0; i < result.dataItems.length; i++) {
+    //         result.dataItems[i].data = result.dataItems[i].data || {}
+    //     }
+
+    //     return result
+    // }
+
+    // /**
+    //  * 删除指定的资源
+    //  * @param id 要删除的资源编号
+    //  */
+    // async deleteResource(id: string) {
+    //     if (!id) throw errors.argumentNull('id')
+
+    //     let url = this.url('resource/remove')
+    //     return this.postByJson(url, { id })
+    // }
+
+    // /**
+    //  * 获取指定资源的子按钮
+    //  * @param id 资源编号
+    //  */
+    // async getResourceChildCommands(id: string) {
+    //     if (!id) throw errors.argumentNull('id')
+
+    //     let buttonType: ResourceType = 'button'
+    //     let filter = `parent_id = '${id}' and type = '${buttonType}'`
+    //     let url = `resource/list`
+    //     let result = await this.getByJson(url, { filter })
+    //     return result
+    // }
 
     //=============================================================
     // 角色相关
@@ -150,6 +236,29 @@ export class PermissionService extends Service {
 
         let url = this.url('user/setRoles')
         return this.postByJson(url, { userId, roleIds })
+    }
+
+    /**
+     * 添加角色
+     * @param name 要添加的角色名称
+     * @param remark 要添加的角色备注
+     */
+    addRole(name: string, remark?: string) {
+        if (!name) throw errors.argumentNull("name");
+
+        let url = this.url("role/add");
+        return this.postByJson(url, { name, remark });
+    }
+
+    /**
+     * 删除角色
+     * @param id 要删除的角色编号
+     */
+    removeRole(id: string) {
+        if (!id) throw errors.argumentNull("id");
+
+        let url = this.url("role/remove");
+        return this.postByJson(url, { id });
     }
 
     //================================================================
@@ -385,6 +494,16 @@ export class PermissionService extends Service {
         let url = this.url('user/addRoles')
         return this.postByJson(url, { userId, roleIds })
     }
+
+    /**
+     * 获取用角色
+     * @param userId 用户编号
+     */
+    async getUserRoles(userId: string): Promise<Role[]> {
+        let url = this.url('role/userRoles');
+        let r = await this.getByJson<{ [userId: string]: Role[] }>(url, { userIds: [userId] });
+        return r[userId];
+    }
 }
 
 
@@ -403,15 +522,3 @@ interface DataSourceSelectResult<T> {
     dataItems: Array<T>;
 }
 
-
-
-// export interface User {
-//     id: string,
-//     user_name: string,
-//     mobile: string,
-//     email: string,
-//     password: string,
-//     sort_number: number,
-//     data?: any
-//     // roleIds: string[]
-// }

@@ -1,29 +1,49 @@
 import { Service, LoginInfo } from "./service";
-import { User, Resource, Role } from "../models";
+import { User, Resource, Role, Token } from "../models";
 export declare class PermissionService extends Service {
     static baseUrl: string;
     constructor();
     protected url(path: string): string;
-    /** 添加资源 */
-    addResource(item: Partial<Resource>): Promise<{
-        id: string;
-    } | null>;
-    /** 更新资源 */
-    updateResource(item: Partial<Resource>): Promise<{} | null>;
-    /** 获取菜单类型的资源 */
-    getMenuResources(): Promise<DataSourceSelectResult<Resource>>;
-    /** 获取资源列表 */
-    getResourceList(args: DataSourceSelectArguments): Promise<DataSourceSelectResult<Resource>>;
-    /**
-     * 删除指定的资源
-     * @param id 要删除的资源编号
-     */
-    deleteResource(id: string): Promise<{} | null>;
-    /**
-     * 获取指定资源的子按钮
-     * @param id 资源编号
-     */
-    getResourceChildCommands(id: string): Promise<{} | null>;
+    currentUser: {
+        resource: {
+            list: () => Promise<Resource[]>;
+        };
+    };
+    role: {
+        list: () => Promise<Role[]>;
+        item: (id: string) => Promise<Role>;
+        add: (item: Partial<Role>) => Promise<unknown>;
+        remove: (id: string) => Promise<unknown>;
+        update: (item: Partial<Role>) => Promise<unknown>;
+        resource: {
+            /**
+             * 获取角色所允许访问的资源 id
+             * @param roleId 指定的角色编号
+             */
+            ids: (roleId: string) => Promise<string[]>;
+        };
+    };
+    resource: {
+        list: (args?: DataSourceSelectArguments | undefined) => Promise<DataSourceSelectResult<Resource>>;
+        item: (id: string) => Promise<Resource>;
+        remove: (id: string) => Promise<unknown>;
+        add: (item: Partial<Resource>) => Promise<{
+            id: string;
+        }>;
+        update: (item: Partial<Resource>) => Promise<{
+            id: string;
+        }>;
+    };
+    user: {
+        list: (args?: DataSourceSelectArguments | undefined) => Promise<DataSourceSelectResult<User>>;
+        update: (item: Partial<User>) => Promise<unknown>;
+    };
+    token: {
+        list: (args: DataSourceSelectArguments) => Promise<DataSourceSelectResult<Token>>;
+        add: (item: Partial<Token>) => Promise<{
+            id: String;
+        }>;
+    };
     /**
      * 获取角色列表
      */
@@ -38,14 +58,25 @@ export declare class PermissionService extends Service {
      * @param roleId 指定的角色编号
      * @param resourceIds 角色所允许访问的资源编号
      */
-    setRoleResource(roleId: string, resourceIds: string[]): Promise<{} | null>;
+    setRoleResource(roleId: string, resourceIds: string[]): Promise<unknown>;
     /**
      * 获取角色所允许访问的资源 id
      * @param roleId 指定的角色编号
      */
     getRoleResourceIds(roleId: string): Promise<string[]>;
     /** 设置用户角色 */
-    setUserRoles(userId: string, roleIds: string[]): Promise<{} | null>;
+    setUserRoles(userId: string, roleIds: string[]): Promise<unknown>;
+    /**
+     * 添加角色
+     * @param name 要添加的角色名称
+     * @param remark 要添加的角色备注
+     */
+    addRole(name: string, remark?: string): Promise<unknown>;
+    /**
+     * 删除角色
+     * @param id 要删除的角色编号
+     */
+    removeRole(id: string): Promise<unknown>;
     /** 获取用户列表 */
     getUserList(args?: DataSourceSelectArguments): Promise<DataSourceSelectResult<User>>;
     /** 通过手机获取用户 */
@@ -54,7 +85,7 @@ export declare class PermissionService extends Service {
      * 移除当前应用的用户
      * @param userId 要移除的用户编号
      */
-    removeUser(userId: string): Promise<{} | null>;
+    removeUser(userId: string): Promise<unknown>;
     /**
      * 获取当前应用的所有用户
      * @param args 数据源选择参数
@@ -66,20 +97,20 @@ export declare class PermissionService extends Service {
      */
     sendRegisterVerifyCode(mobile: string): Promise<{
         smsId: string;
-    } | null>;
+    }>;
     /**
      * 校验验证码
      * @param smsId 验证码信息的 ID 号
      * @param verifyCode 验证码
      */
-    checkVerifyCode(smsId: string, verifyCode: string): Promise<boolean | null>;
+    checkVerifyCode(smsId: string, verifyCode: string): Promise<boolean>;
     /**
      * 发送重置密码操作验证码
      * @param mobile 接收验证码的手机号
      */
     sendResetVerifyCode(mobile: string): Promise<{
         smsId: string;
-    } | null>;
+    }>;
     /**
      * 重置密码
      * @param mobile 手机号
@@ -87,14 +118,14 @@ export declare class PermissionService extends Service {
      * @param smsId 短信编号
      * @param verifyCode 验证码
      */
-    resetPassword(mobile: string, password: string, smsId: string, verifyCode: string): Promise<{} | null>;
+    resetPassword(mobile: string, password: string, smsId: string, verifyCode: string): Promise<unknown>;
     /**
      * 重置手机号码
      * @param mobile 需要重置的新手机号
      * @param smsId 短信编号
      * @param verifyCode 验证码
      */
-    resetMobile(mobile: string, smsId: string, verifyCode: string): Promise<{} | null>;
+    resetMobile(mobile: string, smsId: string, verifyCode: string): Promise<unknown>;
     /**
      * 退出登录
      */
@@ -130,16 +161,27 @@ export declare class PermissionService extends Service {
      */
     addUser(item: Partial<User>): Promise<{
         id: string;
-    } | null>;
+    }>;
     /**
      * 更新用户信息
      * @param item 用户
      */
-    updateUser(item: User): Promise<{} | null>;
+    updateUser(item: User): Promise<unknown>;
     /**
      * 获取当前登录用户的角色
      */
-    myRoles(): Promise<Role[] | null>;
+    myRoles(): Promise<Role[]>;
+    /**
+     * 给指定的用户添加角色
+     * @param userId 用户编号
+     * @param roleIds 多个角色编号
+     */
+    addUserRoles(userId: string, roleIds: string[]): Promise<unknown>;
+    /**
+     * 获取用角色
+     * @param userId 用户编号
+     */
+    getUserRoles(userId: string): Promise<Role[]>;
 }
 interface DataSourceSelectArguments {
     startRowIndex?: number;

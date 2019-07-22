@@ -192,128 +192,6 @@ function (_maishu_chitu_service) {
       var datePattern1 = /\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/;
       return text.match(datePattern) != null || text.match(datePattern1) != null;
     }
-  }, {
-    key: "getByJson",
-    value: function getByJson(url, data) {
-      if (data && Object.getOwnPropertyNames(data).length > 0) {
-        url = "".concat(url, "?").concat(encodeURIComponent(JSON.stringify(data)));
-      }
-
-      var headers = {
-        "content-type": 'application/json'
-      };
-      return this.ajax(url, {
-        headers: headers,
-        method: 'get'
-      });
-    }
-  }, {
-    key: "putByJson",
-    value: function putByJson(url, data) {
-      var headers = {
-        "content-type": 'application/json'
-      };
-      return this.ajax(url, {
-        headers: headers,
-        data: data,
-        method: 'put'
-      });
-    }
-  }, {
-    key: "postByJson",
-    value: function postByJson(url, data) {
-      var headers = {
-        "content-type": 'application/json'
-      };
-      return this.ajax(url, {
-        headers: headers,
-        data: data,
-        method: 'post'
-      });
-    }
-  }, {
-    key: "deleteByJson",
-    value: function deleteByJson(url, data) {
-      var headers = {
-        "content-type": 'application/json'
-      };
-      return this.ajax(url, {
-        headers: headers,
-        data: data,
-        method: 'delete'
-      });
-    }
-  }, {
-    key: "get",
-    value: function get(url, data) {
-      data = data || {};
-      var params = "";
-
-      for (var key in data) {
-        if (data[key] == null) continue;
-        var value = "".concat(data[key]);
-
-        if (!this.isEncoded(value)) {
-          value = encodeURIComponent(value);
-        }
-
-        params = params ? "".concat(params, "&").concat(key, "=").concat(value) : "".concat(key, "=").concat(value);
-      }
-
-      if (params) {
-        url = "".concat(url, "?").concat(params);
-      }
-
-      return this.ajax(url, {
-        method: 'get'
-      });
-    }
-  }, {
-    key: "isEncoded",
-    value: function isEncoded(uri) {
-      try {
-        uri = uri || '';
-        return uri !== decodeURIComponent(uri);
-      } catch (e) {
-        return false;
-      }
-    }
-  }, {
-    key: "put",
-    value: function put(url, data) {
-      var headers = {
-        "content-type": 'application/x-www-form-urlencoded'
-      };
-      return this.ajax(url, {
-        headers: headers,
-        data: data,
-        method: 'put'
-      });
-    }
-  }, {
-    key: "post",
-    value: function post(url, data) {
-      var headers = {
-        "content-type": 'application/x-www-form-urlencoded'
-      };
-      return this.ajax(url, {
-        headers: headers,
-        data: data,
-        method: 'post'
-      });
-    }
-  }, {
-    key: "delete",
-    value: function _delete(url, data) {
-      var headers = {
-        "content-type": 'application/x-www-form-urlencoded'
-      };
-      return this.ajax(url, {
-        headers: headers,
-        data: data,
-        method: 'delete'
-      });
-    }
   }], [{
     key: "getStorageLoginInfo",
     value: function getStorageLoginInfo() {
@@ -342,6 +220,8 @@ function (_maishu_chitu_service) {
   }, {
     key: "setCookie",
     value: function setCookie(name, value, days) {
+      // nodejs 没有 document
+      if (typeof document == 'undefined') return;
       var expires = "";
 
       if (days) {
@@ -355,6 +235,7 @@ function (_maishu_chitu_service) {
   }, {
     key: "getCookie",
     value: function getCookie(name) {
+      if (typeof document == 'undefined') return null;
       var nameEQ = name + "=";
       var ca = document.cookie.split(';');
 
