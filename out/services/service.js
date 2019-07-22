@@ -10,9 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const maishu_chitu_service_1 = require("maishu-chitu-service");
 class Service extends maishu_chitu_service_1.Service {
-    constructor() {
-        super();
-    }
     static getStorageLoginInfo() {
         let loginInfoSerialString = this.getCookie(Service.LoginInfoStorageName);
         if (!loginInfoSerialString)

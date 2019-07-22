@@ -1,4 +1,5 @@
 import { Service } from "./service";
+import { DataSourceSelectArguments, DataSourceSelectResult } from "../models";
 /** 图片服务，实现图片的上传，获取 */
 export declare class ImageService extends Service {
     static baseUrl: string;
@@ -18,6 +19,11 @@ export declare class ImageService extends Service {
      * @param height 目标图片的高度
      */
     resize(imageBase64: string, width: number, height: number): Promise<string>;
+    list(args: DataSourceSelectArguments): Promise<DataSourceSelectResult<{
+        id: string;
+        with: number;
+        height: number;
+    }>>;
     /**
      * 上传图片
      * @param imageBase64 图片的 base64 数据
@@ -29,7 +35,7 @@ export declare class ImageService extends Service {
      *
      * @param id 删除图片
      */
-    remove(id: string): Promise<unknown>;
+    remove(id: string): Promise<{}>;
 }
 export declare type CanvasDraw = (ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number) => void;
 export declare type DrawOption = {

@@ -1,6 +1,7 @@
 import { Service } from "./service";
 import { errors } from "../errors";
 import { settings } from "../settings";
+import { DataSourceSelectArguments, DataSourceSelectResult } from "../models";
 
 /** 图片服务，实现图片的上传，获取 */
 export class ImageService extends Service {
@@ -13,6 +14,8 @@ export class ImageService extends Service {
 
         return `${ImageService.baseUrl}/${path}`;
     }
+
+
 
     /** 获取图片的 URL
      * @param id 图片的 ID
@@ -103,6 +106,13 @@ export class ImageService extends Service {
                 resolve(canvas.toDataURL())
             }
         })
+    }
+
+    async list(args: DataSourceSelectArguments) {
+        let url = `${ImageService.baseUrl}/list`;
+        type T = { id: string, with: number, height: number };
+        let result = await this.postByJson<DataSourceSelectResult<T>>(url, args);
+        return result;
     }
 
     /**

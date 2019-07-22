@@ -99,6 +99,13 @@ class ImageService extends service_1.Service {
             });
         });
     }
+    list(args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let url = `${ImageService.baseUrl}/list`;
+            let result = yield this.postByJson(url, args);
+            return result;
+        });
+    }
     /**
      * 上传图片
      * @param imageBase64 图片的 base64 数据
