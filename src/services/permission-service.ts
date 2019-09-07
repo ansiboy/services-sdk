@@ -1,7 +1,7 @@
 import { Service, LoginInfo } from "./service";
 import { errors } from "../errors";
 import { User, Resource, ResourceType, Role, Token } from "../models";
-import { events } from "../events";
+// import { events } from "../events";
 
 export class PermissionService extends Service {
 
@@ -380,14 +380,14 @@ export class PermissionService extends Service {
      * 退出登录
      */
     logout() {
-        if (Service.loginInfo.value == null)
-            return
+        // if (Service.loginInfo.value == null)
+        //     return
 
         //TODO: 将服务端 token 设置为失效
 
-        events.logout.fire(this, Service.loginInfo.value)
-        Service.setStorageLoginInfo(null)
-        Service.loginInfo.value = null
+        // events.logout.fire(this, Service.loginInfo.value)
+        // Service.setStorageLoginInfo(null)
+        // Service.loginInfo.value = null
     }
 
     /**
@@ -395,18 +395,33 @@ export class PermissionService extends Service {
      * @param username 用户名
      * @param password 密码
      */
-    async login(username: string, password: string) {
-        if (!username) throw errors.argumentNull('username')
-        if (!password) throw errors.argumentNull('password')
+    async login(args: { openid: string }): Promise<LoginInfo>
+    async login(username: string, password: string): Promise<LoginInfo>
+    async login(arg0: string | { openid: string }, password?: string) {
+
+        let args: { username: string, password: string } | { openid: string };
+        let username: string;
+        if (typeof arg0 == "string") {
+            username = arg0;
+
+            if (!username) throw errors.argumentNull('username')
+            if (!password) throw errors.argumentNull('password');
+
+            args = { username, password };
+        }
+        else {
+            args = arg0;
+        }
+
 
         let url = this.url('user/login')
-        let r = await this.postByJson<LoginInfo | null>(url, { username, password })
+        let r = await this.postByJson<LoginInfo | null>(url, args)
         if (r == null)
             throw errors.unexpectedNullResult()
 
-        Service.loginInfo.value = r
-        Service.setStorageLoginInfo(r)
-        events.login.fire(this, r)
+        // Service.loginInfo.value = r
+        // Service.setStorageLoginInfo(r)
+        // events.login.fire(this, r)
         return r
     }
 
@@ -428,8 +443,8 @@ export class PermissionService extends Service {
         if (r == null)
             throw errors.unexpectedNullResult()
 
-        Service.setStorageLoginInfo(r)
-        events.register.fire(this, r)
+        // Service.setStorageLoginInfo(r)
+        // events.register.fire(this, r)
 
         return r;
     }
@@ -438,9 +453,9 @@ export class PermissionService extends Service {
      * 获取用户个人信息
      */
     async me() {
-        if (!Service.loginInfo.value) {
-            return null
-        }
+        // if (!Service.loginInfo.value) {
+        //     return null
+        // }
         let url = this.url('user/me')
         let user = await this.getByJson<User>(url)
         return user
