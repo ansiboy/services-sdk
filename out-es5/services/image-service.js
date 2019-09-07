@@ -84,6 +84,9 @@ function (_service_1$Service) {
   }, {
     key: "imageSource",
     value: function imageSource(id, width, height) {
+      if (id != null && id.startsWith("http://")) return id;
+      if (id != null && id.indexOf("/") >= 0) return id;
+
       if (!id) {
         width = width == null ? 200 : width;
         height = height == null ? 100 : height;

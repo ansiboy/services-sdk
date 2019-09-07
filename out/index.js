@@ -14,5 +14,3 @@ exports.PermissionService = permission_service_1.PermissionService;
 // export { MessageService } from './services/message-service'
 var settings_1 = require("./settings");
 exports.settings = settings_1.settings;
-var events_1 = require("./events");
-exports.events = events_1.events;

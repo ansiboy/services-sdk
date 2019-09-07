@@ -52,9 +52,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var service_1 = require("./service");
 
-var errors_1 = require("../errors");
+var errors_1 = require("../errors"); // import { events } from "../events";
 
-var events_1 = require("../events");
 
 var PermissionService =
 /*#__PURE__*/
@@ -816,70 +815,76 @@ function (_service_1$Service) {
 
   }, {
     key: "logout",
-    value: function logout() {
-      if (service_1.Service.loginInfo.value == null) return; //TODO: 将服务端 token 设置为失效
-
-      events_1.events.logout.fire(this, service_1.Service.loginInfo.value);
-      service_1.Service.setStorageLoginInfo(null);
-      service_1.Service.loginInfo.value = null;
+    value: function logout() {// if (Service.loginInfo.value == null)
+      //     return
+      //TODO: 将服务端 token 设置为失效
+      // events.logout.fire(this, Service.loginInfo.value)
+      // Service.setStorageLoginInfo(null)
+      // Service.loginInfo.value = null
     }
-    /**
-     * 登录
-     * @param username 用户名
-     * @param password 密码
-     */
-
   }, {
     key: "login",
-    value: function login(username, password) {
+    value: function login(arg0, password) {
       return __awaiter(this, void 0, void 0,
       /*#__PURE__*/
       regeneratorRuntime.mark(function _callee13() {
-        var url, r;
+        var args, username, url, r;
         return regeneratorRuntime.wrap(function _callee13$(_context13) {
           while (1) {
             switch (_context13.prev = _context13.next) {
               case 0:
+                if (!(typeof arg0 == "string")) {
+                  _context13.next = 9;
+                  break;
+                }
+
+                username = arg0;
+
                 if (username) {
-                  _context13.next = 2;
+                  _context13.next = 4;
                   break;
                 }
 
                 throw errors_1.errors.argumentNull('username');
 
-              case 2:
+              case 4:
                 if (password) {
-                  _context13.next = 4;
+                  _context13.next = 6;
                   break;
                 }
 
                 throw errors_1.errors.argumentNull('password');
 
-              case 4:
-                url = this.url('user/login');
-                _context13.next = 7;
-                return this.postByJson(url, {
+              case 6:
+                args = {
                   username: username,
                   password: password
-                });
+                };
+                _context13.next = 10;
+                break;
 
-              case 7:
+              case 9:
+                args = arg0;
+
+              case 10:
+                url = this.url('user/login');
+                _context13.next = 13;
+                return this.postByJson(url, args);
+
+              case 13:
                 r = _context13.sent;
 
                 if (!(r == null)) {
-                  _context13.next = 10;
+                  _context13.next = 16;
                   break;
                 }
 
                 throw errors_1.errors.unexpectedNullResult();
 
-              case 10:
-                service_1.Service.loginInfo.value = r;
-                service_1.Service.setStorageLoginInfo(r);
-                events_1.events.login.fire(this, r);
+              case 16:
                 return _context13.abrupt("return", r);
 
-              case 14:
+              case 17:
               case "end":
                 return _context13.stop();
             }
@@ -959,11 +964,9 @@ function (_service_1$Service) {
                 throw errors_1.errors.unexpectedNullResult();
 
               case 14:
-                service_1.Service.setStorageLoginInfo(r);
-                events_1.events.register.fire(this, r);
                 return _context14.abrupt("return", r);
 
-              case 17:
+              case 15:
               case "end":
                 return _context14.stop();
             }
@@ -986,23 +989,18 @@ function (_service_1$Service) {
           while (1) {
             switch (_context15.prev = _context15.next) {
               case 0:
-                if (service_1.Service.loginInfo.value) {
-                  _context15.next = 2;
-                  break;
-                }
-
-                return _context15.abrupt("return", null);
-
-              case 2:
+                // if (!Service.loginInfo.value) {
+                //     return null
+                // }
                 url = this.url('user/me');
-                _context15.next = 5;
+                _context15.next = 3;
                 return this.getByJson(url);
 
-              case 5:
+              case 3:
                 user = _context15.sent;
                 return _context15.abrupt("return", user);
 
-              case 7:
+              case 5:
               case "end":
                 return _context15.stop();
             }

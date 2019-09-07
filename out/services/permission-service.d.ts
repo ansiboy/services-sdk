@@ -135,6 +135,9 @@ export declare class PermissionService extends Service {
      * @param username 用户名
      * @param password 密码
      */
+    login(args: {
+        openid: string;
+    }): Promise<LoginInfo>;
     login(username: string, password: string): Promise<LoginInfo>;
     /**
      * 注册
@@ -149,7 +152,7 @@ export declare class PermissionService extends Service {
     /**
      * 获取用户个人信息
      */
-    me(): Promise<User | null>;
+    me(): Promise<User>;
     /**
      * 获取用户
      * @param userId 用户编号

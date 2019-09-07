@@ -1,6 +1,6 @@
 /*!
  * 
- *  maishu-services-sdk v1.15.0
+ *  maishu-services-sdk v1.19.0
  *  https://github.com/ansiboy/services-sdk
  *  
  *  Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -152,37 +152,6 @@ exports.errors = {
 
 /***/ }),
 
-/***/ "./out-es5/events.js":
-/*!***************************!*\
-  !*** ./out-es5/events.js ***!
-  \***************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var maishu_chitu_service_1 = __webpack_require__(/*! maishu-chitu-service */ "maishu-chitu-service");
-
-exports.events = {
-  /** 成功调用 login 方法后引发 */
-  login: maishu_chitu_service_1.Callbacks(),
-
-  /** 成功调用 logout 方法后引发 */
-  logout: maishu_chitu_service_1.Callbacks(),
-
-  /** 成功调用 register 方法后引发 */
-  register: maishu_chitu_service_1.Callbacks()
-};
-//# sourceMappingURL=events.js.map
-
-
-/***/ }),
-
 /***/ "./out-es5/index.js":
 /*!**************************!*\
   !*** ./out-es5/index.js ***!
@@ -221,10 +190,6 @@ exports.PermissionService = permission_service_1.PermissionService; // export { 
 var settings_1 = __webpack_require__(/*! ./settings */ "./out-es5/settings.js");
 
 exports.settings = settings_1.settings;
-
-var events_1 = __webpack_require__(/*! ./events */ "./out-es5/events.js");
-
-exports.events = events_1.events;
 //# sourceMappingURL=index.js.map
 
 
@@ -324,6 +289,9 @@ function (_service_1$Service) {
   }, {
     key: "imageSource",
     value: function imageSource(id, width, height) {
+      if (id != null && id.startsWith("http://")) return id;
+      if (id != null && id.indexOf("/") >= 0) return id;
+
       if (!id) {
         width = width == null ? 200 : width;
         height = height == null ? 100 : height;
@@ -688,9 +656,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var service_1 = __webpack_require__(/*! ./service */ "./out-es5/services/service.js");
 
-var errors_1 = __webpack_require__(/*! ../errors */ "./out-es5/errors.js");
+var errors_1 = __webpack_require__(/*! ../errors */ "./out-es5/errors.js"); // import { events } from "../events";
 
-var events_1 = __webpack_require__(/*! ../events */ "./out-es5/events.js");
 
 var PermissionService =
 /*#__PURE__*/
@@ -1452,70 +1419,76 @@ function (_service_1$Service) {
 
   }, {
     key: "logout",
-    value: function logout() {
-      if (service_1.Service.loginInfo.value == null) return; //TODO: 将服务端 token 设置为失效
-
-      events_1.events.logout.fire(this, service_1.Service.loginInfo.value);
-      service_1.Service.setStorageLoginInfo(null);
-      service_1.Service.loginInfo.value = null;
+    value: function logout() {// if (Service.loginInfo.value == null)
+      //     return
+      //TODO: 将服务端 token 设置为失效
+      // events.logout.fire(this, Service.loginInfo.value)
+      // Service.setStorageLoginInfo(null)
+      // Service.loginInfo.value = null
     }
-    /**
-     * 登录
-     * @param username 用户名
-     * @param password 密码
-     */
-
   }, {
     key: "login",
-    value: function login(username, password) {
+    value: function login(arg0, password) {
       return __awaiter(this, void 0, void 0,
       /*#__PURE__*/
       regeneratorRuntime.mark(function _callee13() {
-        var url, r;
+        var args, username, url, r;
         return regeneratorRuntime.wrap(function _callee13$(_context13) {
           while (1) {
             switch (_context13.prev = _context13.next) {
               case 0:
+                if (!(typeof arg0 == "string")) {
+                  _context13.next = 9;
+                  break;
+                }
+
+                username = arg0;
+
                 if (username) {
-                  _context13.next = 2;
+                  _context13.next = 4;
                   break;
                 }
 
                 throw errors_1.errors.argumentNull('username');
 
-              case 2:
+              case 4:
                 if (password) {
-                  _context13.next = 4;
+                  _context13.next = 6;
                   break;
                 }
 
                 throw errors_1.errors.argumentNull('password');
 
-              case 4:
-                url = this.url('user/login');
-                _context13.next = 7;
-                return this.postByJson(url, {
+              case 6:
+                args = {
                   username: username,
                   password: password
-                });
+                };
+                _context13.next = 10;
+                break;
 
-              case 7:
+              case 9:
+                args = arg0;
+
+              case 10:
+                url = this.url('user/login');
+                _context13.next = 13;
+                return this.postByJson(url, args);
+
+              case 13:
                 r = _context13.sent;
 
                 if (!(r == null)) {
-                  _context13.next = 10;
+                  _context13.next = 16;
                   break;
                 }
 
                 throw errors_1.errors.unexpectedNullResult();
 
-              case 10:
-                service_1.Service.loginInfo.value = r;
-                service_1.Service.setStorageLoginInfo(r);
-                events_1.events.login.fire(this, r);
+              case 16:
                 return _context13.abrupt("return", r);
 
-              case 14:
+              case 17:
               case "end":
                 return _context13.stop();
             }
@@ -1595,11 +1568,9 @@ function (_service_1$Service) {
                 throw errors_1.errors.unexpectedNullResult();
 
               case 14:
-                service_1.Service.setStorageLoginInfo(r);
-                events_1.events.register.fire(this, r);
                 return _context14.abrupt("return", r);
 
-              case 17:
+              case 15:
               case "end":
                 return _context14.stop();
             }
@@ -1622,23 +1593,18 @@ function (_service_1$Service) {
           while (1) {
             switch (_context15.prev = _context15.next) {
               case 0:
-                if (service_1.Service.loginInfo.value) {
-                  _context15.next = 2;
-                  break;
-                }
-
-                return _context15.abrupt("return", null);
-
-              case 2:
+                // if (!Service.loginInfo.value) {
+                //     return null
+                // }
                 url = this.url('user/me');
-                _context15.next = 5;
+                _context15.next = 3;
                 return this.getByJson(url);
 
-              case 5:
+              case 3:
                 user = _context15.sent;
                 return _context15.abrupt("return", user);
 
-              case 7:
+              case 5:
               case "end":
                 return _context15.stop();
             }
@@ -1897,6 +1863,58 @@ function (_maishu_chitu_service) {
 
   _createClass(Service, [{
     key: "ajax",
+    // static readonly LoginInfoStorageName = 'app-login-info'
+    // static loginInfo = new ValueStore<LoginInfo | null>(Service.getStorageLoginInfo())
+    // static applicationId: string | (() => string)
+    // static getStorageLoginInfo(): LoginInfo | null {
+    //     let loginInfoSerialString = this.getCookie(Service.LoginInfoStorageName)
+    //     if (!loginInfoSerialString)
+    //         return null
+    //     try {
+    //         let loginInfo = JSON.parse(loginInfoSerialString)
+    //         return loginInfo
+    //     }
+    //     catch (e) {
+    //         console.error(e)
+    //         console.log(loginInfoSerialString)
+    //         return null
+    //     }
+    // }
+    // protected static setStorageLoginInfo(value: LoginInfo | null) {
+    //     if (value == null) {
+    //         this.removeCookie(Service.LoginInfoStorageName)
+    //         return
+    //     }
+    //     this.setCookie(Service.LoginInfoStorageName, JSON.stringify(value), 1000)
+    // }
+    // private static setCookie(name: string, value: string, days?: number) {
+    //     // nodejs 没有 document
+    //     if (typeof document == 'undefined')
+    //         return;
+    //     var expires = "";
+    //     if (days) {
+    //         var date = new Date();
+    //         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    //         expires = "; expires=" + date.toUTCString();
+    //     }
+    //     document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    // }
+    // private static getCookie(name: string) {
+    //     if (typeof document == 'undefined')
+    //         return null;
+    //     var nameEQ = name + "=";
+    //     var ca = document.cookie.split(';');
+    //     for (var i = 0; i < ca.length; i++) {
+    //         var c = ca[i];
+    //         while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+    //         if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    //     }
+    //     return null;
+    // }
+    // private static removeCookie(name: string) {
+    //     // document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    //     this.setCookie(name, '')
+    // }
     value: function ajax(url, options) {
       var _this = this;
 
@@ -1917,33 +1935,35 @@ function (_maishu_chitu_service) {
             switch (_context.prev = _context.next) {
               case 0:
                 options = options || {};
-                options.headers = options.headers || {};
-                if (Service.loginInfo.value) options.headers['token'] = Service.loginInfo.value.token;
-                if (Service.applicationId) options.headers['application-id'] = typeof Service.applicationId == 'function' ? Service.applicationId() : Service.applicationId;
-                _context.next = 6;
+                options.headers = options.headers || {}; // if (Service.loginInfo.value)
+                //     options.headers['token'] = Service.loginInfo.value.token
+                // if (Service.applicationId)
+                //     options.headers['application-id'] = typeof Service.applicationId == 'function' ? Service.applicationId() : Service.applicationId
+
+                _context.next = 4;
                 return _super.ajax.call(this, url, options);
 
-              case 6:
+              case 4:
                 data = _context.sent;
 
                 if (!(data == null)) {
-                  _context.next = 9;
+                  _context.next = 7;
                   break;
                 }
 
                 return _context.abrupt("return", null);
 
-              case 9:
+              case 7:
                 obj = data;
 
                 if (!(obj.code && obj.message)) {
-                  _context.next = 12;
+                  _context.next = 10;
                   break;
                 }
 
                 throw new Error(obj.message);
 
-              case 12:
+              case 10:
                 if (obj != null && obj['DataItems'] != null && obj['TotalRowCount'] != null) {
                   d = {};
                   keys = Object.keys(data);
@@ -1960,7 +1980,7 @@ function (_maishu_chitu_service) {
                 this.travelJSON(data);
                 return _context.abrupt("return", data);
 
-              case 15:
+              case 13:
               case "end":
                 return _context.stop();
             }
@@ -2020,78 +2040,11 @@ function (_maishu_chitu_service) {
       var datePattern1 = /\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/;
       return text.match(datePattern) != null || text.match(datePattern1) != null;
     }
-  }], [{
-    key: "getStorageLoginInfo",
-    value: function getStorageLoginInfo() {
-      var loginInfoSerialString = this.getCookie(Service.LoginInfoStorageName);
-      if (!loginInfoSerialString) return null;
-
-      try {
-        var loginInfo = JSON.parse(loginInfoSerialString);
-        return loginInfo;
-      } catch (e) {
-        console.error(e);
-        console.log(loginInfoSerialString);
-        return null;
-      }
-    }
-  }, {
-    key: "setStorageLoginInfo",
-    value: function setStorageLoginInfo(value) {
-      if (value == null) {
-        this.removeCookie(Service.LoginInfoStorageName);
-        return;
-      }
-
-      this.setCookie(Service.LoginInfoStorageName, JSON.stringify(value), 1000);
-    }
-  }, {
-    key: "setCookie",
-    value: function setCookie(name, value, days) {
-      // nodejs 没有 document
-      if (typeof document == 'undefined') return;
-      var expires = "";
-
-      if (days) {
-        var date = new Date();
-        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-        expires = "; expires=" + date.toUTCString();
-      }
-
-      document.cookie = name + "=" + (value || "") + expires + "; path=/";
-    }
-  }, {
-    key: "getCookie",
-    value: function getCookie(name) {
-      if (typeof document == 'undefined') return null;
-      var nameEQ = name + "=";
-      var ca = document.cookie.split(';');
-
-      for (var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-
-        while (c.charAt(0) == ' ') {
-          c = c.substring(1, c.length);
-        }
-
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-      }
-
-      return null;
-    }
-  }, {
-    key: "removeCookie",
-    value: function removeCookie(name) {
-      // document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-      this.setCookie(name, '');
-    }
   }]);
 
   return Service;
 }(maishu_chitu_service_1.Service);
 
-Service.LoginInfoStorageName = 'app-login-info';
-Service.loginInfo = new maishu_chitu_service_1.ValueStore(Service.getStorageLoginInfo());
 exports.Service = Service;
 //# sourceMappingURL=service.js.map
 
@@ -2243,18 +2196,15 @@ var permission_service_1 = __webpack_require__(/*! ./services/permission-service
 
 var toolkit_service_1 = __webpack_require__(/*! ./services/toolkit-service */ "./out-es5/services/toolkit-service.js");
 
-var service_1 = __webpack_require__(/*! ./services/service */ "./out-es5/services/service.js");
-
 exports.settings = {
   noImageText: '暂无图片',
 
-  get applicationId() {
-    return service_1.Service.applicationId;
-  },
-
-  set applicationId(value) {
-    service_1.Service.applicationId = value;
-  },
+  // get applicationId() {
+  //     return Service.applicationId
+  // },
+  // set applicationId(value) {
+  //     Service.applicationId = value
+  // },
 
   /** 获取图片服务的 URL 地址 */
   get imageServiceUrl() {

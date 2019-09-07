@@ -1,6 +1,6 @@
 /*!
  * 
- *  maishu-services-sdk v1.15.0
+ *  maishu-services-sdk v1.19.0
  *  https://github.com/ansiboy/services-sdk
  *  
  *  Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -148,29 +148,6 @@ exports.errors = {
 
 /***/ }),
 
-/***/ "./out/events.js":
-/*!***********************!*\
-  !*** ./out/events.js ***!
-  \***********************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const maishu_chitu_service_1 = __webpack_require__(/*! maishu-chitu-service */ "maishu-chitu-service");
-exports.events = {
-    /** 成功调用 login 方法后引发 */
-    login: maishu_chitu_service_1.Callbacks(),
-    /** 成功调用 logout 方法后引发 */
-    logout: maishu_chitu_service_1.Callbacks(),
-    /** 成功调用 register 方法后引发 */
-    register: maishu_chitu_service_1.Callbacks(),
-};
-
-
-/***/ }),
-
 /***/ "./out/index.js":
 /*!**********************!*\
   !*** ./out/index.js ***!
@@ -195,8 +172,6 @@ exports.PermissionService = permission_service_1.PermissionService;
 // export { MessageService } from './services/message-service'
 var settings_1 = __webpack_require__(/*! ./settings */ "./out/settings.js");
 exports.settings = settings_1.settings;
-var events_1 = __webpack_require__(/*! ./events */ "./out/events.js");
-exports.events = events_1.events;
 
 
 /***/ }),
@@ -235,6 +210,10 @@ class ImageService extends service_1.Service {
      * @param height 图片的高度，如果不指定则为实际图片的高度
      */
     imageSource(id, width, height) {
+        if (id != null && id.startsWith("http://"))
+            return id;
+        if (id != null && id.indexOf("/") >= 0)
+            return id;
         if (!id) {
             width = width == null ? 200 : width;
             height = height == null ? 100 : height;
@@ -403,7 +382,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const service_1 = __webpack_require__(/*! ./service */ "./out/services/service.js");
 const errors_1 = __webpack_require__(/*! ../errors */ "./out/errors.js");
-const events_1 = __webpack_require__(/*! ../events */ "./out/events.js");
+// import { events } from "../events";
 class PermissionService extends service_1.Service {
     constructor() {
         super();
@@ -759,31 +738,35 @@ class PermissionService extends service_1.Service {
      * 退出登录
      */
     logout() {
-        if (service_1.Service.loginInfo.value == null)
-            return;
+        // if (Service.loginInfo.value == null)
+        //     return
         //TODO: 将服务端 token 设置为失效
-        events_1.events.logout.fire(this, service_1.Service.loginInfo.value);
-        service_1.Service.setStorageLoginInfo(null);
-        service_1.Service.loginInfo.value = null;
+        // events.logout.fire(this, Service.loginInfo.value)
+        // Service.setStorageLoginInfo(null)
+        // Service.loginInfo.value = null
     }
-    /**
-     * 登录
-     * @param username 用户名
-     * @param password 密码
-     */
-    login(username, password) {
+    login(arg0, password) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!username)
-                throw errors_1.errors.argumentNull('username');
-            if (!password)
-                throw errors_1.errors.argumentNull('password');
+            let args;
+            let username;
+            if (typeof arg0 == "string") {
+                username = arg0;
+                if (!username)
+                    throw errors_1.errors.argumentNull('username');
+                if (!password)
+                    throw errors_1.errors.argumentNull('password');
+                args = { username, password };
+            }
+            else {
+                args = arg0;
+            }
             let url = this.url('user/login');
-            let r = yield this.postByJson(url, { username, password });
+            let r = yield this.postByJson(url, args);
             if (r == null)
                 throw errors_1.errors.unexpectedNullResult();
-            service_1.Service.loginInfo.value = r;
-            service_1.Service.setStorageLoginInfo(r);
-            events_1.events.login.fire(this, r);
+            // Service.loginInfo.value = r
+            // Service.setStorageLoginInfo(r)
+            // events.login.fire(this, r)
             return r;
         });
     }
@@ -808,8 +791,8 @@ class PermissionService extends service_1.Service {
             let r = yield this.postByJson(url, { mobile, password, smsId, verifyCode, data });
             if (r == null)
                 throw errors_1.errors.unexpectedNullResult();
-            service_1.Service.setStorageLoginInfo(r);
-            events_1.events.register.fire(this, r);
+            // Service.setStorageLoginInfo(r)
+            // events.register.fire(this, r)
             return r;
         });
     }
@@ -818,9 +801,9 @@ class PermissionService extends service_1.Service {
      */
     me() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!service_1.Service.loginInfo.value) {
-                return null;
-            }
+            // if (!Service.loginInfo.value) {
+            //     return null
+            // }
             let url = this.url('user/me');
             let user = yield this.getByJson(url);
             return user;
@@ -913,57 +896,58 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const maishu_chitu_service_1 = __webpack_require__(/*! maishu-chitu-service */ "maishu-chitu-service");
 class Service extends maishu_chitu_service_1.Service {
-    static getStorageLoginInfo() {
-        let loginInfoSerialString = this.getCookie(Service.LoginInfoStorageName);
-        if (!loginInfoSerialString)
-            return null;
-        try {
-            let loginInfo = JSON.parse(loginInfoSerialString);
-            return loginInfo;
-        }
-        catch (e) {
-            console.error(e);
-            console.log(loginInfoSerialString);
-            return null;
-        }
-    }
-    static setStorageLoginInfo(value) {
-        if (value == null) {
-            this.removeCookie(Service.LoginInfoStorageName);
-            return;
-        }
-        this.setCookie(Service.LoginInfoStorageName, JSON.stringify(value), 1000);
-    }
-    static setCookie(name, value, days) {
-        // nodejs 没有 document
-        if (typeof document == 'undefined')
-            return;
-        var expires = "";
-        if (days) {
-            var date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            expires = "; expires=" + date.toUTCString();
-        }
-        document.cookie = name + "=" + (value || "") + expires + "; path=/";
-    }
-    static getCookie(name) {
-        if (typeof document == 'undefined')
-            return null;
-        var nameEQ = name + "=";
-        var ca = document.cookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ')
-                c = c.substring(1, c.length);
-            if (c.indexOf(nameEQ) == 0)
-                return c.substring(nameEQ.length, c.length);
-        }
-        return null;
-    }
-    static removeCookie(name) {
-        // document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        this.setCookie(name, '');
-    }
+    // static readonly LoginInfoStorageName = 'app-login-info'
+    // static loginInfo = new ValueStore<LoginInfo | null>(Service.getStorageLoginInfo())
+    // static applicationId: string | (() => string)
+    // static getStorageLoginInfo(): LoginInfo | null {
+    //     let loginInfoSerialString = this.getCookie(Service.LoginInfoStorageName)
+    //     if (!loginInfoSerialString)
+    //         return null
+    //     try {
+    //         let loginInfo = JSON.parse(loginInfoSerialString)
+    //         return loginInfo
+    //     }
+    //     catch (e) {
+    //         console.error(e)
+    //         console.log(loginInfoSerialString)
+    //         return null
+    //     }
+    // }
+    // protected static setStorageLoginInfo(value: LoginInfo | null) {
+    //     if (value == null) {
+    //         this.removeCookie(Service.LoginInfoStorageName)
+    //         return
+    //     }
+    //     this.setCookie(Service.LoginInfoStorageName, JSON.stringify(value), 1000)
+    // }
+    // private static setCookie(name: string, value: string, days?: number) {
+    //     // nodejs 没有 document
+    //     if (typeof document == 'undefined')
+    //         return;
+    //     var expires = "";
+    //     if (days) {
+    //         var date = new Date();
+    //         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    //         expires = "; expires=" + date.toUTCString();
+    //     }
+    //     document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    // }
+    // private static getCookie(name: string) {
+    //     if (typeof document == 'undefined')
+    //         return null;
+    //     var nameEQ = name + "=";
+    //     var ca = document.cookie.split(';');
+    //     for (var i = 0; i < ca.length; i++) {
+    //         var c = ca[i];
+    //         while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+    //         if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    //     }
+    //     return null;
+    // }
+    // private static removeCookie(name: string) {
+    //     // document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    //     this.setCookie(name, '')
+    // }
     ajax(url, options) {
         const _super = Object.create(null, {
             ajax: { get: () => super.ajax }
@@ -971,10 +955,10 @@ class Service extends maishu_chitu_service_1.Service {
         return __awaiter(this, void 0, void 0, function* () {
             options = options || {};
             options.headers = options.headers || {};
-            if (Service.loginInfo.value)
-                options.headers['token'] = Service.loginInfo.value.token;
-            if (Service.applicationId)
-                options.headers['application-id'] = typeof Service.applicationId == 'function' ? Service.applicationId() : Service.applicationId;
+            // if (Service.loginInfo.value)
+            //     options.headers['token'] = Service.loginInfo.value.token
+            // if (Service.applicationId)
+            //     options.headers['application-id'] = typeof Service.applicationId == 'function' ? Service.applicationId() : Service.applicationId
             let data = yield _super.ajax.call(this, url, options);
             if (data == null) {
                 return null;
@@ -1039,8 +1023,6 @@ class Service extends maishu_chitu_service_1.Service {
         return text.match(datePattern) != null || text.match(datePattern1) != null;
     }
 }
-Service.LoginInfoStorageName = 'app-login-info';
-Service.loginInfo = new maishu_chitu_service_1.ValueStore(Service.getStorageLoginInfo());
 exports.Service = Service;
 
 
@@ -1112,15 +1094,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const image_service_1 = __webpack_require__(/*! ./services/image-service */ "./out/services/image-service.js");
 const permission_service_1 = __webpack_require__(/*! ./services/permission-service */ "./out/services/permission-service.js");
 const toolkit_service_1 = __webpack_require__(/*! ./services/toolkit-service */ "./out/services/toolkit-service.js");
-const service_1 = __webpack_require__(/*! ./services/service */ "./out/services/service.js");
 exports.settings = {
     noImageText: '暂无图片',
-    get applicationId() {
-        return service_1.Service.applicationId;
-    },
-    set applicationId(value) {
-        service_1.Service.applicationId = value;
-    },
+    // get applicationId() {
+    //     return Service.applicationId
+    // },
+    // set applicationId(value) {
+    //     Service.applicationId = value
+    // },
     /** 获取图片服务的 URL 地址 */
     get imageServiceUrl() {
         return image_service_1.ImageService.baseUrl;

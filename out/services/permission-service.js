@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const service_1 = require("./service");
 const errors_1 = require("../errors");
-const events_1 = require("../events");
+// import { events } from "../events";
 class PermissionService extends service_1.Service {
     constructor() {
         super();
@@ -366,31 +366,35 @@ class PermissionService extends service_1.Service {
      * 退出登录
      */
     logout() {
-        if (service_1.Service.loginInfo.value == null)
-            return;
+        // if (Service.loginInfo.value == null)
+        //     return
         //TODO: 将服务端 token 设置为失效
-        events_1.events.logout.fire(this, service_1.Service.loginInfo.value);
-        service_1.Service.setStorageLoginInfo(null);
-        service_1.Service.loginInfo.value = null;
+        // events.logout.fire(this, Service.loginInfo.value)
+        // Service.setStorageLoginInfo(null)
+        // Service.loginInfo.value = null
     }
-    /**
-     * 登录
-     * @param username 用户名
-     * @param password 密码
-     */
-    login(username, password) {
+    login(arg0, password) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!username)
-                throw errors_1.errors.argumentNull('username');
-            if (!password)
-                throw errors_1.errors.argumentNull('password');
+            let args;
+            let username;
+            if (typeof arg0 == "string") {
+                username = arg0;
+                if (!username)
+                    throw errors_1.errors.argumentNull('username');
+                if (!password)
+                    throw errors_1.errors.argumentNull('password');
+                args = { username, password };
+            }
+            else {
+                args = arg0;
+            }
             let url = this.url('user/login');
-            let r = yield this.postByJson(url, { username, password });
+            let r = yield this.postByJson(url, args);
             if (r == null)
                 throw errors_1.errors.unexpectedNullResult();
-            service_1.Service.loginInfo.value = r;
-            service_1.Service.setStorageLoginInfo(r);
-            events_1.events.login.fire(this, r);
+            // Service.loginInfo.value = r
+            // Service.setStorageLoginInfo(r)
+            // events.login.fire(this, r)
             return r;
         });
     }
@@ -415,8 +419,8 @@ class PermissionService extends service_1.Service {
             let r = yield this.postByJson(url, { mobile, password, smsId, verifyCode, data });
             if (r == null)
                 throw errors_1.errors.unexpectedNullResult();
-            service_1.Service.setStorageLoginInfo(r);
-            events_1.events.register.fire(this, r);
+            // Service.setStorageLoginInfo(r)
+            // events.register.fire(this, r)
             return r;
         });
     }
@@ -425,9 +429,9 @@ class PermissionService extends service_1.Service {
      */
     me() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!service_1.Service.loginInfo.value) {
-                return null;
-            }
+            // if (!Service.loginInfo.value) {
+            //     return null
+            // }
             let url = this.url('user/me');
             let user = yield this.getByJson(url);
             return user;

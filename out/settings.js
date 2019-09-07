@@ -3,15 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const image_service_1 = require("./services/image-service");
 const permission_service_1 = require("./services/permission-service");
 const toolkit_service_1 = require("./services/toolkit-service");
-const service_1 = require("./services/service");
 exports.settings = {
     noImageText: '暂无图片',
-    get applicationId() {
-        return service_1.Service.applicationId;
-    },
-    set applicationId(value) {
-        service_1.Service.applicationId = value;
-    },
+    // get applicationId() {
+    //     return Service.applicationId
+    // },
+    // set applicationId(value) {
+    //     Service.applicationId = value
+    // },
     /** 获取图片服务的 URL 地址 */
     get imageServiceUrl() {
         return image_service_1.ImageService.baseUrl;

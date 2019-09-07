@@ -24,6 +24,10 @@ class ImageService extends service_1.Service {
      * @param height 图片的高度，如果不指定则为实际图片的高度
      */
     imageSource(id, width, height) {
+        if (id != null && id.startsWith("http://"))
+            return id;
+        if (id != null && id.indexOf("/") >= 0)
+            return id;
         if (!id) {
             width = width == null ? 200 : width;
             height = height == null ? 100 : height;
