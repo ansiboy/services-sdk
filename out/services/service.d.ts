@@ -7,7 +7,6 @@ export declare class Service extends ChiTuSerivce {
     static readonly LoginInfoStorageName = "app-login-info";
     static loginInfo: ValueStore<LoginInfo | null>;
     static applicationId: string | (() => string);
-    constructor();
     static getStorageLoginInfo(): LoginInfo | null;
     protected static setStorageLoginInfo(value: LoginInfo | null): void;
     private static setCookie;

@@ -1,6 +1,10 @@
 /*!
  * 
+<<<<<<< HEAD
  *  maishu-services-sdk v1.13.4
+=======
+ *  maishu-services-sdk v1.15.0
+>>>>>>> b9acbbe8538f6cebc1505b677567d4a13a7362a2
  *  https://github.com/ansiboy/services-sdk
  *  
  *  Copyright (c) 2016-2018, shu mai <ansiboy@163.com>
@@ -308,6 +312,13 @@ class ImageService extends service_1.Service {
                     resolve(canvas.toDataURL());
                 };
             });
+        });
+    }
+    list(args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let url = `${ImageService.baseUrl}/list`;
+            let result = yield this.postByJson(url, args);
+            return result;
         });
     }
     /**
@@ -907,9 +918,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const maishu_chitu_service_1 = __webpack_require__(/*! maishu-chitu-service */ "maishu-chitu-service");
 class Service extends maishu_chitu_service_1.Service {
-    constructor() {
-        super();
-    }
     static getStorageLoginInfo() {
         let loginInfoSerialString = this.getCookie(Service.LoginInfoStorageName);
         if (!loginInfoSerialString)

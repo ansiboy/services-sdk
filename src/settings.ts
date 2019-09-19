@@ -18,12 +18,12 @@ interface Settings {
 export let settings: Settings = {
     noImageText: '暂无图片',
 
-    get applicationId() {
-        return Service.applicationId
-    },
-    set applicationId(value) {
-        Service.applicationId = value
-    },
+    // get applicationId() {
+    //     return Service.applicationId
+    // },
+    // set applicationId(value) {
+    //     Service.applicationId = value
+    // },
 
     /** 获取图片服务的 URL 地址 */
     get imageServiceUrl() {

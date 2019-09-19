@@ -19,7 +19,8 @@ export interface Role {
     data: {
         resource_types: ResourceType[]
     },
-    category?: string
+    category?: string,
+    remark?: string,
 }
 
 export interface User {
@@ -38,12 +39,6 @@ export interface Token {
     content: string,
     contentType: string,
     createDateTime: Date,
-}
-
-export interface Path {
-    id: string,
-    create_date_time: Date,
-    value: string,
 }
 
 //===================================================

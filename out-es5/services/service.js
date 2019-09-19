@@ -64,7 +64,7 @@ function (_maishu_chitu_service) {
   function Service() {
     _classCallCheck(this, Service);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Service).call(this));
+    return _possibleConstructorReturn(this, _getPrototypeOf(Service).apply(this, arguments));
   }
 
   _createClass(Service, [{

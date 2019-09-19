@@ -6,78 +6,74 @@ export interface LoginInfo {
 }
 
 export class Service extends ChiTuSerivce {
-    static readonly LoginInfoStorageName = 'app-login-info'
-    static loginInfo = new ValueStore<LoginInfo | null>(Service.getStorageLoginInfo())
-    static applicationId: string | (() => string)
+    // static readonly LoginInfoStorageName = 'app-login-info'
+    // static loginInfo = new ValueStore<LoginInfo | null>(Service.getStorageLoginInfo())
+    // static applicationId: string | (() => string)
 
-    constructor() {
-        super();
-    }
+    // static getStorageLoginInfo(): LoginInfo | null {
+    //     let loginInfoSerialString = this.getCookie(Service.LoginInfoStorageName)
+    //     if (!loginInfoSerialString)
+    //         return null
 
-    static getStorageLoginInfo(): LoginInfo | null {
-        let loginInfoSerialString = this.getCookie(Service.LoginInfoStorageName)
-        if (!loginInfoSerialString)
-            return null
+    //     try {
+    //         let loginInfo = JSON.parse(loginInfoSerialString)
+    //         return loginInfo
+    //     }
+    //     catch (e) {
+    //         console.error(e)
+    //         console.log(loginInfoSerialString)
+    //         return null
+    //     }
+    // }
 
-        try {
-            let loginInfo = JSON.parse(loginInfoSerialString)
-            return loginInfo
-        }
-        catch (e) {
-            console.error(e)
-            console.log(loginInfoSerialString)
-            return null
-        }
-    }
+    // protected static setStorageLoginInfo(value: LoginInfo | null) {
+    //     if (value == null) {
+    //         this.removeCookie(Service.LoginInfoStorageName)
+    //         return
+    //     }
 
-    protected static setStorageLoginInfo(value: LoginInfo | null) {
-        if (value == null) {
-            this.removeCookie(Service.LoginInfoStorageName)
-            return
-        }
+    //     this.setCookie(Service.LoginInfoStorageName, JSON.stringify(value), 1000)
+    // }
 
-        this.setCookie(Service.LoginInfoStorageName, JSON.stringify(value), 1000)
-    }
+    // private static setCookie(name: string, value: string, days?: number) {
+    //     // nodejs 没有 document
+    //     if (typeof document == 'undefined')
+    //         return;
 
-    private static setCookie(name: string, value: string, days?: number) {
-        // nodejs 没有 document
-        if (typeof document == 'undefined')
-            return;
+    //     var expires = "";
+    //     if (days) {
+    //         var date = new Date();
+    //         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    //         expires = "; expires=" + date.toUTCString();
+    //     }
+    //     document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    // }
+    // private static getCookie(name: string) {
+    //     if (typeof document == 'undefined')
+    //         return null;
 
-        var expires = "";
-        if (days) {
-            var date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            expires = "; expires=" + date.toUTCString();
-        }
-        document.cookie = name + "=" + (value || "") + expires + "; path=/";
-    }
-    private static getCookie(name: string) {
-        if (typeof document == 'undefined')
-            return null;
-
-        var nameEQ = name + "=";
-        var ca = document.cookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-        }
-        return null;
-    }
-    private static removeCookie(name: string) {
-        // document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        this.setCookie(name, '')
-    }
+    //     var nameEQ = name + "=";
+    //     var ca = document.cookie.split(';');
+    //     for (var i = 0; i < ca.length; i++) {
+    //         var c = ca[i];
+    //         while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+    //         if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    //     }
+    //     return null;
+    // }
+    // private static removeCookie(name: string) {
+    //     // document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    //     this.setCookie(name, '')
+    // }
 
     async ajax<T>(url: string, options?: AjaxOptions): Promise<T | null> {
         options = options || {}
         options.headers = options.headers || {}
-        if (Service.loginInfo.value)
-            options.headers['token'] = Service.loginInfo.value.token
+        // if (Service.loginInfo.value)
+        //     options.headers['token'] = Service.loginInfo.value.token
 
-        if (Service.applicationId)
-            options.headers['application-id'] = typeof Service.applicationId == 'function' ? Service.applicationId() : Service.applicationId
+        // if (Service.applicationId)
+        //     options.headers['application-id'] = typeof Service.applicationId == 'function' ? Service.applicationId() : Service.applicationId
 
         let data = await super.ajax<T>(url, options)
         if (data == null) {
@@ -149,75 +145,4 @@ export class Service extends ChiTuSerivce {
         const datePattern1 = /\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/;
         return text.match(datePattern) != null || text.match(datePattern1) != null
     }
-
-    // public getByJson<T>(url: string, data?: any) {
-    //     if (data && Object.getOwnPropertyNames(data).length > 0) {
-    //         url = `${url}?${encodeURIComponent(JSON.stringify(data))}`;
-    //     }
-
-    //     let headers = { "content-type": 'application/json' };
-    //     return this.ajax<T>(url, { headers, method: 'get' })
-    // }
-
-    // protected putByJson<T>(url: string, data?: any) {
-    //     let headers = { "content-type": 'application/json' };
-    //     return this.ajax<T>(url, { headers, data, method: 'put' });
-    // }
-
-    // protected postByJson<T>(url: string, data?: any) {
-    //     let headers = { "content-type": 'application/json' };
-    //     return this.ajax<T>(url, { headers, data, method: 'post' });
-    // }
-
-    // protected deleteByJson<T>(url: string, data: any) {
-    //     let headers = { "content-type": 'application/json' };
-    //     return this.ajax<T>(url, { headers, data, method: 'delete' });
-    // }
-
-
-    // protected get<T>(url: string, data?: any) {
-    //     data = data || {};
-    //     let params = "";
-    //     for (let key in data) {
-    //         if (data[key] == null)
-    //             continue
-
-    //         let value = `${data[key]}`
-    //         if (!this.isEncoded(value)) {
-    //             value = encodeURIComponent(value)
-    //         }
-    //         params = params ? `${params}&${key}=${value}` : `${key}=${value}`;
-    //     }
-
-    //     if (params) {
-    //         url = `${url}?${params}`;
-    //     }
-
-    //     return this.ajax<T>(url, { method: 'get' })
-    // }
-
-    // private isEncoded(uri: string) {
-    //     try {
-    //         uri = uri || '';
-    //         return uri !== decodeURIComponent(uri);
-    //     }
-    //     catch (e) {
-    //         return false
-    //     }
-    // }
-
-    // protected put<T>(url: string, data?: any) {
-    //     let headers = { "content-type": 'application/x-www-form-urlencoded' };
-    //     return this.ajax<T>(url, { headers, data, method: 'put' });
-    // }
-
-    // protected post<T>(url: string, data?: any) {
-    //     let headers = { "content-type": 'application/x-www-form-urlencoded' };
-    //     return this.ajax<T>(url, { headers, data, method: 'post', });
-    // }
-
-    // protected delete<T>(url: string, data: any) {
-    //     let headers = { "content-type": 'application/x-www-form-urlencoded' };
-    //     return this.ajax<T>(url, { headers, data, method: 'delete' });
-    // }
 }
