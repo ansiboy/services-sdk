@@ -35,7 +35,7 @@ export declare class ImageService extends Service {
      *
      * @param id 删除图片
      */
-    remove(id: string): Promise<{}>;
+    remove(id: string): Promise<unknown>;
 }
 export declare type CanvasDraw = (ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number) => void;
 export declare type DrawOption = {

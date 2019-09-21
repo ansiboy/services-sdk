@@ -6,66 +6,6 @@ export interface LoginInfo {
 }
 
 export class Service extends ChiTuSerivce {
-    // static readonly LoginInfoStorageName = 'app-login-info'
-    // static loginInfo = new ValueStore<LoginInfo | null>(Service.getStorageLoginInfo())
-    // static applicationId: string | (() => string)
-
-    // static getStorageLoginInfo(): LoginInfo | null {
-    //     let loginInfoSerialString = this.getCookie(Service.LoginInfoStorageName)
-    //     if (!loginInfoSerialString)
-    //         return null
-
-    //     try {
-    //         let loginInfo = JSON.parse(loginInfoSerialString)
-    //         return loginInfo
-    //     }
-    //     catch (e) {
-    //         console.error(e)
-    //         console.log(loginInfoSerialString)
-    //         return null
-    //     }
-    // }
-
-    // protected static setStorageLoginInfo(value: LoginInfo | null) {
-    //     if (value == null) {
-    //         this.removeCookie(Service.LoginInfoStorageName)
-    //         return
-    //     }
-
-    //     this.setCookie(Service.LoginInfoStorageName, JSON.stringify(value), 1000)
-    // }
-
-    // private static setCookie(name: string, value: string, days?: number) {
-    //     // nodejs 没有 document
-    //     if (typeof document == 'undefined')
-    //         return;
-
-    //     var expires = "";
-    //     if (days) {
-    //         var date = new Date();
-    //         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    //         expires = "; expires=" + date.toUTCString();
-    //     }
-    //     document.cookie = name + "=" + (value || "") + expires + "; path=/";
-    // }
-    // private static getCookie(name: string) {
-    //     if (typeof document == 'undefined')
-    //         return null;
-
-    //     var nameEQ = name + "=";
-    //     var ca = document.cookie.split(';');
-    //     for (var i = 0; i < ca.length; i++) {
-    //         var c = ca[i];
-    //         while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-    //         if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-    //     }
-    //     return null;
-    // }
-    // private static removeCookie(name: string) {
-    //     // document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    //     this.setCookie(name, '')
-    // }
-
     async ajax<T>(url: string, options?: AjaxOptions): Promise<T | null> {
         options = options || {}
         options.headers = options.headers || {}

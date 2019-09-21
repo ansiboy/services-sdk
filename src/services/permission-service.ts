@@ -7,13 +7,16 @@ export class PermissionService extends Service {
 
     static baseUrl: string
 
-    constructor() {
-        super()
-    }
+    role = new RoleModule(this);
+    user = new UserModule(this);
+    sms = new SMSModule(this);
 
     protected url(path: string) {
         if (!PermissionService.baseUrl)
             throw errors.serviceUrlCanntNull('permissionService')
+
+        if (PermissionService.baseUrl.endsWith("/"))
+            return `${PermissionService.baseUrl}${path}`;
 
         return `${PermissionService.baseUrl}/${path}`
     }
@@ -27,8 +30,7 @@ export class PermissionService extends Service {
         }
     }
 
-    role = new RoleModule(this);
-    user = new UserModule(this);
+
 
 
     resource = {
@@ -68,48 +70,6 @@ export class PermissionService extends Service {
         }
     }
 
-    //=============================================================
-    // 角色相关
-
-    /**
-     * 
-     * @param roleId 指定的角色编号
-     * @param resourceIds 角色所允许访问的资源编号
-     */
-    setRoleResource(roleId: string, resourceIds: string[]) {
-        if (!roleId) throw errors.argumentNull('roleId')
-        if (!resourceIds) throw errors.argumentNull('resourceIds')
-
-        let url = this.url('role/setResources')
-        return this.postByJson(url, { roleId, resourceIds })
-    }
-
-    /**
-     * 获取角色所允许访问的资源 id
-     * @param roleId 指定的角色编号
-     */
-    async getRoleResourceIds(roleId: string): Promise<string[]> {
-        if (!roleId) throw errors.argumentNull('roleId')
-        let url = this.url('role/resourceIds')
-        let r = await this.getByJson<string[]>(url, { roleId })
-        return r || []
-    }
-
-
-
-
-
-    removeRole(id: string) {
-        if (!id) throw errors.argumentNull("id");
-
-        let url = this.url("role/remove");
-        return this.postByJson(url, { id });
-    }
-
-    //================================================================
-    // 用户相关
-
-
 
     /** 
      * 移除当前应用的用户
@@ -136,40 +96,6 @@ export class PermissionService extends Service {
         return result
     }
 
-    /** 
-     * 发送注册操作验证码
-     * @param mobile 接收验证码的手机号
-     */
-    sendRegisterVerifyCode(mobile: string) {
-        let url = this.url('sms/sendVerifyCode')
-        return this.postByJson<{ smsId: string }>(url, { mobile, type: 'register' })
-    }
-
-
-    /**
-     * 校验验证码
-     * @param smsId 验证码信息的 ID 号
-     * @param verifyCode 验证码
-     */
-    async checkVerifyCode(smsId: string, verifyCode: string) {
-        if (!smsId) throw errors.argumentNull('smsId')
-        if (!verifyCode) throw errors.argumentNull('verifycode')
-
-        let url = this.url('sms/checkVerifyCode')
-        let r = await this.postByJson<boolean>(url, { smsId, verifyCode })
-        return r
-    }
-
-    /**
-     * 发送重置密码操作验证码
-     * @param mobile 接收验证码的手机号
-     */
-    sendResetVerifyCode(mobile: string) {
-        if (!mobile) throw errors.argumentNull('mobile')
-
-        let url = this.url('sms/sendVerifyCode')
-        return this.postByJson<{ smsId: string }>(url, { mobile, type: 'resetPassword' })
-    }
 
 
     /**
@@ -192,8 +118,8 @@ class ServiceModule {
 
     constructor(service: PermissionService) {
         this.service = service;
-        this.getByJson = this.service.getByJson;
-        this.postByJson = this.service.postByJson;
+        this.getByJson = this.service.getByJson.bind(this.service);
+        this.postByJson = this.service.postByJson.bind(this.service);
         this.get = this.service.get;
     }
 
@@ -301,20 +227,6 @@ class UserModule extends ServiceModule {
     }
 
     /**
-     * 退出登录
-     */
-    logout() {
-        // if (Service.loginInfo.value == null)
-        //     return
-
-        //TODO: 将服务端 token 设置为失效
-
-        // events.logout.fire(this, Service.loginInfo.value)
-        // Service.setStorageLoginInfo(null)
-        // Service.loginInfo.value = null
-    }
-
-    /**
      * 登录
      * @param username 用户名
      * @param password 密码
@@ -343,9 +255,6 @@ class UserModule extends ServiceModule {
         if (r == null)
             throw errors.unexpectedNullResult()
 
-        // Service.loginInfo.value = r
-        // Service.setStorageLoginInfo(r)
-        // events.login.fire(this, r)
         return r
     }
 
@@ -366,9 +275,6 @@ class UserModule extends ServiceModule {
         let r = await this.postByJson<LoginInfo>(url, { mobile, password, smsId, verifyCode, data })
         if (r == null)
             throw errors.unexpectedNullResult()
-
-        // Service.setStorageLoginInfo(r)
-        // events.register.fire(this, r)
 
         return r;
     }
@@ -458,6 +364,68 @@ class RoleModule extends ServiceModule {
     update(item: Partial<Role>) {
         let url = this.url("role/update");
         return this.postByJson(url, { item });
+    }
+
+    /**
+     * 获取角色所允许访问的资源 id
+     * @param roleId 指定的角色编号
+     */
+    async resourceIds(roleId: string): Promise<string[]> {
+        if (!roleId) throw errors.argumentNull('roleId')
+        let url = this.url('role/resourceIds')
+        let r = await this.getByJson<string[]>(url, { roleId })
+        return r || []
+    }
+
+    /**
+     * 
+     * @param roleId 指定的角色编号
+     * @param resourceIds 角色所允许访问的资源编号
+     */
+    setResource(roleId: string, resourceIds: string[]) {
+        if (!roleId) throw errors.argumentNull('roleId')
+        if (!resourceIds) throw errors.argumentNull('resourceIds')
+
+        let url = this.url('role/setResources')
+        return this.postByJson(url, { roleId, resourceIds })
+    }
+
+}
+
+class SMSModule extends ServiceModule {
+    /** 
+     * 发送注册操作验证码
+     * @param mobile 接收验证码的手机号
+     */
+    sendRegisterVerifyCode(mobile: string) {
+        let url = this.url('sms/sendVerifyCode')
+        return this.postByJson<{ smsId: string }>(url, { mobile, type: 'register' })
+    }
+
+
+    /**
+     * 校验验证码
+     * @param smsId 验证码信息的 ID 号
+     * @param verifyCode 验证码
+     */
+    async checkVerifyCode(smsId: string, verifyCode: string) {
+        if (!smsId) throw errors.argumentNull('smsId')
+        if (!verifyCode) throw errors.argumentNull('verifycode')
+
+        let url = this.url('sms/checkVerifyCode')
+        let r = await this.postByJson<boolean>(url, { smsId, verifyCode })
+        return r
+    }
+
+    /**
+     * 发送重置密码操作验证码
+     * @param mobile 接收验证码的手机号
+     */
+    sendResetVerifyCode(mobile: string) {
+        if (!mobile) throw errors.argumentNull('mobile')
+
+        let url = this.url('sms/sendVerifyCode')
+        return this.postByJson<{ smsId: string }>(url, { mobile, type: 'resetPassword' })
     }
 
 }
