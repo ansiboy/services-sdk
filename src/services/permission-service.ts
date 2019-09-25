@@ -7,13 +7,16 @@ export class PermissionService extends Service {
 
     static baseUrl: string
 
-    constructor() {
-        super()
-    }
+    role = new RoleModule(this);
+    user = new UserModule(this);
+    sms = new SMSModule(this);
 
     protected url(path: string) {
         if (!PermissionService.baseUrl)
             throw errors.serviceUrlCanntNull('permissionService')
+
+        if (PermissionService.baseUrl.endsWith("/"))
+            return `${PermissionService.baseUrl}${path}`;
 
         return `${PermissionService.baseUrl}/${path}`
     }
@@ -27,40 +30,8 @@ export class PermissionService extends Service {
         }
     }
 
-    role = {
-        list: () => {
-            let url = this.url("role/list")
-            return this.get<Role[]>(url);
-        },
-        item: (id: string) => {
-            let url = this.url("role/item");
-            return this.get<Role>(url, { id });
-        },
-        add: (item: Partial<Role>) => {
-            let url = this.url("role/add");
-            return this.postByJson(url, { item })
-        },
-        remove: (id: string) => {
-            let url = this.url("role/remove");
-            return this.postByJson(url, { id });
-        },
-        update: (item: Partial<Role>) => {
-            let url = this.url("role/update");
-            return this.postByJson(url, { item });
-        },
-        resource: {
-            /**
-             * 获取角色所允许访问的资源 id
-             * @param roleId 指定的角色编号
-             */
-            ids: async (roleId: string) => {
-                if (!roleId) throw errors.argumentNull('roleId')
-                let url = this.url('role/resourceIds')
-                let r = await this.getByJson<string[]>(url, { roleId })
-                return r || []
-            }
-        }
-    };
+
+
 
     resource = {
         list: (args?: DataSourceSelectArguments) => {
@@ -85,21 +56,6 @@ export class PermissionService extends Service {
         }
     };
 
-    user = {
-        list: async (args?: DataSourceSelectArguments) => {
-            let url = this.url('user/list');
-            let result = await this.getByJson<DataSourceSelectResult<User>>(url, { args });
-            if (result == null)
-                throw errors.unexpectedNullResult();
-
-            return result;
-        },
-        update: async (item: Partial<User>) => {
-            let url = this.url('user/update');
-            let result = await this.postByJson(url, { user: item });
-            return result;
-        }
-    }
 
     token = {
         list: async (args: DataSourceSelectArguments) => {
@@ -114,175 +70,6 @@ export class PermissionService extends Service {
         }
     }
 
-    // //=============================================================
-    // // 资源相关
-
-    // /** 添加资源 */
-    // async addResource(item: Partial<Resource>) {
-    //     if (!item) throw errors.argumentNull('item')
-
-    //     let url = this.url('resource/add')
-    //     let result = await this.postByJson<{ id: string }>(url, { item })
-    //     Object.assign(item, result)
-    //     return result
-    // }
-
-    // /** 更新资源 */
-    // async updateResource(item: Partial<Resource>) {
-    //     if (!item) throw errors.argumentNull('item')
-
-    //     let url = this.url('resource/update')
-    //     let result = await this.postByJson(url, { item })
-    //     Object.assign(item, result)
-    //     return result
-    // }
-
-    // /** 获取资源列表 */
-    // async getResourceList(args: DataSourceSelectArguments): Promise<DataSourceSelectResult<Resource>> {
-    //     if (!args) throw errors.argumentNull('args')
-
-    //     let url = this.url('resource/list')
-    //     if (!args.sortExpression)
-    //         args.sortExpression = 'sort_number asc'
-
-    //     type T = Resource & { data?: { visible?: boolean } }
-    //     let result = await this.getByJson<DataSourceSelectResult<T>>(url, { args })
-    //     if (result == null)
-    //         throw errors.unexpectedNullResult()
-
-    //     for (let i = 0; i < result.dataItems.length; i++) {
-    //         result.dataItems[i].data = result.dataItems[i].data || {}
-    //     }
-
-    //     return result
-    // }
-
-    // /**
-    //  * 删除指定的资源
-    //  * @param id 要删除的资源编号
-    //  */
-    // async deleteResource(id: string) {
-    //     if (!id) throw errors.argumentNull('id')
-
-    //     let url = this.url('resource/remove')
-    //     return this.postByJson(url, { id })
-    // }
-
-    // /**
-    //  * 获取指定资源的子按钮
-    //  * @param id 资源编号
-    //  */
-    // async getResourceChildCommands(id: string) {
-    //     if (!id) throw errors.argumentNull('id')
-
-    //     let buttonType: ResourceType = 'button'
-    //     let filter = `parent_id = '${id}' and type = '${buttonType}'`
-    //     let url = `resource/list`
-    //     let result = await this.getByJson(url, { filter })
-    //     return result
-    // }
-
-    //=============================================================
-    // 角色相关
-
-    /**
-     * 获取角色列表
-     */
-    async getRoles(): Promise<Role[]> {
-        let url = this.url('role/list')
-        let r = await this.getByJson<Role[]>(url)
-        return r || []
-    }
-
-    /**
-     * 获取单个角色
-     * @param id 要获取的角色编号
-     */
-    getRole(id: string): Promise<Role | null> {
-        if (!id) throw errors.argumentNull('id')
-
-        let url = this.url('role/get')
-        return this.getByJson(url, { id })
-    }
-
-    /**
-     * 
-     * @param roleId 指定的角色编号
-     * @param resourceIds 角色所允许访问的资源编号
-     */
-    setRoleResource(roleId: string, resourceIds: string[]) {
-        if (!roleId) throw errors.argumentNull('roleId')
-        if (!resourceIds) throw errors.argumentNull('resourceIds')
-
-        let url = this.url('role/setResources')
-        return this.postByJson(url, { roleId, resourceIds })
-    }
-
-    /**
-     * 获取角色所允许访问的资源 id
-     * @param roleId 指定的角色编号
-     */
-    async getRoleResourceIds(roleId: string): Promise<string[]> {
-        if (!roleId) throw errors.argumentNull('roleId')
-        let url = this.url('role/resourceIds')
-        let r = await this.getByJson<string[]>(url, { roleId })
-        return r || []
-    }
-
-    /** 设置用户角色 */
-    setUserRoles(userId: string, roleIds: string[]) {
-        if (!userId) throw errors.argumentNull('userId')
-        if (!roleIds) throw errors.argumentNull('roleIds')
-
-        let url = this.url('user/setRoles')
-        return this.postByJson(url, { userId, roleIds })
-    }
-
-    /**
-     * 添加角色
-     * @param name 要添加的角色名称
-     * @param remark 要添加的角色备注
-     */
-    addRole(name: string, remark?: string) {
-        if (!name) throw errors.argumentNull("name");
-
-        let url = this.url("role/add");
-        return this.postByJson(url, { name, remark });
-    }
-
-    /**
-     * 删除角色
-     * @param id 要删除的角色编号
-     */
-    removeRole(id: string) {
-        if (!id) throw errors.argumentNull("id");
-
-        let url = this.url("role/remove");
-        return this.postByJson(url, { id });
-    }
-
-    //================================================================
-    // 用户相关
-
-    /** 获取用户列表 */
-    async getUserList(args?: DataSourceSelectArguments): Promise<DataSourceSelectResult<User>> {
-        let url = this.url('user/list')
-        let result = await this.getByJson<DataSourceSelectResult<User>>(url, { args })
-        if (result == null)
-            throw errors.unexpectedNullResult()
-
-        return result
-    }
-
-    /** 通过手机获取用户 */
-    async getUserByMobile(mobile: string) {
-        if (!mobile) throw errors.argumentNull('mobile')
-
-        let args: DataSourceSelectArguments = {}
-        args.filter = `mobile = '${mobile}'`
-        let r = await this.getUserList(args)
-        return r.dataItems[0]
-    }
 
     /** 
      * 移除当前应用的用户
@@ -309,39 +96,102 @@ export class PermissionService extends Service {
         return result
     }
 
-    /** 
-     * 发送注册操作验证码
-     * @param mobile 接收验证码的手机号
+
+
+    /**
+     * 获取用角色
+     * @param userId 用户编号
      */
-    sendRegisterVerifyCode(mobile: string) {
-        let url = this.url('sms/sendVerifyCode')
-        return this.postByJson<{ smsId: string }>(url, { mobile, type: 'register' })
+    async getUserRoles(userId: string): Promise<Role[]> {
+        let url = this.url('role/userRoles');
+        let r = await this.getByJson<{ [userId: string]: Role[] }>(url, { userIds: [userId] });
+        return r[userId];
+    }
+}
+
+
+class ServiceModule {
+    service: PermissionService;
+    getByJson: <T>(url: string, data?: any) => Promise<T>;
+    postByJson: <T>(url: string, data?: any) => Promise<T>;
+    get: <T>(url: string, data?: any) => Promise<T>;
+
+    constructor(service: PermissionService) {
+        this.service = service;
+        this.getByJson = this.service.getByJson.bind(this.service);
+        this.postByJson = this.service.postByJson.bind(this.service);
+        this.get = this.service.get;
+    }
+
+    protected url(path: string) {
+        if (!PermissionService.baseUrl)
+            throw errors.serviceUrlCanntNull('permissionService')
+
+        return `${PermissionService.baseUrl}/${path}`
+    }
+}
+
+class UserModule extends ServiceModule {
+    /** 获取用户列表 */
+    async list(args?: DataSourceSelectArguments) {
+        let url = this.url('user/list');
+        let result = await this.getByJson<DataSourceSelectResult<User>>(url, { args });
+        if (result == null)
+            throw errors.unexpectedNullResult();
+
+        return result;
+    }
+
+    /**
+     * 更新用户信息
+     * @param item 用户
+     */
+    async update(item: Partial<User>) {
+        let url = this.url('user/update');
+        let result = await this.postByJson(url, { user: item });
+        return result;
+    }
+
+    /**
+     * 获取用户
+     * @param userId 用户编号
+     */
+    async item(userId: string) {
+        let url = this.url('user/item')
+        let user = await this.getByJson<User | null>(url, { userId });
+
+        return user
     }
 
 
     /**
-     * 校验验证码
-     * @param smsId 验证码信息的 ID 号
-     * @param verifyCode 验证码
+     * 添加用户信息
+     * @param item 用户
      */
-    async checkVerifyCode(smsId: string, verifyCode: string) {
-        if (!smsId) throw errors.argumentNull('smsId')
-        if (!verifyCode) throw errors.argumentNull('verifycode')
-
-        let url = this.url('sms/checkVerifyCode')
-        let r = await this.postByJson<boolean>(url, { smsId, verifyCode })
+    async  addUser(item: Partial<User>) {
+        let url = this.url('user/add')
+        let result: { id: string }
+        let r = await this.postByJson<typeof result>(url, { item })
         return r
     }
 
-    /**
-     * 发送重置密码操作验证码
-     * @param mobile 接收验证码的手机号
-     */
-    sendResetVerifyCode(mobile: string) {
+    /** 设置用户角色 */
+    async setRoles(userId: string, roleIds: string[]) {
+        if (!userId) throw errors.argumentNull('userId')
+        if (!roleIds) throw errors.argumentNull('roleIds')
+
+        let url = this.url('user/setRoles')
+        return this.postByJson(url, { userId, roleIds })
+    }
+
+    /** 通过手机获取用户 */
+    async listByMobile(mobile: string) {
         if (!mobile) throw errors.argumentNull('mobile')
 
-        let url = this.url('sms/sendVerifyCode')
-        return this.postByJson<{ smsId: string }>(url, { mobile, type: 'resetPassword' })
+        let args: DataSourceSelectArguments = {}
+        args.filter = `mobile = '${mobile}'`
+        let r = await this.list(args);
+        return r.dataItems[0]
     }
 
     /**
@@ -377,20 +227,6 @@ export class PermissionService extends Service {
     }
 
     /**
-     * 退出登录
-     */
-    logout() {
-        // if (Service.loginInfo.value == null)
-        //     return
-
-        //TODO: 将服务端 token 设置为失效
-
-        // events.logout.fire(this, Service.loginInfo.value)
-        // Service.setStorageLoginInfo(null)
-        // Service.loginInfo.value = null
-    }
-
-    /**
      * 登录
      * @param username 用户名
      * @param password 密码
@@ -419,9 +255,6 @@ export class PermissionService extends Service {
         if (r == null)
             throw errors.unexpectedNullResult()
 
-        // Service.loginInfo.value = r
-        // Service.setStorageLoginInfo(r)
-        // events.login.fire(this, r)
         return r
     }
 
@@ -443,9 +276,6 @@ export class PermissionService extends Service {
         if (r == null)
             throw errors.unexpectedNullResult()
 
-        // Service.setStorageLoginInfo(r)
-        // events.register.fire(this, r)
-
         return r;
     }
 
@@ -453,42 +283,9 @@ export class PermissionService extends Service {
      * 获取用户个人信息
      */
     async me() {
-        // if (!Service.loginInfo.value) {
-        //     return null
-        // }
         let url = this.url('user/me')
         let user = await this.getByJson<User>(url)
         return user
-    }
-
-    /**
-     * 获取用户
-     * @param userId 用户编号
-     */
-    async getUser(userId: string) {
-        let url = this.url('user/item')
-        let user = await this.getByJson<User | null>(url, { userId })
-        return user
-    }
-
-    /**
-     * 添加用户信息
-     * @param item 用户
-     */
-    async addUser(item: Partial<User>) {
-        let url = this.url('user/add')
-        let result: { id: string }
-        let r = await this.postByJson<typeof result>(url, { item })
-        return r
-    }
-
-    /**
-     * 更新用户信息
-     * @param item 用户
-     */
-    updateUser(item: User) {
-        let url = this.url('user/update')
-        return this.postByJson(url, { user: item })
     }
 
     /**
@@ -510,18 +307,128 @@ export class PermissionService extends Service {
         return this.postByJson(url, { userId, roleIds })
     }
 
-    /**
-     * 获取用角色
-     * @param userId 用户编号
-     */
-    async getUserRoles(userId: string): Promise<Role[]> {
-        let url = this.url('role/userRoles');
-        let r = await this.getByJson<{ [userId: string]: Role[] }>(url, { userIds: [userId] });
-        return r[userId];
-    }
 }
 
+class RoleModule extends ServiceModule {
 
+    resource = {
+        /**
+         * 获取角色所允许访问的资源 id
+         * @param roleId 指定的角色编号
+         */
+        ids: async (roleId: string) => {
+            if (!roleId) throw errors.argumentNull('roleId')
+            let url = this.url('role/resourceIds')
+            let r = await this.getByJson<string[]>(url, { roleId })
+            return r || []
+        }
+    }
+
+    async list() {
+        let url = this.url("role/list")
+        return this.get<Role[]>(url);
+    }
+
+    item(id: string) {
+        let url = this.url("role/item");
+        return this.get<Role>(url, { id });
+    }
+
+    /**
+     * 添加角色
+     */
+    add(name: string, remark: string): Promise<{ id: string }>;
+    add(item: Partial<Role>): Promise<{ id: string }>
+    add(arg1: any, arg2?: string) {
+        let url = this.url("role/add");
+
+        let item: Partial<Role>;
+        if (typeof arg1 == "string") {
+            item = { name: arg1, remark: arg2 }
+        }
+        else {
+            item = arg1;
+        }
+        return this.postByJson(url, { item })
+    }
+
+    /**
+     * 删除角色
+     * @param id 要删除的角色编号
+     */
+    remove(id: string) {
+        let url = this.url("role/remove");
+        return this.postByJson(url, { id });
+    }
+
+    update(item: Partial<Role>) {
+        let url = this.url("role/update");
+        return this.postByJson(url, { item });
+    }
+
+    /**
+     * 获取角色所允许访问的资源 id
+     * @param roleId 指定的角色编号
+     */
+    async resourceIds(roleId: string): Promise<string[]> {
+        if (!roleId) throw errors.argumentNull('roleId')
+        let url = this.url('role/resourceIds')
+        let r = await this.getByJson<string[]>(url, { roleId })
+        return r || []
+    }
+
+    /**
+     * 
+     * @param roleId 指定的角色编号
+     * @param resourceIds 角色所允许访问的资源编号
+     */
+    setResource(roleId: string, resourceIds: string[]) {
+        if (!roleId) throw errors.argumentNull('roleId')
+        if (!resourceIds) throw errors.argumentNull('resourceIds')
+
+        let url = this.url('role/setResources')
+        return this.postByJson(url, { roleId, resourceIds })
+    }
+
+}
+
+class SMSModule extends ServiceModule {
+    /** 
+     * 发送注册操作验证码
+     * @param mobile 接收验证码的手机号
+     */
+    sendRegisterVerifyCode(mobile: string) {
+        let url = this.url('sms/sendVerifyCode')
+        return this.postByJson<{ smsId: string }>(url, { mobile, type: 'register' })
+    }
+
+
+    /**
+     * 校验验证码
+     * @param smsId 验证码信息的 ID 号
+     * @param verifyCode 验证码
+     */
+    async checkVerifyCode(smsId: string, verifyCode: string) {
+        if (!smsId) throw errors.argumentNull('smsId')
+        if (!verifyCode) throw errors.argumentNull('verifycode')
+
+        let url = this.url('sms/checkVerifyCode')
+        let r = await this.postByJson<boolean>(url, { smsId, verifyCode })
+        return r
+    }
+
+    /**
+     * 发送重置密码操作验证码
+     * @param mobile 接收验证码的手机号
+     */
+    sendResetVerifyCode(mobile: string) {
+        if (!mobile) throw errors.argumentNull('mobile')
+
+        let url = this.url('sms/sendVerifyCode')
+        return this.postByJson<{ smsId: string }>(url, { mobile, type: 'resetPassword' })
+    }
+
+}
 
 
 

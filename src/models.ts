@@ -19,7 +19,8 @@ export interface Role {
     data: {
         resource_types: ResourceType[]
     },
-    category?: string
+    category?: string,
+    remark?: string,
 }
 
 export interface User {
