@@ -19,6 +19,7 @@ export interface Role {
     };
     category?: string;
     remark?: string;
+    create_date_time: Date;
 }
 export interface User {
     id: string;
@@ -31,6 +32,7 @@ export interface User {
     data: {
         [key: string]: any;
     };
+    role_id: string;
 }
 export interface Token {
     id: string;

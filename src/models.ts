@@ -21,6 +21,7 @@ export interface Role {
     },
     category?: string,
     remark?: string,
+    create_date_time: Date,
 }
 
 export interface User {
@@ -31,7 +32,8 @@ export interface User {
     password?: string,
     openid?: string,
     create_date_time: Date,
-    data: { [key: string]: any }
+    data: { [key: string]: any },
+    role_id: string,
 }
 
 export interface Token {

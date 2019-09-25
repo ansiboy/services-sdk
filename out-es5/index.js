@@ -12,10 +12,6 @@ var image_service_1 = require("./services/image-service");
 
 exports.ImageService = image_service_1.ImageService;
 
-var user_service_1 = require("./services/user-service");
-
-exports.UserService = user_service_1.UserService;
-
 var toolkit_service_1 = require("./services/toolkit-service");
 
 exports.ToolkitService = toolkit_service_1.ToolkitService;

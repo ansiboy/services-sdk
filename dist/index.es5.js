@@ -174,10 +174,6 @@ var image_service_1 = __webpack_require__(/*! ./services/image-service */ "./out
 
 exports.ImageService = image_service_1.ImageService;
 
-var user_service_1 = __webpack_require__(/*! ./services/user-service */ "./out-es5/services/user-service.js");
-
-exports.UserService = user_service_1.UserService;
-
 var toolkit_service_1 = __webpack_require__(/*! ./services/toolkit-service */ "./out-es5/services/toolkit-service.js");
 
 exports.ToolkitService = toolkit_service_1.ToolkitService;
@@ -681,15 +677,6 @@ function (_service_1$Service) {
     _this.role = new RoleModule(_assertThisInitialized(_this));
     _this.user = new UserModule(_assertThisInitialized(_this));
     _this.sms = new SMSModule(_assertThisInitialized(_this));
-    _this.currentUser = {
-      resource: {
-        list: function list() {
-          var url = _this.url("current-user/resource/list");
-
-          return _this.get(url);
-        }
-      }
-    };
     _this.resource = {
       list: function list(args) {
         var url = _this.url("resource/list");
@@ -927,7 +914,8 @@ function () {
     this.service = service;
     this.getByJson = this.service.getByJson.bind(this.service);
     this.postByJson = this.service.postByJson.bind(this.service);
-    this.get = this.service.get;
+    this.get = this.service.get.bind(this.service);
+    this.post = this.service.post.bind(this.service);
   }
 
   _createClass(ServiceModule, [{
@@ -947,49 +935,110 @@ function (_ServiceModule) {
   _inherits(UserModule, _ServiceModule);
 
   function UserModule() {
+    var _this2;
+
     _classCallCheck(this, UserModule);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(UserModule).apply(this, arguments));
+    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(UserModule).apply(this, arguments));
+    _this2.role = {
+      list: function list(userId) {
+        return __awaiter(_assertThisInitialized(_this2), void 0, void 0,
+        /*#__PURE__*/
+        regeneratorRuntime.mark(function _callee6() {
+          var url, r;
+          return regeneratorRuntime.wrap(function _callee6$(_context6) {
+            while (1) {
+              switch (_context6.prev = _context6.next) {
+                case 0:
+                  url = this.url("user/role/list");
+                  _context6.next = 3;
+                  return this.getByJson(url, {
+                    userId: userId
+                  });
+
+                case 3:
+                  r = _context6.sent;
+                  return _context6.abrupt("return", r);
+
+                case 5:
+                case "end":
+                  return _context6.stop();
+              }
+            }
+          }, _callee6, this);
+        }));
+      }
+    };
+    _this2.resource = {
+      list: function list(userId) {
+        return __awaiter(_assertThisInitialized(_this2), void 0, void 0,
+        /*#__PURE__*/
+        regeneratorRuntime.mark(function _callee7() {
+          var url, r;
+          return regeneratorRuntime.wrap(function _callee7$(_context7) {
+            while (1) {
+              switch (_context7.prev = _context7.next) {
+                case 0:
+                  url = this.url("user/resource/list");
+                  _context7.next = 3;
+                  return this.getByJson(url, {
+                    userId: userId
+                  });
+
+                case 3:
+                  r = _context7.sent;
+                  return _context7.abrupt("return", r);
+
+                case 5:
+                case "end":
+                  return _context7.stop();
+              }
+            }
+          }, _callee7, this);
+        }));
+      }
+    };
+    return _this2;
   }
+  /** 获取用户列表 */
+
 
   _createClass(UserModule, [{
     key: "list",
-
-    /** 获取用户列表 */
     value: function list(args) {
       return __awaiter(this, void 0, void 0,
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee6() {
+      regeneratorRuntime.mark(function _callee8() {
         var url, result;
-        return regeneratorRuntime.wrap(function _callee6$(_context6) {
+        return regeneratorRuntime.wrap(function _callee8$(_context8) {
           while (1) {
-            switch (_context6.prev = _context6.next) {
+            switch (_context8.prev = _context8.next) {
               case 0:
                 url = this.url('user/list');
-                _context6.next = 3;
+                _context8.next = 3;
                 return this.getByJson(url, {
                   args: args
                 });
 
               case 3:
-                result = _context6.sent;
+                result = _context8.sent;
 
                 if (!(result == null)) {
-                  _context6.next = 6;
+                  _context8.next = 6;
                   break;
                 }
 
                 throw errors_1.errors.unexpectedNullResult();
 
               case 6:
-                return _context6.abrupt("return", result);
+                return _context8.abrupt("return", result);
 
               case 7:
               case "end":
-                return _context6.stop();
+                return _context8.stop();
             }
           }
-        }, _callee6, this);
+        }, _callee8, this);
       }));
     }
     /**
@@ -1002,28 +1051,28 @@ function (_ServiceModule) {
     value: function update(item) {
       return __awaiter(this, void 0, void 0,
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee7() {
+      regeneratorRuntime.mark(function _callee9() {
         var url, result;
-        return regeneratorRuntime.wrap(function _callee7$(_context7) {
+        return regeneratorRuntime.wrap(function _callee9$(_context9) {
           while (1) {
-            switch (_context7.prev = _context7.next) {
+            switch (_context9.prev = _context9.next) {
               case 0:
                 url = this.url('user/update');
-                _context7.next = 3;
+                _context9.next = 3;
                 return this.postByJson(url, {
                   user: item
                 });
 
               case 3:
-                result = _context7.sent;
-                return _context7.abrupt("return", result);
+                result = _context9.sent;
+                return _context9.abrupt("return", result);
 
               case 5:
               case "end":
-                return _context7.stop();
+                return _context9.stop();
             }
           }
-        }, _callee7, this);
+        }, _callee9, this);
       }));
     }
     /**
@@ -1036,28 +1085,28 @@ function (_ServiceModule) {
     value: function item(userId) {
       return __awaiter(this, void 0, void 0,
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee8() {
+      regeneratorRuntime.mark(function _callee10() {
         var url, user;
-        return regeneratorRuntime.wrap(function _callee8$(_context8) {
+        return regeneratorRuntime.wrap(function _callee10$(_context10) {
           while (1) {
-            switch (_context8.prev = _context8.next) {
+            switch (_context10.prev = _context10.next) {
               case 0:
                 url = this.url('user/item');
-                _context8.next = 3;
+                _context10.next = 3;
                 return this.getByJson(url, {
                   userId: userId
                 });
 
               case 3:
-                user = _context8.sent;
-                return _context8.abrupt("return", user);
+                user = _context10.sent;
+                return _context10.abrupt("return", user);
 
               case 5:
               case "end":
-                return _context8.stop();
+                return _context10.stop();
             }
           }
-        }, _callee8, this);
+        }, _callee10, this);
       }));
     }
     /**
@@ -1066,75 +1115,32 @@ function (_ServiceModule) {
      */
 
   }, {
-    key: "addUser",
-    value: function addUser(item) {
+    key: "add",
+    value: function add(item) {
       return __awaiter(this, void 0, void 0,
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee9() {
+      regeneratorRuntime.mark(function _callee11() {
         var url, result, r;
-        return regeneratorRuntime.wrap(function _callee9$(_context9) {
+        return regeneratorRuntime.wrap(function _callee11$(_context11) {
           while (1) {
-            switch (_context9.prev = _context9.next) {
+            switch (_context11.prev = _context11.next) {
               case 0:
                 url = this.url('user/add');
-                _context9.next = 3;
+                _context11.next = 3;
                 return this.postByJson(url, {
                   item: item
                 });
 
               case 3:
-                r = _context9.sent;
-                return _context9.abrupt("return", r);
+                r = _context11.sent;
+                return _context11.abrupt("return", r);
 
               case 5:
               case "end":
-                return _context9.stop();
+                return _context11.stop();
             }
           }
-        }, _callee9, this);
-      }));
-    }
-    /** 设置用户角色 */
-
-  }, {
-    key: "setRoles",
-    value: function setRoles(userId, roleIds) {
-      return __awaiter(this, void 0, void 0,
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee10() {
-        var url;
-        return regeneratorRuntime.wrap(function _callee10$(_context10) {
-          while (1) {
-            switch (_context10.prev = _context10.next) {
-              case 0:
-                if (userId) {
-                  _context10.next = 2;
-                  break;
-                }
-
-                throw errors_1.errors.argumentNull('userId');
-
-              case 2:
-                if (roleIds) {
-                  _context10.next = 4;
-                  break;
-                }
-
-                throw errors_1.errors.argumentNull('roleIds');
-
-              case 4:
-                url = this.url('user/setRoles');
-                return _context10.abrupt("return", this.postByJson(url, {
-                  userId: userId,
-                  roleIds: roleIds
-                }));
-
-              case 6:
-              case "end":
-                return _context10.stop();
-            }
-          }
-        }, _callee10, this);
+        }, _callee11, this);
       }));
     }
     /** 通过手机获取用户 */
@@ -1144,14 +1150,14 @@ function (_ServiceModule) {
     value: function listByMobile(mobile) {
       return __awaiter(this, void 0, void 0,
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee11() {
+      regeneratorRuntime.mark(function _callee12() {
         var args, r;
-        return regeneratorRuntime.wrap(function _callee11$(_context11) {
+        return regeneratorRuntime.wrap(function _callee12$(_context12) {
           while (1) {
-            switch (_context11.prev = _context11.next) {
+            switch (_context12.prev = _context12.next) {
               case 0:
                 if (mobile) {
-                  _context11.next = 2;
+                  _context12.next = 2;
                   break;
                 }
 
@@ -1160,19 +1166,19 @@ function (_ServiceModule) {
               case 2:
                 args = {};
                 args.filter = "mobile = '".concat(mobile, "'");
-                _context11.next = 6;
+                _context12.next = 6;
                 return this.list(args);
 
               case 6:
-                r = _context11.sent;
-                return _context11.abrupt("return", r.dataItems[0]);
+                r = _context12.sent;
+                return _context12.abrupt("return", r.dataItems[0]);
 
               case 8:
               case "end":
-                return _context11.stop();
+                return _context12.stop();
             }
           }
-        }, _callee11, this);
+        }, _callee12, this);
       }));
     }
     /**
@@ -1223,21 +1229,21 @@ function (_ServiceModule) {
     value: function login(arg0, password) {
       return __awaiter(this, void 0, void 0,
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee12() {
+      regeneratorRuntime.mark(function _callee13() {
         var args, username, url, r;
-        return regeneratorRuntime.wrap(function _callee12$(_context12) {
+        return regeneratorRuntime.wrap(function _callee13$(_context13) {
           while (1) {
-            switch (_context12.prev = _context12.next) {
+            switch (_context13.prev = _context13.next) {
               case 0:
                 if (!(typeof arg0 == "string")) {
-                  _context12.next = 9;
+                  _context13.next = 9;
                   break;
                 }
 
                 username = arg0;
 
                 if (username) {
-                  _context12.next = 4;
+                  _context13.next = 4;
                   break;
                 }
 
@@ -1245,7 +1251,7 @@ function (_ServiceModule) {
 
               case 4:
                 if (password) {
-                  _context12.next = 6;
+                  _context13.next = 6;
                   break;
                 }
 
@@ -1256,7 +1262,7 @@ function (_ServiceModule) {
                   username: username,
                   password: password
                 };
-                _context12.next = 10;
+                _context13.next = 10;
                 break;
 
               case 9:
@@ -1264,28 +1270,28 @@ function (_ServiceModule) {
 
               case 10:
                 url = this.url('user/login');
-                _context12.next = 13;
+                _context13.next = 13;
                 return this.postByJson(url, args);
 
               case 13:
-                r = _context12.sent;
+                r = _context13.sent;
 
                 if (!(r == null)) {
-                  _context12.next = 16;
+                  _context13.next = 16;
                   break;
                 }
 
                 throw errors_1.errors.unexpectedNullResult();
 
               case 16:
-                return _context12.abrupt("return", r);
+                return _context13.abrupt("return", r);
 
               case 17:
               case "end":
-                return _context12.stop();
+                return _context13.stop();
             }
           }
-        }, _callee12, this);
+        }, _callee13, this);
       }));
     }
     /**
@@ -1301,14 +1307,14 @@ function (_ServiceModule) {
     value: function register(mobile, password, smsId, verifyCode, data) {
       return __awaiter(this, void 0, void 0,
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee13() {
+      regeneratorRuntime.mark(function _callee14() {
         var url, r;
-        return regeneratorRuntime.wrap(function _callee13$(_context13) {
+        return regeneratorRuntime.wrap(function _callee14$(_context14) {
           while (1) {
-            switch (_context13.prev = _context13.next) {
+            switch (_context14.prev = _context14.next) {
               case 0:
                 if (mobile) {
-                  _context13.next = 2;
+                  _context14.next = 2;
                   break;
                 }
 
@@ -1316,7 +1322,7 @@ function (_ServiceModule) {
 
               case 2:
                 if (password) {
-                  _context13.next = 4;
+                  _context14.next = 4;
                   break;
                 }
 
@@ -1324,7 +1330,7 @@ function (_ServiceModule) {
 
               case 4:
                 if (smsId) {
-                  _context13.next = 6;
+                  _context14.next = 6;
                   break;
                 }
 
@@ -1332,7 +1338,7 @@ function (_ServiceModule) {
 
               case 6:
                 if (verifyCode) {
-                  _context13.next = 8;
+                  _context14.next = 8;
                   break;
                 }
 
@@ -1340,7 +1346,7 @@ function (_ServiceModule) {
 
               case 8:
                 url = this.url('user/register');
-                _context13.next = 11;
+                _context14.next = 11;
                 return this.postByJson(url, {
                   mobile: mobile,
                   password: password,
@@ -1350,24 +1356,24 @@ function (_ServiceModule) {
                 });
 
               case 11:
-                r = _context13.sent;
+                r = _context14.sent;
 
                 if (!(r == null)) {
-                  _context13.next = 14;
+                  _context14.next = 14;
                   break;
                 }
 
                 throw errors_1.errors.unexpectedNullResult();
 
               case 14:
-                return _context13.abrupt("return", r);
+                return _context14.abrupt("return", r);
 
               case 15:
               case "end":
-                return _context13.stop();
+                return _context14.stop();
             }
           }
-        }, _callee13, this);
+        }, _callee14, this);
       }));
     }
     /**
@@ -1379,73 +1385,28 @@ function (_ServiceModule) {
     value: function me() {
       return __awaiter(this, void 0, void 0,
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee14() {
-        var url, user;
-        return regeneratorRuntime.wrap(function _callee14$(_context14) {
-          while (1) {
-            switch (_context14.prev = _context14.next) {
-              case 0:
-                url = this.url('user/me');
-                _context14.next = 3;
-                return this.getByJson(url);
-
-              case 3:
-                user = _context14.sent;
-                return _context14.abrupt("return", user);
-
-              case 5:
-              case "end":
-                return _context14.stop();
-            }
-          }
-        }, _callee14, this);
-      }));
-    }
-    /**
-     * 获取当前登录用户的角色
-     */
-
-  }, {
-    key: "myRoles",
-    value: function myRoles() {
-      return __awaiter(this, void 0, void 0,
-      /*#__PURE__*/
       regeneratorRuntime.mark(function _callee15() {
-        var url, roles;
+        var url, user;
         return regeneratorRuntime.wrap(function _callee15$(_context15) {
           while (1) {
             switch (_context15.prev = _context15.next) {
               case 0:
-                url = this.url('user/getRoles');
+                url = this.url('user/me');
                 _context15.next = 3;
                 return this.getByJson(url);
 
               case 3:
-                roles = _context15.sent;
-                return _context15.abrupt("return", roles);
+                user = _context15.sent;
+                delete user.password;
+                return _context15.abrupt("return", user);
 
-              case 5:
+              case 6:
               case "end":
                 return _context15.stop();
             }
           }
         }, _callee15, this);
       }));
-    }
-    /**
-     * 给指定的用户添加角色
-     * @param userId 用户编号
-     * @param roleIds 多个角色编号
-     */
-
-  }, {
-    key: "addUserRoles",
-    value: function addUserRoles(userId, roleIds) {
-      var url = this.url('user/addRoles');
-      return this.postByJson(url, {
-        userId: userId,
-        roleIds: roleIds
-      });
     }
   }]);
 
@@ -1458,18 +1419,18 @@ function (_ServiceModule2) {
   _inherits(RoleModule, _ServiceModule2);
 
   function RoleModule() {
-    var _this2;
+    var _this3;
 
     _classCallCheck(this, RoleModule);
 
-    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(RoleModule).apply(this, arguments));
-    _this2.resource = {
+    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(RoleModule).apply(this, arguments));
+    _this3.resource = {
       /**
        * 获取角色所允许访问的资源 id
        * @param roleId 指定的角色编号
        */
       ids: function ids(roleId) {
-        return __awaiter(_assertThisInitialized(_this2), void 0, void 0,
+        return __awaiter(_assertThisInitialized(_this3), void 0, void 0,
         /*#__PURE__*/
         regeneratorRuntime.mark(function _callee16() {
           var url, r;
@@ -1504,7 +1465,7 @@ function (_ServiceModule2) {
         }));
       }
     };
-    return _this2;
+    return _this3;
   }
 
   _createClass(RoleModule, [{
@@ -2030,58 +1991,6 @@ function (_service_1$Service) {
 
 exports.ToolkitService = ToolkitService;
 //# sourceMappingURL=toolkit-service.js.map
-
-
-/***/ }),
-
-/***/ "./out-es5/services/user-service.js":
-/*!******************************************!*\
-  !*** ./out-es5/services/user-service.js ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var permission_service_1 = __webpack_require__(/*! ./permission-service */ "./out-es5/services/permission-service.js");
-/** 与用户相关的服务，这个类已经废弃，请使用  PermissionService*/
-
-
-var UserService =
-/*#__PURE__*/
-function (_permission_service_) {
-  _inherits(UserService, _permission_service_);
-
-  function UserService() {
-    _classCallCheck(this, UserService);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(UserService).apply(this, arguments));
-  }
-
-  return UserService;
-}(permission_service_1.PermissionService);
-
-exports.UserService = UserService;
-//# sourceMappingURL=user-service.js.map
 
 
 /***/ }),

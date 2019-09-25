@@ -18,14 +18,6 @@ class PermissionService extends service_1.Service {
         this.role = new RoleModule(this);
         this.user = new UserModule(this);
         this.sms = new SMSModule(this);
-        this.currentUser = {
-            resource: {
-                list: () => {
-                    let url = this.url("current-user/resource/list");
-                    return this.get(url);
-                }
-            }
-        };
         this.resource = {
             list: (args) => {
                 let url = this.url("resource/list");
@@ -113,7 +105,8 @@ class ServiceModule {
         this.service = service;
         this.getByJson = this.service.getByJson.bind(this.service);
         this.postByJson = this.service.postByJson.bind(this.service);
-        this.get = this.service.get;
+        this.get = this.service.get.bind(this.service);
+        this.post = this.service.post.bind(this.service);
     }
     url(path) {
         if (!PermissionService.baseUrl)
@@ -122,6 +115,23 @@ class ServiceModule {
     }
 }
 class UserModule extends ServiceModule {
+    constructor() {
+        super(...arguments);
+        this.role = {
+            list: (userId) => __awaiter(this, void 0, void 0, function* () {
+                let url = this.url("user/role/list");
+                let r = yield this.getByJson(url, { userId });
+                return r;
+            })
+        };
+        this.resource = {
+            list: (userId) => __awaiter(this, void 0, void 0, function* () {
+                let url = this.url("user/resource/list");
+                let r = yield this.getByJson(url, { userId });
+                return r;
+            })
+        };
+    }
     /** 获取用户列表 */
     list(args) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -158,23 +168,12 @@ class UserModule extends ServiceModule {
      * 添加用户信息
      * @param item 用户
      */
-    addUser(item) {
+    add(item) {
         return __awaiter(this, void 0, void 0, function* () {
             let url = this.url('user/add');
             let result;
             let r = yield this.postByJson(url, { item });
             return r;
-        });
-    }
-    /** 设置用户角色 */
-    setRoles(userId, roleIds) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!userId)
-                throw errors_1.errors.argumentNull('userId');
-            if (!roleIds)
-                throw errors_1.errors.argumentNull('roleIds');
-            let url = this.url('user/setRoles');
-            return this.postByJson(url, { userId, roleIds });
         });
     }
     /** 通过手机获取用户 */
@@ -276,27 +275,9 @@ class UserModule extends ServiceModule {
         return __awaiter(this, void 0, void 0, function* () {
             let url = this.url('user/me');
             let user = yield this.getByJson(url);
+            delete user.password;
             return user;
         });
-    }
-    /**
-     * 获取当前登录用户的角色
-     */
-    myRoles() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let url = this.url('user/getRoles');
-            let roles = yield this.getByJson(url);
-            return roles;
-        });
-    }
-    /**
-     * 给指定的用户添加角色
-     * @param userId 用户编号
-     * @param roleIds 多个角色编号
-     */
-    addUserRoles(userId, roleIds) {
-        let url = this.url('user/addRoles');
-        return this.postByJson(url, { userId, roleIds });
     }
 }
 class RoleModule extends ServiceModule {

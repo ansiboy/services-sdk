@@ -6,11 +6,6 @@ export declare class PermissionService extends Service {
     user: UserModule;
     sms: SMSModule;
     protected url(path: string): string;
-    currentUser: {
-        resource: {
-            list: () => Promise<Resource[]>;
-        };
-    };
     resource: {
         list: (args?: DataSourceSelectArguments | undefined) => Promise<DataSourceSelectResult<Resource>>;
         item: (id: string) => Promise<Resource>;
@@ -46,13 +41,20 @@ export declare class PermissionService extends Service {
 }
 declare class ServiceModule {
     service: PermissionService;
-    getByJson: <T>(url: string, data?: any) => Promise<T>;
-    postByJson: <T>(url: string, data?: any) => Promise<T>;
-    get: <T>(url: string, data?: any) => Promise<T>;
+    getByJson: Service["getByJson"];
+    postByJson: Service["postByJson"];
+    get: Service["get"];
+    post: Service["post"];
     constructor(service: PermissionService);
     protected url(path: string): string;
 }
 declare class UserModule extends ServiceModule {
+    role: {
+        list: (userId: string) => Promise<Role[]>;
+    };
+    resource: {
+        list: (userId: string) => Promise<Resource[]>;
+    };
     /** 获取用户列表 */
     list(args?: DataSourceSelectArguments): Promise<DataSourceSelectResult<User>>;
     /**
@@ -69,11 +71,9 @@ declare class UserModule extends ServiceModule {
      * 添加用户信息
      * @param item 用户
      */
-    addUser(item: Partial<User>): Promise<{
+    add(item: Partial<User>): Promise<{
         id: string;
     }>;
-    /** 设置用户角色 */
-    setRoles(userId: string, roleIds: string[]): Promise<unknown>;
     /** 通过手机获取用户 */
     listByMobile(mobile: string): Promise<User>;
     /**
@@ -114,16 +114,6 @@ declare class UserModule extends ServiceModule {
      * 获取用户个人信息
      */
     me(): Promise<User>;
-    /**
-     * 获取当前登录用户的角色
-     */
-    myRoles(): Promise<Role[]>;
-    /**
-     * 给指定的用户添加角色
-     * @param userId 用户编号
-     * @param roleIds 多个角色编号
-     */
-    addUserRoles(userId: string, roleIds: string[]): Promise<unknown>;
 }
 declare class RoleModule extends ServiceModule {
     resource: {

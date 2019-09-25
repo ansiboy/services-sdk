@@ -21,17 +21,6 @@ export class PermissionService extends Service {
         return `${PermissionService.baseUrl}/${path}`
     }
 
-    currentUser = {
-        resource: {
-            list: () => {
-                let url = this.url("current-user/resource/list");
-                return this.get<Resource[]>(url);
-            }
-        }
-    }
-
-
-
 
     resource = {
         list: (args?: DataSourceSelectArguments) => {
@@ -96,8 +85,6 @@ export class PermissionService extends Service {
         return result
     }
 
-
-
     /**
      * 获取用角色
      * @param userId 用户编号
@@ -112,15 +99,17 @@ export class PermissionService extends Service {
 
 class ServiceModule {
     service: PermissionService;
-    getByJson: <T>(url: string, data?: any) => Promise<T>;
-    postByJson: <T>(url: string, data?: any) => Promise<T>;
-    get: <T>(url: string, data?: any) => Promise<T>;
+    getByJson: Service["getByJson"];
+    postByJson: Service["postByJson"];
+    get: Service["get"];
+    post: Service["post"];
 
     constructor(service: PermissionService) {
         this.service = service;
         this.getByJson = this.service.getByJson.bind(this.service);
         this.postByJson = this.service.postByJson.bind(this.service);
-        this.get = this.service.get;
+        this.get = this.service.get.bind(this.service);
+        this.post = this.service.post.bind(this.service);
     }
 
     protected url(path: string) {
@@ -132,6 +121,23 @@ class ServiceModule {
 }
 
 class UserModule extends ServiceModule {
+
+    role = {
+        list: async (userId: string) => {
+            let url = this.url("user/role/list");
+            let r = await this.getByJson<Role[]>(url, { userId });
+            return r;
+        }
+    }
+
+    resource = {
+        list: async (userId: string) => {
+            let url = this.url("user/resource/list");
+            let r = await this.getByJson<Resource[]>(url, { userId });
+            return r;
+        }
+    }
+
     /** 获取用户列表 */
     async list(args?: DataSourceSelectArguments) {
         let url = this.url('user/list');
@@ -163,25 +169,15 @@ class UserModule extends ServiceModule {
         return user
     }
 
-
     /**
      * 添加用户信息
      * @param item 用户
      */
-    async  addUser(item: Partial<User>) {
+    async add(item: Partial<User>) {
         let url = this.url('user/add')
         let result: { id: string }
         let r = await this.postByJson<typeof result>(url, { item })
         return r
-    }
-
-    /** 设置用户角色 */
-    async setRoles(userId: string, roleIds: string[]) {
-        if (!userId) throw errors.argumentNull('userId')
-        if (!roleIds) throw errors.argumentNull('roleIds')
-
-        let url = this.url('user/setRoles')
-        return this.postByJson(url, { userId, roleIds })
     }
 
     /** 通过手机获取用户 */
@@ -283,30 +279,11 @@ class UserModule extends ServiceModule {
      * 获取用户个人信息
      */
     async me() {
-        let url = this.url('user/me')
-        let user = await this.getByJson<User>(url)
+        let url = this.url('user/me');
+        let user = await this.getByJson<User>(url);
+        delete user.password;
         return user
     }
-
-    /**
-     * 获取当前登录用户的角色
-     */
-    async myRoles() {
-        let url = this.url('user/getRoles')
-        let roles = await this.getByJson<Role[]>(url)
-        return roles
-    }
-
-    /**
-     * 给指定的用户添加角色
-     * @param userId 用户编号
-     * @param roleIds 多个角色编号
-     */
-    addUserRoles(userId: string, roleIds: string[]) {
-        let url = this.url('user/addRoles')
-        return this.postByJson(url, { userId, roleIds })
-    }
-
 }
 
 class RoleModule extends ServiceModule {
